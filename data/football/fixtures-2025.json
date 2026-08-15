@@ -1,0 +1,3422 @@
+[
+  {
+    "fixtureId": 1378969,
+    "date": "2025-08-15T19:00:00+00:00",
+    "round": "Regular Season - 1",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 4,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1378970,
+    "date": "2025-08-16T11:30:00+00:00",
+    "round": "Regular Season - 1",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Newcastle",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378974,
+    "date": "2025-08-16T14:00:00+00:00",
+    "round": "Regular Season - 1",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Burnley",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378971,
+    "date": "2025-08-16T14:00:00+00:00",
+    "round": "Regular Season - 1",
+    "homeTeam": "Brighton",
+    "awayTeam": "Fulham",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1378973,
+    "date": "2025-08-16T14:00:00+00:00",
+    "round": "Regular Season - 1",
+    "homeTeam": "Sunderland",
+    "awayTeam": "West Ham",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378975,
+    "date": "2025-08-16T16:30:00+00:00",
+    "round": "Regular Season - 1",
+    "homeTeam": "Wolves",
+    "awayTeam": "Manchester City",
+    "homeGoals": 0,
+    "awayGoals": 4
+  },
+  {
+    "fixtureId": 1378976,
+    "date": "2025-08-17T13:00:00+00:00",
+    "round": "Regular Season - 1",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378972,
+    "date": "2025-08-17T13:00:00+00:00",
+    "round": "Regular Season - 1",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Brentford",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1378977,
+    "date": "2025-08-17T15:30:00+00:00",
+    "round": "Regular Season - 1",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Arsenal",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1378978,
+    "date": "2025-08-18T19:00:00+00:00",
+    "round": "Regular Season - 1",
+    "homeTeam": "Leeds",
+    "awayTeam": "Everton",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378988,
+    "date": "2025-08-22T19:00:00+00:00",
+    "round": "Regular Season - 2",
+    "homeTeam": "West Ham",
+    "awayTeam": "Chelsea",
+    "homeGoals": 1,
+    "awayGoals": 5
+  },
+  {
+    "fixtureId": 1378986,
+    "date": "2025-08-23T11:30:00+00:00",
+    "round": "Regular Season - 2",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Tottenham",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1378980,
+    "date": "2025-08-23T14:00:00+00:00",
+    "round": "Regular Season - 2",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Wolves",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378982,
+    "date": "2025-08-23T14:00:00+00:00",
+    "round": "Regular Season - 2",
+    "homeTeam": "Burnley",
+    "awayTeam": "Sunderland",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378981,
+    "date": "2025-08-23T14:00:00+00:00",
+    "round": "Regular Season - 2",
+    "homeTeam": "Brentford",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378979,
+    "date": "2025-08-23T16:30:00+00:00",
+    "round": "Regular Season - 2",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Leeds",
+    "homeGoals": 5,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378984,
+    "date": "2025-08-24T13:00:00+00:00",
+    "round": "Regular Season - 2",
+    "homeTeam": "Everton",
+    "awayTeam": "Brighton",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378983,
+    "date": "2025-08-24T13:00:00+00:00",
+    "round": "Regular Season - 2",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1378985,
+    "date": "2025-08-24T15:30:00+00:00",
+    "round": "Regular Season - 2",
+    "homeTeam": "Fulham",
+    "awayTeam": "Manchester United",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1378987,
+    "date": "2025-08-25T19:00:00+00:00",
+    "round": "Regular Season - 2",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Liverpool",
+    "homeGoals": 2,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1378991,
+    "date": "2025-08-30T11:30:00+00:00",
+    "round": "Regular Season - 3",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Fulham",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378994,
+    "date": "2025-08-30T14:00:00+00:00",
+    "round": "Regular Season - 3",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Burnley",
+    "homeGoals": 3,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1378998,
+    "date": "2025-08-30T14:00:00+00:00",
+    "round": "Regular Season - 3",
+    "homeTeam": "Wolves",
+    "awayTeam": "Everton",
+    "homeGoals": 2,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1378997,
+    "date": "2025-08-30T14:00:00+00:00",
+    "round": "Regular Season - 3",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1378996,
+    "date": "2025-08-30T14:00:00+00:00",
+    "round": "Regular Season - 3",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Brentford",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1378992,
+    "date": "2025-08-30T16:30:00+00:00",
+    "round": "Regular Season - 3",
+    "homeTeam": "Leeds",
+    "awayTeam": "Newcastle",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378990,
+    "date": "2025-08-31T13:00:00+00:00",
+    "round": "Regular Season - 3",
+    "homeTeam": "Brighton",
+    "awayTeam": "Manchester City",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1378995,
+    "date": "2025-08-31T13:00:00+00:00",
+    "round": "Regular Season - 3",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "West Ham",
+    "homeGoals": 0,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1378993,
+    "date": "2025-08-31T15:30:00+00:00",
+    "round": "Regular Season - 3",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Arsenal",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1378989,
+    "date": "2025-08-31T18:00:00+00:00",
+    "round": "Regular Season - 3",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 0,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1378999,
+    "date": "2025-09-13T11:30:00+00:00",
+    "round": "Regular Season - 4",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379007,
+    "date": "2025-09-13T14:00:00+00:00",
+    "round": "Regular Season - 4",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Wolves",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379000,
+    "date": "2025-09-13T14:00:00+00:00",
+    "round": "Regular Season - 4",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Brighton",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379005,
+    "date": "2025-09-13T14:00:00+00:00",
+    "round": "Regular Season - 4",
+    "homeTeam": "Fulham",
+    "awayTeam": "Leeds",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379004,
+    "date": "2025-09-13T14:00:00+00:00",
+    "round": "Regular Season - 4",
+    "homeTeam": "Everton",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379003,
+    "date": "2025-09-13T14:00:00+00:00",
+    "round": "Regular Season - 4",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Sunderland",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379008,
+    "date": "2025-09-13T16:30:00+00:00",
+    "round": "Regular Season - 4",
+    "homeTeam": "West Ham",
+    "awayTeam": "Tottenham",
+    "homeGoals": 0,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379001,
+    "date": "2025-09-13T19:00:00+00:00",
+    "round": "Regular Season - 4",
+    "homeTeam": "Brentford",
+    "awayTeam": "Chelsea",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379002,
+    "date": "2025-09-14T13:00:00+00:00",
+    "round": "Regular Season - 4",
+    "homeTeam": "Burnley",
+    "awayTeam": "Liverpool",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379006,
+    "date": "2025-09-14T15:30:00+00:00",
+    "round": "Regular Season - 4",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Manchester United",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379014,
+    "date": "2025-09-20T11:30:00+00:00",
+    "round": "Regular Season - 5",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Everton",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379018,
+    "date": "2025-09-20T14:00:00+00:00",
+    "round": "Regular Season - 5",
+    "homeTeam": "Wolves",
+    "awayTeam": "Leeds",
+    "homeGoals": 1,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379012,
+    "date": "2025-09-20T14:00:00+00:00",
+    "round": "Regular Season - 5",
+    "homeTeam": "Burnley",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379017,
+    "date": "2025-09-20T14:00:00+00:00",
+    "round": "Regular Season - 5",
+    "homeTeam": "West Ham",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379011,
+    "date": "2025-09-20T14:00:00+00:00",
+    "round": "Regular Season - 5",
+    "homeTeam": "Brighton",
+    "awayTeam": "Tottenham",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379015,
+    "date": "2025-09-20T16:30:00+00:00",
+    "round": "Regular Season - 5",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Chelsea",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379013,
+    "date": "2025-09-20T19:00:00+00:00",
+    "round": "Regular Season - 5",
+    "homeTeam": "Fulham",
+    "awayTeam": "Brentford",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379010,
+    "date": "2025-09-21T13:00:00+00:00",
+    "round": "Regular Season - 5",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Newcastle",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379016,
+    "date": "2025-09-21T13:00:00+00:00",
+    "round": "Regular Season - 5",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379009,
+    "date": "2025-09-21T15:30:00+00:00",
+    "round": "Regular Season - 5",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Manchester City",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379020,
+    "date": "2025-09-27T11:30:00+00:00",
+    "round": "Regular Season - 6",
+    "homeTeam": "Brentford",
+    "awayTeam": "Manchester United",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379021,
+    "date": "2025-09-27T14:00:00+00:00",
+    "round": "Regular Season - 6",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Brighton",
+    "homeGoals": 1,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379025,
+    "date": "2025-09-27T14:00:00+00:00",
+    "round": "Regular Season - 6",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Burnley",
+    "homeGoals": 5,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379022,
+    "date": "2025-09-27T14:00:00+00:00",
+    "round": "Regular Season - 6",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Liverpool",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379024,
+    "date": "2025-09-27T14:00:00+00:00",
+    "round": "Regular Season - 6",
+    "homeTeam": "Leeds",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379027,
+    "date": "2025-09-27T16:30:00+00:00",
+    "round": "Regular Season - 6",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Sunderland",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379028,
+    "date": "2025-09-27T19:00:00+00:00",
+    "round": "Regular Season - 6",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Wolves",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379019,
+    "date": "2025-09-28T13:00:00+00:00",
+    "round": "Regular Season - 6",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Fulham",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379026,
+    "date": "2025-09-28T15:30:00+00:00",
+    "round": "Regular Season - 6",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Arsenal",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379023,
+    "date": "2025-09-29T19:00:00+00:00",
+    "round": "Regular Season - 6",
+    "homeTeam": "Everton",
+    "awayTeam": "West Ham",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379031,
+    "date": "2025-10-03T19:00:00+00:00",
+    "round": "Regular Season - 7",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Fulham",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379035,
+    "date": "2025-10-04T11:30:00+00:00",
+    "round": "Regular Season - 7",
+    "homeTeam": "Leeds",
+    "awayTeam": "Tottenham",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379036,
+    "date": "2025-10-04T14:00:00+00:00",
+    "round": "Regular Season - 7",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Sunderland",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379029,
+    "date": "2025-10-04T14:00:00+00:00",
+    "round": "Regular Season - 7",
+    "homeTeam": "Arsenal",
+    "awayTeam": "West Ham",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379033,
+    "date": "2025-10-04T16:30:00+00:00",
+    "round": "Regular Season - 7",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Liverpool",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379037,
+    "date": "2025-10-05T13:00:00+00:00",
+    "round": "Regular Season - 7",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379038,
+    "date": "2025-10-05T13:00:00+00:00",
+    "round": "Regular Season - 7",
+    "homeTeam": "Wolves",
+    "awayTeam": "Brighton",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379034,
+    "date": "2025-10-05T13:00:00+00:00",
+    "round": "Regular Season - 7",
+    "homeTeam": "Everton",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379030,
+    "date": "2025-10-05T13:00:00+00:00",
+    "round": "Regular Season - 7",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Burnley",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379032,
+    "date": "2025-10-05T15:30:00+00:00",
+    "round": "Regular Season - 7",
+    "homeTeam": "Brentford",
+    "awayTeam": "Manchester City",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379045,
+    "date": "2025-10-18T11:30:00+00:00",
+    "round": "Regular Season - 8",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Chelsea",
+    "homeGoals": 0,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379040,
+    "date": "2025-10-18T14:00:00+00:00",
+    "round": "Regular Season - 8",
+    "homeTeam": "Burnley",
+    "awayTeam": "Leeds",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379044,
+    "date": "2025-10-18T14:00:00+00:00",
+    "round": "Regular Season - 8",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Everton",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379039,
+    "date": "2025-10-18T14:00:00+00:00",
+    "round": "Regular Season - 8",
+    "homeTeam": "Brighton",
+    "awayTeam": "Newcastle",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379041,
+    "date": "2025-10-18T14:00:00+00:00",
+    "round": "Regular Season - 8",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 3,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379046,
+    "date": "2025-10-18T14:00:00+00:00",
+    "round": "Regular Season - 8",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Wolves",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379042,
+    "date": "2025-10-18T16:30:00+00:00",
+    "round": "Regular Season - 8",
+    "homeTeam": "Fulham",
+    "awayTeam": "Arsenal",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379047,
+    "date": "2025-10-19T13:00:00+00:00",
+    "round": "Regular Season - 8",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379043,
+    "date": "2025-10-19T15:30:00+00:00",
+    "round": "Regular Season - 8",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Manchester United",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379048,
+    "date": "2025-10-20T19:00:00+00:00",
+    "round": "Regular Season - 8",
+    "homeTeam": "West Ham",
+    "awayTeam": "Brentford",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379055,
+    "date": "2025-10-24T19:00:00+00:00",
+    "round": "Regular Season - 9",
+    "homeTeam": "Leeds",
+    "awayTeam": "West Ham",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379057,
+    "date": "2025-10-25T14:00:00+00:00",
+    "round": "Regular Season - 9",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Fulham",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379053,
+    "date": "2025-10-25T14:00:00+00:00",
+    "round": "Regular Season - 9",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Sunderland",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379056,
+    "date": "2025-10-25T16:30:00+00:00",
+    "round": "Regular Season - 9",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Brighton",
+    "homeGoals": 4,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379052,
+    "date": "2025-10-25T19:00:00+00:00",
+    "round": "Regular Season - 9",
+    "homeTeam": "Brentford",
+    "awayTeam": "Liverpool",
+    "homeGoals": 3,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379051,
+    "date": "2025-10-26T14:00:00+00:00",
+    "round": "Regular Season - 9",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379058,
+    "date": "2025-10-26T14:00:00+00:00",
+    "round": "Regular Season - 9",
+    "homeTeam": "Wolves",
+    "awayTeam": "Burnley",
+    "homeGoals": 2,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379049,
+    "date": "2025-10-26T14:00:00+00:00",
+    "round": "Regular Season - 9",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379050,
+    "date": "2025-10-26T14:00:00+00:00",
+    "round": "Regular Season - 9",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Manchester City",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379054,
+    "date": "2025-10-26T16:30:00+00:00",
+    "round": "Regular Season - 9",
+    "homeTeam": "Everton",
+    "awayTeam": "Tottenham",
+    "homeGoals": 0,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379062,
+    "date": "2025-11-01T15:00:00+00:00",
+    "round": "Regular Season - 10",
+    "homeTeam": "Fulham",
+    "awayTeam": "Wolves",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379060,
+    "date": "2025-11-01T15:00:00+00:00",
+    "round": "Regular Season - 10",
+    "homeTeam": "Burnley",
+    "awayTeam": "Arsenal",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379059,
+    "date": "2025-11-01T15:00:00+00:00",
+    "round": "Regular Season - 10",
+    "homeTeam": "Brighton",
+    "awayTeam": "Leeds",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379061,
+    "date": "2025-11-01T15:00:00+00:00",
+    "round": "Regular Season - 10",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Brentford",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379065,
+    "date": "2025-11-01T15:00:00+00:00",
+    "round": "Regular Season - 10",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Manchester United",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379067,
+    "date": "2025-11-01T17:30:00+00:00",
+    "round": "Regular Season - 10",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Chelsea",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379063,
+    "date": "2025-11-01T20:00:00+00:00",
+    "round": "Regular Season - 10",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379068,
+    "date": "2025-11-02T14:00:00+00:00",
+    "round": "Regular Season - 10",
+    "homeTeam": "West Ham",
+    "awayTeam": "Newcastle",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379064,
+    "date": "2025-11-02T16:30:00+00:00",
+    "round": "Regular Season - 10",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379066,
+    "date": "2025-11-03T20:00:00+00:00",
+    "round": "Regular Season - 10",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Everton",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379077,
+    "date": "2025-11-08T12:30:00+00:00",
+    "round": "Regular Season - 11",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Manchester United",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379073,
+    "date": "2025-11-08T15:00:00+00:00",
+    "round": "Regular Season - 11",
+    "homeTeam": "Everton",
+    "awayTeam": "Fulham",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379078,
+    "date": "2025-11-08T15:00:00+00:00",
+    "round": "Regular Season - 11",
+    "homeTeam": "West Ham",
+    "awayTeam": "Burnley",
+    "homeGoals": 3,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379076,
+    "date": "2025-11-08T17:30:00+00:00",
+    "round": "Regular Season - 11",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Arsenal",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379071,
+    "date": "2025-11-08T20:00:00+00:00",
+    "round": "Regular Season - 11",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Wolves",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379072,
+    "date": "2025-11-09T14:00:00+00:00",
+    "round": "Regular Season - 11",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Brighton",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379070,
+    "date": "2025-11-09T14:00:00+00:00",
+    "round": "Regular Season - 11",
+    "homeTeam": "Brentford",
+    "awayTeam": "Newcastle",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379075,
+    "date": "2025-11-09T14:00:00+00:00",
+    "round": "Regular Season - 11",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Leeds",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379069,
+    "date": "2025-11-09T14:00:00+00:00",
+    "round": "Regular Season - 11",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 4,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379074,
+    "date": "2025-11-09T16:30:00+00:00",
+    "round": "Regular Season - 11",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Liverpool",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379082,
+    "date": "2025-11-22T12:30:00+00:00",
+    "round": "Regular Season - 12",
+    "homeTeam": "Burnley",
+    "awayTeam": "Chelsea",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379080,
+    "date": "2025-11-22T15:00:00+00:00",
+    "round": "Regular Season - 12",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "West Ham",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379083,
+    "date": "2025-11-22T15:00:00+00:00",
+    "round": "Regular Season - 12",
+    "homeTeam": "Fulham",
+    "awayTeam": "Sunderland",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379088,
+    "date": "2025-11-22T15:00:00+00:00",
+    "round": "Regular Season - 12",
+    "homeTeam": "Wolves",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379085,
+    "date": "2025-11-22T15:00:00+00:00",
+    "round": "Regular Season - 12",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 0,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379081,
+    "date": "2025-11-22T15:00:00+00:00",
+    "round": "Regular Season - 12",
+    "homeTeam": "Brighton",
+    "awayTeam": "Brentford",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379087,
+    "date": "2025-11-22T17:30:00+00:00",
+    "round": "Regular Season - 12",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Manchester City",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379084,
+    "date": "2025-11-23T14:00:00+00:00",
+    "round": "Regular Season - 12",
+    "homeTeam": "Leeds",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379079,
+    "date": "2025-11-23T16:30:00+00:00",
+    "round": "Regular Season - 12",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Tottenham",
+    "homeGoals": 4,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379086,
+    "date": "2025-11-24T20:00:00+00:00",
+    "round": "Regular Season - 12",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Everton",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379094,
+    "date": "2025-11-29T15:00:00+00:00",
+    "round": "Regular Season - 13",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Leeds",
+    "homeGoals": 3,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379090,
+    "date": "2025-11-29T15:00:00+00:00",
+    "round": "Regular Season - 13",
+    "homeTeam": "Brentford",
+    "awayTeam": "Burnley",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379096,
+    "date": "2025-11-29T15:00:00+00:00",
+    "round": "Regular Season - 13",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 3,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379093,
+    "date": "2025-11-29T17:30:00+00:00",
+    "round": "Regular Season - 13",
+    "homeTeam": "Everton",
+    "awayTeam": "Newcastle",
+    "homeGoals": 1,
+    "awayGoals": 4
+  },
+  {
+    "fixtureId": 1379097,
+    "date": "2025-11-29T20:00:00+00:00",
+    "round": "Regular Season - 13",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Fulham",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379092,
+    "date": "2025-11-30T12:00:00+00:00",
+    "round": "Regular Season - 13",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Manchester United",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379098,
+    "date": "2025-11-30T14:05:00+00:00",
+    "round": "Regular Season - 13",
+    "homeTeam": "West Ham",
+    "awayTeam": "Liverpool",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379095,
+    "date": "2025-11-30T14:05:00+00:00",
+    "round": "Regular Season - 13",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Brighton",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379089,
+    "date": "2025-11-30T14:05:00+00:00",
+    "round": "Regular Season - 13",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Wolves",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379091,
+    "date": "2025-11-30T16:30:00+00:00",
+    "round": "Regular Season - 13",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Arsenal",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379100,
+    "date": "2025-12-02T19:30:00+00:00",
+    "round": "Regular Season - 14",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Everton",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379103,
+    "date": "2025-12-02T19:30:00+00:00",
+    "round": "Regular Season - 14",
+    "homeTeam": "Fulham",
+    "awayTeam": "Manchester City",
+    "homeGoals": 4,
+    "awayGoals": 5
+  },
+  {
+    "fixtureId": 1379107,
+    "date": "2025-12-02T20:15:00+00:00",
+    "round": "Regular Season - 14",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Tottenham",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379108,
+    "date": "2025-12-03T19:30:00+00:00",
+    "round": "Regular Season - 14",
+    "homeTeam": "Wolves",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379099,
+    "date": "2025-12-03T19:30:00+00:00",
+    "round": "Regular Season - 14",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Brentford",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379102,
+    "date": "2025-12-03T19:30:00+00:00",
+    "round": "Regular Season - 14",
+    "homeTeam": "Burnley",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379101,
+    "date": "2025-12-03T19:30:00+00:00",
+    "round": "Regular Season - 14",
+    "homeTeam": "Brighton",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 3,
+    "awayGoals": 4
+  },
+  {
+    "fixtureId": 1379105,
+    "date": "2025-12-03T20:15:00+00:00",
+    "round": "Regular Season - 14",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Sunderland",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379104,
+    "date": "2025-12-03T20:15:00+00:00",
+    "round": "Regular Season - 14",
+    "homeTeam": "Leeds",
+    "awayTeam": "Chelsea",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379106,
+    "date": "2025-12-04T20:00:00+00:00",
+    "round": "Regular Season - 14",
+    "homeTeam": "Manchester United",
+    "awayTeam": "West Ham",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379109,
+    "date": "2025-12-06T12:30:00+00:00",
+    "round": "Regular Season - 15",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Arsenal",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379116,
+    "date": "2025-12-06T15:00:00+00:00",
+    "round": "Regular Season - 15",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Burnley",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379110,
+    "date": "2025-12-06T15:00:00+00:00",
+    "round": "Regular Season - 15",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Chelsea",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379112,
+    "date": "2025-12-06T15:00:00+00:00",
+    "round": "Regular Season - 15",
+    "homeTeam": "Everton",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379117,
+    "date": "2025-12-06T15:00:00+00:00",
+    "round": "Regular Season - 15",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Brentford",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379115,
+    "date": "2025-12-06T15:00:00+00:00",
+    "round": "Regular Season - 15",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Sunderland",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379114,
+    "date": "2025-12-06T17:30:00+00:00",
+    "round": "Regular Season - 15",
+    "homeTeam": "Leeds",
+    "awayTeam": "Liverpool",
+    "homeGoals": 3,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379111,
+    "date": "2025-12-07T14:00:00+00:00",
+    "round": "Regular Season - 15",
+    "homeTeam": "Brighton",
+    "awayTeam": "West Ham",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379113,
+    "date": "2025-12-07T16:30:00+00:00",
+    "round": "Regular Season - 15",
+    "homeTeam": "Fulham",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379118,
+    "date": "2025-12-08T20:00:00+00:00",
+    "round": "Regular Season - 15",
+    "homeTeam": "Wolves",
+    "awayTeam": "Manchester United",
+    "homeGoals": 1,
+    "awayGoals": 4
+  },
+  {
+    "fixtureId": 1379124,
+    "date": "2025-12-13T15:00:00+00:00",
+    "round": "Regular Season - 16",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Brighton",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379122,
+    "date": "2025-12-13T15:00:00+00:00",
+    "round": "Regular Season - 16",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Everton",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379121,
+    "date": "2025-12-13T17:30:00+00:00",
+    "round": "Regular Season - 16",
+    "homeTeam": "Burnley",
+    "awayTeam": "Fulham",
+    "homeGoals": 2,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379119,
+    "date": "2025-12-13T20:00:00+00:00",
+    "round": "Regular Season - 16",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Wolves",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379128,
+    "date": "2025-12-14T14:00:00+00:00",
+    "round": "Regular Season - 16",
+    "homeTeam": "West Ham",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 2,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379123,
+    "date": "2025-12-14T14:00:00+00:00",
+    "round": "Regular Season - 16",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Manchester City",
+    "homeGoals": 0,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379126,
+    "date": "2025-12-14T14:00:00+00:00",
+    "round": "Regular Season - 16",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Tottenham",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379127,
+    "date": "2025-12-14T14:00:00+00:00",
+    "round": "Regular Season - 16",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Newcastle",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379120,
+    "date": "2025-12-14T16:30:00+00:00",
+    "round": "Regular Season - 16",
+    "homeTeam": "Brentford",
+    "awayTeam": "Leeds",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379125,
+    "date": "2025-12-15T20:00:00+00:00",
+    "round": "Regular Season - 16",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 4,
+    "awayGoals": 4
+  },
+  {
+    "fixtureId": 1379136,
+    "date": "2025-12-20T12:30:00+00:00",
+    "round": "Regular Season - 17",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Chelsea",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379130,
+    "date": "2025-12-20T15:00:00+00:00",
+    "round": "Regular Season - 17",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Burnley",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379138,
+    "date": "2025-12-20T15:00:00+00:00",
+    "round": "Regular Season - 17",
+    "homeTeam": "Wolves",
+    "awayTeam": "Brentford",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379135,
+    "date": "2025-12-20T15:00:00+00:00",
+    "round": "Regular Season - 17",
+    "homeTeam": "Manchester City",
+    "awayTeam": "West Ham",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379131,
+    "date": "2025-12-20T15:00:00+00:00",
+    "round": "Regular Season - 17",
+    "homeTeam": "Brighton",
+    "awayTeam": "Sunderland",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379137,
+    "date": "2025-12-20T17:30:00+00:00",
+    "round": "Regular Season - 17",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Liverpool",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379132,
+    "date": "2025-12-20T20:00:00+00:00",
+    "round": "Regular Season - 17",
+    "homeTeam": "Everton",
+    "awayTeam": "Arsenal",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379134,
+    "date": "2025-12-20T20:00:00+00:00",
+    "round": "Regular Season - 17",
+    "homeTeam": "Leeds",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 4,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379129,
+    "date": "2025-12-21T16:30:00+00:00",
+    "round": "Regular Season - 17",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Manchester United",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379133,
+    "date": "2025-12-22T20:00:00+00:00",
+    "round": "Regular Season - 17",
+    "homeTeam": "Fulham",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379145,
+    "date": "2025-12-26T20:00:00+00:00",
+    "round": "Regular Season - 18",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Newcastle",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379146,
+    "date": "2025-12-27T12:30:00+00:00",
+    "round": "Regular Season - 18",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Manchester City",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379144,
+    "date": "2025-12-27T15:00:00+00:00",
+    "round": "Regular Season - 18",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Wolves",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379139,
+    "date": "2025-12-27T15:00:00+00:00",
+    "round": "Regular Season - 18",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Brighton",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379141,
+    "date": "2025-12-27T15:00:00+00:00",
+    "round": "Regular Season - 18",
+    "homeTeam": "Burnley",
+    "awayTeam": "Everton",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379148,
+    "date": "2025-12-27T15:00:00+00:00",
+    "round": "Regular Season - 18",
+    "homeTeam": "West Ham",
+    "awayTeam": "Fulham",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379140,
+    "date": "2025-12-27T15:00:00+00:00",
+    "round": "Regular Season - 18",
+    "homeTeam": "Brentford",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 4,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379142,
+    "date": "2025-12-27T17:30:00+00:00",
+    "round": "Regular Season - 18",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379147,
+    "date": "2025-12-28T14:00:00+00:00",
+    "round": "Regular Season - 18",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Leeds",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379143,
+    "date": "2025-12-28T16:30:00+00:00",
+    "round": "Regular Season - 18",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Tottenham",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379151,
+    "date": "2025-12-30T19:30:00+00:00",
+    "round": "Regular Season - 19",
+    "homeTeam": "Burnley",
+    "awayTeam": "Newcastle",
+    "homeGoals": 1,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379158,
+    "date": "2025-12-30T19:30:00+00:00",
+    "round": "Regular Season - 19",
+    "homeTeam": "West Ham",
+    "awayTeam": "Brighton",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379152,
+    "date": "2025-12-30T19:30:00+00:00",
+    "round": "Regular Season - 19",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379156,
+    "date": "2025-12-30T19:30:00+00:00",
+    "round": "Regular Season - 19",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Everton",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379155,
+    "date": "2025-12-30T20:15:00+00:00",
+    "round": "Regular Season - 19",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Wolves",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379149,
+    "date": "2025-12-30T20:15:00+00:00",
+    "round": "Regular Season - 19",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 4,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379154,
+    "date": "2026-01-01T17:30:00+00:00",
+    "round": "Regular Season - 19",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Leeds",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379153,
+    "date": "2026-01-01T17:30:00+00:00",
+    "round": "Regular Season - 19",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Fulham",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379150,
+    "date": "2026-01-01T20:00:00+00:00",
+    "round": "Regular Season - 19",
+    "homeTeam": "Brentford",
+    "awayTeam": "Tottenham",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379157,
+    "date": "2026-01-01T20:00:00+00:00",
+    "round": "Regular Season - 19",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Manchester City",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379159,
+    "date": "2026-01-03T12:30:00+00:00",
+    "round": "Regular Season - 20",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379168,
+    "date": "2026-01-03T15:00:00+00:00",
+    "round": "Regular Season - 20",
+    "homeTeam": "Wolves",
+    "awayTeam": "West Ham",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379161,
+    "date": "2026-01-03T15:00:00+00:00",
+    "round": "Regular Season - 20",
+    "homeTeam": "Brighton",
+    "awayTeam": "Burnley",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379160,
+    "date": "2026-01-03T17:30:00+00:00",
+    "round": "Regular Season - 20",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Arsenal",
+    "homeGoals": 2,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379164,
+    "date": "2026-01-04T12:30:00+00:00",
+    "round": "Regular Season - 20",
+    "homeTeam": "Leeds",
+    "awayTeam": "Manchester United",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379166,
+    "date": "2026-01-04T15:00:00+00:00",
+    "round": "Regular Season - 20",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379162,
+    "date": "2026-01-04T15:00:00+00:00",
+    "round": "Regular Season - 20",
+    "homeTeam": "Everton",
+    "awayTeam": "Brentford",
+    "homeGoals": 2,
+    "awayGoals": 4
+  },
+  {
+    "fixtureId": 1379167,
+    "date": "2026-01-04T15:00:00+00:00",
+    "round": "Regular Season - 20",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Sunderland",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379163,
+    "date": "2026-01-04T15:15:00+00:00",
+    "round": "Regular Season - 20",
+    "homeTeam": "Fulham",
+    "awayTeam": "Liverpool",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379165,
+    "date": "2026-01-04T17:30:00+00:00",
+    "round": "Regular Season - 20",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Chelsea",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379178,
+    "date": "2026-01-06T20:00:00+00:00",
+    "round": "Regular Season - 21",
+    "homeTeam": "West Ham",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379170,
+    "date": "2026-01-07T19:30:00+00:00",
+    "round": "Regular Season - 21",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Tottenham",
+    "homeGoals": 3,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379175,
+    "date": "2026-01-07T19:30:00+00:00",
+    "round": "Regular Season - 21",
+    "homeTeam": "Fulham",
+    "awayTeam": "Chelsea",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379174,
+    "date": "2026-01-07T19:30:00+00:00",
+    "round": "Regular Season - 21",
+    "homeTeam": "Everton",
+    "awayTeam": "Wolves",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379176,
+    "date": "2026-01-07T19:30:00+00:00",
+    "round": "Regular Season - 21",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Brighton",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379173,
+    "date": "2026-01-07T19:30:00+00:00",
+    "round": "Regular Season - 21",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379171,
+    "date": "2026-01-07T19:30:00+00:00",
+    "round": "Regular Season - 21",
+    "homeTeam": "Brentford",
+    "awayTeam": "Sunderland",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379177,
+    "date": "2026-01-07T20:15:00+00:00",
+    "round": "Regular Season - 21",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Leeds",
+    "homeGoals": 4,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379172,
+    "date": "2026-01-07T20:15:00+00:00",
+    "round": "Regular Season - 21",
+    "homeTeam": "Burnley",
+    "awayTeam": "Manchester United",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379169,
+    "date": "2026-01-08T20:00:00+00:00",
+    "round": "Regular Season - 21",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Liverpool",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379184,
+    "date": "2026-01-17T12:30:00+00:00",
+    "round": "Regular Season - 22",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Manchester City",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379183,
+    "date": "2026-01-17T15:00:00+00:00",
+    "round": "Regular Season - 22",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Burnley",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379187,
+    "date": "2026-01-17T15:00:00+00:00",
+    "round": "Regular Season - 22",
+    "homeTeam": "Tottenham",
+    "awayTeam": "West Ham",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379181,
+    "date": "2026-01-17T15:00:00+00:00",
+    "round": "Regular Season - 22",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Brentford",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379182,
+    "date": "2026-01-17T15:00:00+00:00",
+    "round": "Regular Season - 22",
+    "homeTeam": "Leeds",
+    "awayTeam": "Fulham",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379186,
+    "date": "2026-01-17T15:00:00+00:00",
+    "round": "Regular Season - 22",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379185,
+    "date": "2026-01-17T17:30:00+00:00",
+    "round": "Regular Season - 22",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Arsenal",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379188,
+    "date": "2026-01-18T14:00:00+00:00",
+    "round": "Regular Season - 22",
+    "homeTeam": "Wolves",
+    "awayTeam": "Newcastle",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379179,
+    "date": "2026-01-18T16:30:00+00:00",
+    "round": "Regular Season - 22",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Everton",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379180,
+    "date": "2026-01-19T20:00:00+00:00",
+    "round": "Regular Season - 22",
+    "homeTeam": "Brighton",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379198,
+    "date": "2026-01-24T12:30:00+00:00",
+    "round": "Regular Season - 23",
+    "homeTeam": "West Ham",
+    "awayTeam": "Sunderland",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379195,
+    "date": "2026-01-24T15:00:00+00:00",
+    "round": "Regular Season - 23",
+    "homeTeam": "Fulham",
+    "awayTeam": "Brighton",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379192,
+    "date": "2026-01-24T15:00:00+00:00",
+    "round": "Regular Season - 23",
+    "homeTeam": "Burnley",
+    "awayTeam": "Tottenham",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379196,
+    "date": "2026-01-24T15:00:00+00:00",
+    "round": "Regular Season - 23",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Wolves",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379190,
+    "date": "2026-01-24T17:30:00+00:00",
+    "round": "Regular Season - 23",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Liverpool",
+    "homeGoals": 3,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379197,
+    "date": "2026-01-25T14:00:00+00:00",
+    "round": "Regular Season - 23",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379193,
+    "date": "2026-01-25T14:00:00+00:00",
+    "round": "Regular Season - 23",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Chelsea",
+    "homeGoals": 1,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379191,
+    "date": "2026-01-25T14:00:00+00:00",
+    "round": "Regular Season - 23",
+    "homeTeam": "Brentford",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379189,
+    "date": "2026-01-25T16:30:00+00:00",
+    "round": "Regular Season - 23",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Manchester United",
+    "homeGoals": 2,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379194,
+    "date": "2026-01-26T20:00:00+00:00",
+    "round": "Regular Season - 23",
+    "homeTeam": "Everton",
+    "awayTeam": "Leeds",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379208,
+    "date": "2026-01-31T15:00:00+00:00",
+    "round": "Regular Season - 24",
+    "homeTeam": "Wolves",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379200,
+    "date": "2026-01-31T15:00:00+00:00",
+    "round": "Regular Season - 24",
+    "homeTeam": "Brighton",
+    "awayTeam": "Everton",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379202,
+    "date": "2026-01-31T15:00:00+00:00",
+    "round": "Regular Season - 24",
+    "homeTeam": "Leeds",
+    "awayTeam": "Arsenal",
+    "homeGoals": 0,
+    "awayGoals": 4
+  },
+  {
+    "fixtureId": 1379201,
+    "date": "2026-01-31T17:30:00+00:00",
+    "round": "Regular Season - 24",
+    "homeTeam": "Chelsea",
+    "awayTeam": "West Ham",
+    "homeGoals": 3,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379203,
+    "date": "2026-01-31T20:00:00+00:00",
+    "round": "Regular Season - 24",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Newcastle",
+    "homeGoals": 4,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379204,
+    "date": "2026-02-01T14:00:00+00:00",
+    "round": "Regular Season - 24",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Fulham",
+    "homeGoals": 3,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379205,
+    "date": "2026-02-01T14:00:00+00:00",
+    "round": "Regular Season - 24",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379199,
+    "date": "2026-02-01T14:00:00+00:00",
+    "round": "Regular Season - 24",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Brentford",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379207,
+    "date": "2026-02-01T16:30:00+00:00",
+    "round": "Regular Season - 24",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Manchester City",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379206,
+    "date": "2026-02-02T20:00:00+00:00",
+    "round": "Regular Season - 24",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Burnley",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379214,
+    "date": "2026-02-06T20:00:00+00:00",
+    "round": "Regular Season - 25",
+    "homeTeam": "Leeds",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379216,
+    "date": "2026-02-07T12:30:00+00:00",
+    "round": "Regular Season - 25",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Tottenham",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379210,
+    "date": "2026-02-07T15:00:00+00:00",
+    "round": "Regular Season - 25",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379213,
+    "date": "2026-02-07T15:00:00+00:00",
+    "round": "Regular Season - 25",
+    "homeTeam": "Fulham",
+    "awayTeam": "Everton",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379218,
+    "date": "2026-02-07T15:00:00+00:00",
+    "round": "Regular Season - 25",
+    "homeTeam": "Wolves",
+    "awayTeam": "Chelsea",
+    "homeGoals": 1,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379209,
+    "date": "2026-02-07T15:00:00+00:00",
+    "round": "Regular Season - 25",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Sunderland",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379212,
+    "date": "2026-02-07T15:00:00+00:00",
+    "round": "Regular Season - 25",
+    "homeTeam": "Burnley",
+    "awayTeam": "West Ham",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379217,
+    "date": "2026-02-07T17:30:00+00:00",
+    "round": "Regular Season - 25",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Brentford",
+    "homeGoals": 2,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379211,
+    "date": "2026-02-08T14:00:00+00:00",
+    "round": "Regular Season - 25",
+    "homeTeam": "Brighton",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379215,
+    "date": "2026-02-08T16:30:00+00:00",
+    "round": "Regular Season - 25",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Manchester City",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379223,
+    "date": "2026-02-10T19:30:00+00:00",
+    "round": "Regular Season - 26",
+    "homeTeam": "Everton",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379227,
+    "date": "2026-02-10T19:30:00+00:00",
+    "round": "Regular Season - 26",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Newcastle",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379221,
+    "date": "2026-02-10T19:30:00+00:00",
+    "round": "Regular Season - 26",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Leeds",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379228,
+    "date": "2026-02-10T20:15:00+00:00",
+    "round": "Regular Season - 26",
+    "homeTeam": "West Ham",
+    "awayTeam": "Manchester United",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379224,
+    "date": "2026-02-11T19:30:00+00:00",
+    "round": "Regular Season - 26",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Fulham",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379222,
+    "date": "2026-02-11T19:30:00+00:00",
+    "round": "Regular Season - 26",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Burnley",
+    "homeGoals": 2,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379225,
+    "date": "2026-02-11T19:30:00+00:00",
+    "round": "Regular Season - 26",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Wolves",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379219,
+    "date": "2026-02-11T19:30:00+00:00",
+    "round": "Regular Season - 26",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Brighton",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379226,
+    "date": "2026-02-11T20:15:00+00:00",
+    "round": "Regular Season - 26",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Liverpool",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379220,
+    "date": "2026-02-12T20:00:00+00:00",
+    "round": "Regular Season - 26",
+    "homeTeam": "Brentford",
+    "awayTeam": "Arsenal",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379278,
+    "date": "2026-02-18T20:00:00+00:00",
+    "round": "Regular Season - 31",
+    "homeTeam": "Wolves",
+    "awayTeam": "Arsenal",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379231,
+    "date": "2026-02-21T15:00:00+00:00",
+    "round": "Regular Season - 27",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Burnley",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379230,
+    "date": "2026-02-21T15:00:00+00:00",
+    "round": "Regular Season - 27",
+    "homeTeam": "Brentford",
+    "awayTeam": "Brighton",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379229,
+    "date": "2026-02-21T15:00:00+00:00",
+    "round": "Regular Season - 27",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Leeds",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379238,
+    "date": "2026-02-21T17:30:00+00:00",
+    "round": "Regular Season - 27",
+    "homeTeam": "West Ham",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379234,
+    "date": "2026-02-21T20:00:00+00:00",
+    "round": "Regular Season - 27",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Newcastle",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379232,
+    "date": "2026-02-22T14:00:00+00:00",
+    "round": "Regular Season - 27",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Wolves",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379235,
+    "date": "2026-02-22T14:00:00+00:00",
+    "round": "Regular Season - 27",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Liverpool",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379236,
+    "date": "2026-02-22T14:00:00+00:00",
+    "round": "Regular Season - 27",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Fulham",
+    "homeGoals": 1,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379237,
+    "date": "2026-02-22T16:30:00+00:00",
+    "round": "Regular Season - 27",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Arsenal",
+    "homeGoals": 1,
+    "awayGoals": 4
+  },
+  {
+    "fixtureId": 1379233,
+    "date": "2026-02-23T20:00:00+00:00",
+    "round": "Regular Season - 27",
+    "homeTeam": "Everton",
+    "awayTeam": "Manchester United",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379248,
+    "date": "2026-02-27T20:00:00+00:00",
+    "round": "Regular Season - 28",
+    "homeTeam": "Wolves",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379240,
+    "date": "2026-02-28T12:30:00+00:00",
+    "round": "Regular Season - 28",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Sunderland",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379247,
+    "date": "2026-02-28T15:00:00+00:00",
+    "round": "Regular Season - 28",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Everton",
+    "homeGoals": 2,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379245,
+    "date": "2026-02-28T15:00:00+00:00",
+    "round": "Regular Season - 28",
+    "homeTeam": "Liverpool",
+    "awayTeam": "West Ham",
+    "homeGoals": 5,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379242,
+    "date": "2026-02-28T15:00:00+00:00",
+    "round": "Regular Season - 28",
+    "homeTeam": "Burnley",
+    "awayTeam": "Brentford",
+    "homeGoals": 3,
+    "awayGoals": 4
+  },
+  {
+    "fixtureId": 1379244,
+    "date": "2026-02-28T17:30:00+00:00",
+    "round": "Regular Season - 28",
+    "homeTeam": "Leeds",
+    "awayTeam": "Manchester City",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379246,
+    "date": "2026-03-01T14:00:00+00:00",
+    "round": "Regular Season - 28",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379243,
+    "date": "2026-03-01T14:00:00+00:00",
+    "round": "Regular Season - 28",
+    "homeTeam": "Fulham",
+    "awayTeam": "Tottenham",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379241,
+    "date": "2026-03-01T14:00:00+00:00",
+    "round": "Regular Season - 28",
+    "homeTeam": "Brighton",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379239,
+    "date": "2026-03-01T16:30:00+00:00",
+    "round": "Regular Season - 28",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Chelsea",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379250,
+    "date": "2026-03-03T19:30:00+00:00",
+    "round": "Regular Season - 29",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Brentford",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379252,
+    "date": "2026-03-03T19:30:00+00:00",
+    "round": "Regular Season - 29",
+    "homeTeam": "Everton",
+    "awayTeam": "Burnley",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379254,
+    "date": "2026-03-03T19:30:00+00:00",
+    "round": "Regular Season - 29",
+    "homeTeam": "Leeds",
+    "awayTeam": "Sunderland",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379258,
+    "date": "2026-03-03T20:15:00+00:00",
+    "round": "Regular Season - 29",
+    "homeTeam": "Wolves",
+    "awayTeam": "Liverpool",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379253,
+    "date": "2026-03-04T19:30:00+00:00",
+    "round": "Regular Season - 29",
+    "homeTeam": "Fulham",
+    "awayTeam": "West Ham",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379255,
+    "date": "2026-03-04T19:30:00+00:00",
+    "round": "Regular Season - 29",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379251,
+    "date": "2026-03-04T19:30:00+00:00",
+    "round": "Regular Season - 29",
+    "homeTeam": "Brighton",
+    "awayTeam": "Arsenal",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379249,
+    "date": "2026-03-04T19:30:00+00:00",
+    "round": "Regular Season - 29",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Chelsea",
+    "homeGoals": 1,
+    "awayGoals": 4
+  },
+  {
+    "fixtureId": 1379256,
+    "date": "2026-03-04T20:15:00+00:00",
+    "round": "Regular Season - 29",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Manchester United",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379257,
+    "date": "2026-03-05T20:00:00+00:00",
+    "round": "Regular Season - 29",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 1,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379261,
+    "date": "2026-03-14T15:00:00+00:00",
+    "round": "Regular Season - 30",
+    "homeTeam": "Burnley",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379267,
+    "date": "2026-03-14T15:00:00+00:00",
+    "round": "Regular Season - 30",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Brighton",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379259,
+    "date": "2026-03-14T17:30:00+00:00",
+    "round": "Regular Season - 30",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Everton",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379262,
+    "date": "2026-03-14T17:30:00+00:00",
+    "round": "Regular Season - 30",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Newcastle",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379268,
+    "date": "2026-03-14T20:00:00+00:00",
+    "round": "Regular Season - 30",
+    "homeTeam": "West Ham",
+    "awayTeam": "Manchester City",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379265,
+    "date": "2026-03-15T14:00:00+00:00",
+    "round": "Regular Season - 30",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379263,
+    "date": "2026-03-15T14:00:00+00:00",
+    "round": "Regular Season - 30",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Leeds",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379266,
+    "date": "2026-03-15T14:00:00+00:00",
+    "round": "Regular Season - 30",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Fulham",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379264,
+    "date": "2026-03-15T16:30:00+00:00",
+    "round": "Regular Season - 30",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Tottenham",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379260,
+    "date": "2026-03-16T20:00:00+00:00",
+    "round": "Regular Season - 30",
+    "homeTeam": "Brentford",
+    "awayTeam": "Wolves",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379270,
+    "date": "2026-03-20T20:00:00+00:00",
+    "round": "Regular Season - 31",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Manchester United",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379271,
+    "date": "2026-03-21T12:30:00+00:00",
+    "round": "Regular Season - 31",
+    "homeTeam": "Brighton",
+    "awayTeam": "Liverpool",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379273,
+    "date": "2026-03-21T15:00:00+00:00",
+    "round": "Regular Season - 31",
+    "homeTeam": "Fulham",
+    "awayTeam": "Burnley",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379272,
+    "date": "2026-03-21T17:30:00+00:00",
+    "round": "Regular Season - 31",
+    "homeTeam": "Everton",
+    "awayTeam": "Chelsea",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379274,
+    "date": "2026-03-21T20:00:00+00:00",
+    "round": "Regular Season - 31",
+    "homeTeam": "Leeds",
+    "awayTeam": "Brentford",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379276,
+    "date": "2026-03-22T12:00:00+00:00",
+    "round": "Regular Season - 31",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Sunderland",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379277,
+    "date": "2026-03-22T14:15:00+00:00",
+    "round": "Regular Season - 31",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 0,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379269,
+    "date": "2026-03-22T14:15:00+00:00",
+    "round": "Regular Season - 31",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "West Ham",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379288,
+    "date": "2026-04-10T19:00:00+00:00",
+    "round": "Regular Season - 32",
+    "homeTeam": "West Ham",
+    "awayTeam": "Wolves",
+    "homeGoals": 4,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379279,
+    "date": "2026-04-11T11:30:00+00:00",
+    "round": "Regular Season - 32",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379281,
+    "date": "2026-04-11T14:00:00+00:00",
+    "round": "Regular Season - 32",
+    "homeTeam": "Burnley",
+    "awayTeam": "Brighton",
+    "homeGoals": 0,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379280,
+    "date": "2026-04-11T14:00:00+00:00",
+    "round": "Regular Season - 32",
+    "homeTeam": "Brentford",
+    "awayTeam": "Everton",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379284,
+    "date": "2026-04-11T16:30:00+00:00",
+    "round": "Regular Season - 32",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Fulham",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379283,
+    "date": "2026-04-12T13:00:00+00:00",
+    "round": "Regular Season - 32",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Newcastle",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379286,
+    "date": "2026-04-12T13:00:00+00:00",
+    "round": "Regular Season - 32",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379287,
+    "date": "2026-04-12T13:00:00+00:00",
+    "round": "Regular Season - 32",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Tottenham",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379282,
+    "date": "2026-04-12T15:30:00+00:00",
+    "round": "Regular Season - 32",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Manchester City",
+    "homeGoals": 0,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379285,
+    "date": "2026-04-13T19:00:00+00:00",
+    "round": "Regular Season - 32",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Leeds",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379290,
+    "date": "2026-04-18T11:30:00+00:00",
+    "round": "Regular Season - 33",
+    "homeTeam": "Brentford",
+    "awayTeam": "Fulham",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379296,
+    "date": "2026-04-18T14:00:00+00:00",
+    "round": "Regular Season - 33",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379294,
+    "date": "2026-04-18T14:00:00+00:00",
+    "round": "Regular Season - 33",
+    "homeTeam": "Leeds",
+    "awayTeam": "Wolves",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379298,
+    "date": "2026-04-18T16:30:00+00:00",
+    "round": "Regular Season - 33",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Brighton",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379291,
+    "date": "2026-04-18T19:00:00+00:00",
+    "round": "Regular Season - 33",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Manchester United",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379293,
+    "date": "2026-04-19T13:00:00+00:00",
+    "round": "Regular Season - 33",
+    "homeTeam": "Everton",
+    "awayTeam": "Liverpool",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379297,
+    "date": "2026-04-19T13:00:00+00:00",
+    "round": "Regular Season - 33",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Burnley",
+    "homeGoals": 4,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379289,
+    "date": "2026-04-19T13:00:00+00:00",
+    "round": "Regular Season - 33",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Sunderland",
+    "homeGoals": 4,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379295,
+    "date": "2026-04-19T15:30:00+00:00",
+    "round": "Regular Season - 33",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Arsenal",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379292,
+    "date": "2026-04-20T19:00:00+00:00",
+    "round": "Regular Season - 33",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "West Ham",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379301,
+    "date": "2026-04-21T19:00:00+00:00",
+    "round": "Regular Season - 34",
+    "homeTeam": "Brighton",
+    "awayTeam": "Chelsea",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379300,
+    "date": "2026-04-22T19:00:00+00:00",
+    "round": "Regular Season - 34",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Leeds",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379302,
+    "date": "2026-04-22T19:00:00+00:00",
+    "round": "Regular Season - 34",
+    "homeTeam": "Burnley",
+    "awayTeam": "Manchester City",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379306,
+    "date": "2026-04-24T19:00:00+00:00",
+    "round": "Regular Season - 34",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 0,
+    "awayGoals": 5
+  },
+  {
+    "fixtureId": 1379303,
+    "date": "2026-04-25T11:30:00+00:00",
+    "round": "Regular Season - 34",
+    "homeTeam": "Fulham",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379308,
+    "date": "2026-04-25T14:00:00+00:00",
+    "round": "Regular Season - 34",
+    "homeTeam": "Wolves",
+    "awayTeam": "Tottenham",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379304,
+    "date": "2026-04-25T14:00:00+00:00",
+    "round": "Regular Season - 34",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379307,
+    "date": "2026-04-25T14:00:00+00:00",
+    "round": "Regular Season - 34",
+    "homeTeam": "West Ham",
+    "awayTeam": "Everton",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379299,
+    "date": "2026-04-25T16:30:00+00:00",
+    "round": "Regular Season - 34",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Newcastle",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379305,
+    "date": "2026-04-27T19:00:00+00:00",
+    "round": "Regular Season - 34",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Brentford",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379315,
+    "date": "2026-05-01T19:00:00+00:00",
+    "round": "Regular Season - 35",
+    "homeTeam": "Leeds",
+    "awayTeam": "Burnley",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379317,
+    "date": "2026-05-02T14:00:00+00:00",
+    "round": "Regular Season - 35",
+    "homeTeam": "Newcastle",
+    "awayTeam": "Brighton",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379318,
+    "date": "2026-05-02T14:00:00+00:00",
+    "round": "Regular Season - 35",
+    "homeTeam": "Wolves",
+    "awayTeam": "Sunderland",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379312,
+    "date": "2026-05-02T14:00:00+00:00",
+    "round": "Regular Season - 35",
+    "homeTeam": "Brentford",
+    "awayTeam": "West Ham",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379309,
+    "date": "2026-05-02T16:30:00+00:00",
+    "round": "Regular Season - 35",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Fulham",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379311,
+    "date": "2026-05-03T13:00:00+00:00",
+    "round": "Regular Season - 35",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379316,
+    "date": "2026-05-03T14:30:00+00:00",
+    "round": "Regular Season - 35",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Liverpool",
+    "homeGoals": 3,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379310,
+    "date": "2026-05-03T18:00:00+00:00",
+    "round": "Regular Season - 35",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Tottenham",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379313,
+    "date": "2026-05-04T14:00:00+00:00",
+    "round": "Regular Season - 35",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 1,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379314,
+    "date": "2026-05-04T19:00:00+00:00",
+    "round": "Regular Season - 35",
+    "homeTeam": "Everton",
+    "awayTeam": "Manchester City",
+    "homeGoals": 3,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379323,
+    "date": "2026-05-09T11:30:00+00:00",
+    "round": "Regular Season - 36",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Chelsea",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379322,
+    "date": "2026-05-09T14:00:00+00:00",
+    "round": "Regular Season - 36",
+    "homeTeam": "Fulham",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379319,
+    "date": "2026-05-09T14:00:00+00:00",
+    "round": "Regular Season - 36",
+    "homeTeam": "Brighton",
+    "awayTeam": "Wolves",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379326,
+    "date": "2026-05-09T14:00:00+00:00",
+    "round": "Regular Season - 36",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Manchester United",
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379324,
+    "date": "2026-05-09T16:30:00+00:00",
+    "round": "Regular Season - 36",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Brentford",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379320,
+    "date": "2026-05-10T13:00:00+00:00",
+    "round": "Regular Season - 36",
+    "homeTeam": "Burnley",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379321,
+    "date": "2026-05-10T13:00:00+00:00",
+    "round": "Regular Season - 36",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Everton",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379325,
+    "date": "2026-05-10T13:00:00+00:00",
+    "round": "Regular Season - 36",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Newcastle",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379328,
+    "date": "2026-05-10T15:30:00+00:00",
+    "round": "Regular Season - 36",
+    "homeTeam": "West Ham",
+    "awayTeam": "Arsenal",
+    "homeGoals": 0,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379327,
+    "date": "2026-05-11T19:00:00+00:00",
+    "round": "Regular Season - 36",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Leeds",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379275,
+    "date": "2026-05-13T19:00:00+00:00",
+    "round": "Regular Season - 31",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379330,
+    "date": "2026-05-15T19:00:00+00:00",
+    "round": "Regular Season - 37",
+    "homeTeam": "Aston Villa",
+    "awayTeam": "Liverpool",
+    "homeGoals": 4,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379336,
+    "date": "2026-05-17T11:30:00+00:00",
+    "round": "Regular Season - 37",
+    "homeTeam": "Manchester United",
+    "awayTeam": "Nottingham Forest",
+    "homeGoals": 3,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379338,
+    "date": "2026-05-17T14:00:00+00:00",
+    "round": "Regular Season - 37",
+    "homeTeam": "Wolves",
+    "awayTeam": "Fulham",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379334,
+    "date": "2026-05-17T14:00:00+00:00",
+    "round": "Regular Season - 37",
+    "homeTeam": "Everton",
+    "awayTeam": "Sunderland",
+    "homeGoals": 1,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379332,
+    "date": "2026-05-17T14:00:00+00:00",
+    "round": "Regular Season - 37",
+    "homeTeam": "Brentford",
+    "awayTeam": "Crystal Palace",
+    "homeGoals": 2,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379335,
+    "date": "2026-05-17T14:00:00+00:00",
+    "round": "Regular Season - 37",
+    "homeTeam": "Leeds",
+    "awayTeam": "Brighton",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379337,
+    "date": "2026-05-17T16:30:00+00:00",
+    "round": "Regular Season - 37",
+    "homeTeam": "Newcastle",
+    "awayTeam": "West Ham",
+    "homeGoals": 3,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379329,
+    "date": "2026-05-18T19:00:00+00:00",
+    "round": "Regular Season - 37",
+    "homeTeam": "Arsenal",
+    "awayTeam": "Burnley",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379331,
+    "date": "2026-05-19T18:30:00+00:00",
+    "round": "Regular Season - 37",
+    "homeTeam": "Bournemouth",
+    "awayTeam": "Manchester City",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379333,
+    "date": "2026-05-19T19:15:00+00:00",
+    "round": "Regular Season - 37",
+    "homeTeam": "Chelsea",
+    "awayTeam": "Tottenham",
+    "homeGoals": 2,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379342,
+    "date": "2026-05-24T15:00:00+00:00",
+    "round": "Regular Season - 38",
+    "homeTeam": "Fulham",
+    "awayTeam": "Newcastle",
+    "homeGoals": 2,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379343,
+    "date": "2026-05-24T15:00:00+00:00",
+    "round": "Regular Season - 38",
+    "homeTeam": "Liverpool",
+    "awayTeam": "Brentford",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379340,
+    "date": "2026-05-24T15:00:00+00:00",
+    "round": "Regular Season - 38",
+    "homeTeam": "Burnley",
+    "awayTeam": "Wolves",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379347,
+    "date": "2026-05-24T15:00:00+00:00",
+    "round": "Regular Season - 38",
+    "homeTeam": "Tottenham",
+    "awayTeam": "Everton",
+    "homeGoals": 1,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379348,
+    "date": "2026-05-24T15:00:00+00:00",
+    "round": "Regular Season - 38",
+    "homeTeam": "West Ham",
+    "awayTeam": "Leeds",
+    "homeGoals": 3,
+    "awayGoals": 0
+  },
+  {
+    "fixtureId": 1379344,
+    "date": "2026-05-24T15:00:00+00:00",
+    "round": "Regular Season - 38",
+    "homeTeam": "Manchester City",
+    "awayTeam": "Aston Villa",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379339,
+    "date": "2026-05-24T15:00:00+00:00",
+    "round": "Regular Season - 38",
+    "homeTeam": "Brighton",
+    "awayTeam": "Manchester United",
+    "homeGoals": 0,
+    "awayGoals": 3
+  },
+  {
+    "fixtureId": 1379341,
+    "date": "2026-05-24T15:00:00+00:00",
+    "round": "Regular Season - 38",
+    "homeTeam": "Crystal Palace",
+    "awayTeam": "Arsenal",
+    "homeGoals": 1,
+    "awayGoals": 2
+  },
+  {
+    "fixtureId": 1379345,
+    "date": "2026-05-24T15:00:00+00:00",
+    "round": "Regular Season - 38",
+    "homeTeam": "Nottingham Forest",
+    "awayTeam": "Bournemouth",
+    "homeGoals": 1,
+    "awayGoals": 1
+  },
+  {
+    "fixtureId": 1379346,
+    "date": "2026-05-24T15:00:00+00:00",
+    "round": "Regular Season - 38",
+    "homeTeam": "Sunderland",
+    "awayTeam": "Chelsea",
+    "homeGoals": 2,
+    "awayGoals": 1
+  }
+]

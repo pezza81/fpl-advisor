@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "fetch:football": "node --env-file=.env.local scripts/fetch-football-data.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.116.0",
     "next": "16.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"
