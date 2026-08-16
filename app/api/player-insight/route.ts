@@ -1,14 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { buildFplNameLookup, classifyTrend, loadFootballDigest } from "@/lib/football-trends";
 import {
-  buildFplNameLookup,
-  classifyMinutesTrend,
-  classifyTrend,
-  loadFootballDigest,
-  type MinutesTrend,
-  type PlayerTrend,
-} from "@/lib/football-trends";
-import { fetchFplSeasonHistory, type FplSeasonRow } from "@/lib/fpl-history";
+  classifyMinutesTrendFromHistory,
+  classifyTrendFromHistory,
+  fetchFplSeasonHistory,
+  type FplMinutesTrend,
+  type FplPlayerTrend,
+  type FplSeasonRow,
+} from "@/lib/fpl-history";
+
+// The API-Football digest keys seasons by numeric year (2024); FPL history
+// keys them by "2024/25"-style labels. Converts a digest-sourced trend into
+// the same shape classifyTrendFromHistory returns, so callers get one
+// consistent type regardless of which source actually answered.
+function normalizeDigestTrend(trend: {
+  direction: "rising" | "declining" | "stable";
+  latestSeason: number | null;
+  previousSeason: number | null;
+  latestOutput: number | null;
+  previousOutput: number | null;
+}): FplPlayerTrend {
+  return {
+    direction: trend.direction,
+    latestSeason: trend.latestSeason != null ? String(trend.latestSeason) : null,
+    previousSeason: trend.previousSeason != null ? String(trend.previousSeason) : null,
+    latestOutput: trend.latestOutput,
+    previousOutput: trend.previousOutput,
+  };
+}
 
 interface PlayerInsightRequestBody {
   id?: number;
@@ -21,9 +41,9 @@ interface PlayerInsightRequestBody {
   news?: string;
 }
 
-function describeTrend(trend: PlayerTrend): string {
+function describeTrend(trend: FplPlayerTrend): string {
   if (trend.direction === "unknown") {
-    return "No 3-season historical trend data is available for this player (no match in the API-Football dataset).";
+    return "No historical trend data is available for this player.";
   }
   if (trend.previousSeason == null || trend.latestSeason == null) {
     return "This player only has one season of historical data, not enough to call a trend.";
@@ -31,7 +51,7 @@ function describeTrend(trend: PlayerTrend): string {
   return `3-season trend: ${trend.previousSeason}: ${trend.previousOutput} combined goals+assists -> ${trend.latestSeason}: ${trend.latestOutput} combined goals+assists (${trend.direction}).`;
 }
 
-function describeMinutesTrend(trend: MinutesTrend): string {
+function describeMinutesTrend(trend: FplMinutesTrend): string {
   if (trend.direction === "unknown" || trend.previousSeason == null || trend.latestSeason == null) {
     return "";
   }
@@ -90,28 +110,26 @@ export async function POST(request: NextRequest) {
     fetchFplSeasonHistory(id ?? 0),
   ]);
 
-  let trend: PlayerTrend = {
-    direction: "unknown",
-    latestSeason: null,
-    previousSeason: null,
-    latestOutput: null,
-    previousOutput: null,
-  };
-  let minutesTrend: MinutesTrend = {
-    direction: "unknown",
-    latestSeason: null,
-    previousSeason: null,
-    latestMinutes: null,
-    previousMinutes: null,
-  };
-
-  if (digest) {
+  // Goal-involvement trend: FPL's own history is the primary source (exact
+  // element-id match), since the API-Football digest only fuzzy-matches
+  // ~65-75% of players by name — that gap was surfacing a false "No
+  // Historical Data" badge for players the season table clearly has 2-3
+  // seasons of data for. Only fall back to the digest when FPL history
+  // itself has nothing to say (new signing, no minutes yet, etc).
+  let trend: FplPlayerTrend = classifyTrendFromHistory(fplSeasons);
+  if (trend.direction === "unknown" && digest) {
     const digestPlayer = buildFplNameLookup(digest).get(name.toLowerCase().trim());
     if (digestPlayer) {
-      trend = { ...classifyTrend(digestPlayer) };
-      minutesTrend = { ...classifyMinutesTrend(digestPlayer) };
+      trend = normalizeDigestTrend(classifyTrend(digestPlayer));
     }
   }
+
+  // Minutes trend comes from this player's own official FPL history (already
+  // fetched above, matched by exact element id) rather than the API-Football
+  // digest — that digest only fuzzy-matches ~65-75% of players by name, which
+  // was showing "Minutes Unknown" for players the season table right below
+  // clearly has real minutes for.
+  const minutesTrend: FplMinutesTrend = classifyMinutesTrendFromHistory(fplSeasons);
 
   const client = new Anthropic({ apiKey });
 

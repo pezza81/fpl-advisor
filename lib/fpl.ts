@@ -142,6 +142,32 @@ function computeFlag(status: string, form: number): SquadPlayer["flag"] {
   return isUnavailable || form < 2 ? "SELL" : "KEEP";
 }
 
+// Shared per-element mapping used by both buildSquad (a user's 15 picks) and
+// buildAllPlayers (every player in the game) — everything except the
+// squad-relative fields (captain/vice-captain/starting XI), which only make
+// sense in the context of one manager's picks.
+function mapElementFields(
+  element: FplElement,
+  teamsById: Map<number, FplTeam>,
+  typesById: Map<number, FplElementType>,
+): Omit<SquadPlayer, "isCaptain" | "isViceCaptain" | "isStarting"> {
+  const form = Number.parseFloat(element.form) || 0;
+
+  return {
+    id: element.id,
+    name: element.web_name,
+    position: typesById.get(element.element_type)?.singular_name_short ?? "?",
+    club: teamsById.get(element.team)?.short_name ?? "?",
+    form,
+    price: element.now_cost / 10,
+    totalPoints: element.total_points,
+    selectedByPercent: Number.parseFloat(element.selected_by_percent) || 0,
+    status: element.status,
+    news: element.news,
+    flag: computeFlag(element.status, form),
+  };
+}
+
 export function buildSquad(
   picks: FplPick[],
   bootstrap: BootstrapStatic,
@@ -159,29 +185,33 @@ export function buildSquad(
       const element = elementsById.get(pick.element);
       if (!element) return null;
 
-      const form = Number.parseFloat(element.form) || 0;
-      const flag = computeFlag(element.status, form);
-
       return {
-        id: element.id,
-        name: element.web_name,
-        position: typesById.get(element.element_type)?.singular_name_short ?? "?",
-        club: teamsById.get(element.team)?.short_name ?? "?",
-        form,
-        price: element.now_cost / 10,
-        totalPoints: element.total_points,
-        selectedByPercent: Number.parseFloat(element.selected_by_percent) || 0,
+        ...mapElementFields(element, teamsById, typesById),
         isCaptain: pick.is_captain,
         isViceCaptain: pick.is_vice_captain,
         isStarting: pick.position <= 11,
-        status: element.status,
-        news: element.news,
-        flag,
       };
     })
     .filter((player): player is SquadPlayer => player !== null)
     .sort((a, b) => a.id - b.id)
     .sort((a, b) => Number(b.isStarting) - Number(a.isStarting));
+}
+
+// Every player in the game, not scoped to any one manager's squad — used by
+// the /players browser page. Captain/vice-captain/starting don't apply
+// outside a squad context, so they're fixed to sensible defaults.
+export function buildAllPlayers(bootstrap: BootstrapStatic): SquadPlayer[] {
+  const teamsById = new Map(bootstrap.teams.map((team) => [team.id, team]));
+  const typesById = new Map(
+    bootstrap.element_types.map((type) => [type.id, type]),
+  );
+
+  return bootstrap.elements.map((element) => ({
+    ...mapElementFields(element, teamsById, typesById),
+    isCaptain: false,
+    isViceCaptain: false,
+    isStarting: true,
+  }));
 }
 
 export const DEMO_TEAM_ID = "demo";
