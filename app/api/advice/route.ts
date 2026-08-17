@@ -9,6 +9,11 @@ import {
   loadFootballDigest,
 } from "@/lib/football-trends";
 import { splitLabeledSections } from "@/lib/text";
+import {
+  fplClubToTeamName,
+  getLeagueStrengthRankings,
+  getTeamRollingForm,
+} from "@/lib/team-stats";
 
 interface AdviceRequestBody {
   teamName?: string;
@@ -73,6 +78,43 @@ async function buildTrendContext(squad: SquadPlayer[]): Promise<string> {
   return `\nHistorical trend data (3 real Premier League seasons via API-Football, cross-referenced against this squad):\n\n${squadSection}\n\n${risingSection}\n`;
 }
 
+// Real match-level xG/xGoT/Pressure Index data (Sportmonks, via the shared
+// football-data-collector DB) for each club represented in the squad —
+// prompt-ready text so advice can cite actual defensive/attacking strength
+// rather than just FPL's own fixture difficulty ratings. Synchronous
+// (better-sqlite3) but still wrapped defensively: the DB lives outside this
+// repo and advice generation shouldn't break if it's ever unreachable.
+function buildTeamStatsContext(squad: SquadPlayer[]): string {
+  try {
+    const rankings = getLeagueStrengthRankings();
+    const rankByTeam = new Map(rankings.map((r) => [r.teamName, r]));
+    const clubCodes = Array.from(new Set(squad.map((player) => player.club)));
+
+    const lines = clubCodes
+      .map((clubCode) => {
+        const teamName = fplClubToTeamName(clubCode);
+        if (!teamName) return null;
+        const form = getTeamRollingForm(teamName, 5);
+        if (!form) return null;
+
+        const rank = rankByTeam.get(teamName);
+        const rankNote = rank
+          ? ` — ranked ${rank.defenseRank}/${rankings.length} for defense and ${rank.attackRank}/${rankings.length} for attack this season`
+          : "";
+
+        return `${teamName} (${clubCode}): last ${form.matchesPlayed} matches — ${form.xgFor} xG created, ${form.xgAgainst} xG conceded, ${form.xgotFor} xGoT for, ${form.xgotAgainst} xGoT against, pressure index ${form.pressureIndex} per game${rankNote}`;
+      })
+      .filter((line): line is string => line !== null);
+
+    if (lines.length === 0) return "";
+
+    return `\nReal match-level xG data for this squad's clubs (Sportmonks, last 5 matches per club, current-season league rankings out of ${rankings.length}):\n${lines.join("\n")}\n`;
+  } catch (error) {
+    console.error("Failed to load shared team-stats DB", error);
+    return "";
+  }
+}
+
 function formatSquadForPrompt(squad: SquadPlayer[]): string {
   return squad
     .map((player) => {
@@ -114,6 +156,7 @@ export async function POST(request: NextRequest) {
 
   const client = new Anthropic({ apiKey });
   const trendContext = await buildTrendContext(squad);
+  const teamStatsContext = buildTeamStatsContext(squad);
 
   const prompt = `You are a sharp, friendly Fantasy Premier League expert giving advice to a mate ahead of gameweek ${gameweek ?? "the next gameweek"}.
 
@@ -123,10 +166,10 @@ Squad value: £${squadValue ?? 0}m
 
 Current 15-man squad (position, name, club, price, form, total points, role):
 ${formatSquadForPrompt(squad)}
-${trendContext}
+${trendContext}${teamStatsContext}
 Give advice in plain English, written like a knowledgeable friend chatting over a pint — no markdown, no bullet points, no headers other than the four labels below, no asterisks. Keep the TRANSFER, CAPTAIN and CHIP sections to two or three sentences each.
 
-${trendContext ? "Be trend-aware, not just form-aware: this week's form is a snapshot, the 3-season trend data above is the pattern behind it. If a squad player is flagged as declining, say so explicitly and treat that as a real reason to consider moving them on even if their current form looks okay. If a squad player is flagged as rising, that strengthens the case to keep or captain them. When recommending a transfer target, prefer someone from the trending-upward list if they fit the budget (bank plus a realistic sale price) and the position needed — name the specific trend evidence (e.g. \"his G+A jumped from X to Y last season\") rather than just their current form. Only fall back to reasoning from current price and form when the trend data doesn't cover a relevant player.\n\n" : ""}Respond with exactly four sections, each starting on its own line with the label followed by a colon, in this order:
+${trendContext ? "Be trend-aware, not just form-aware: this week's form is a snapshot, the 3-season trend data above is the pattern behind it. If a squad player is flagged as declining, say so explicitly and treat that as a real reason to consider moving them on even if their current form looks okay. If a squad player is flagged as rising, that strengthens the case to keep or captain them. When recommending a transfer target, prefer someone from the trending-upward list if they fit the budget (bank plus a realistic sale price) and the position needed — name the specific trend evidence (e.g. \"his G+A jumped from X to Y last season\") rather than just their current form. Only fall back to reasoning from current price and form when the trend data doesn't cover a relevant player.\n\n" : ""}${teamStatsContext ? "Use the real xG data above to justify defensive picks (clean sheet potential for defenders/goalkeepers) and attacking picks (goal threat for midfielders/forwards) — cite the actual numbers (e.g. \"only 0.8 xG conceded per game in the last 5\") instead of vague statements like \"good fixtures\" or generic FPL fixture difficulty talk. A club ranked well for defense is a stronger case for captaining or keeping its defenders/goalkeeper; a club ranked well for attack strengthens the case for its midfielders/forwards. If a club isn't covered by this data, fall back to form and points as normal.\n\n" : ""}Respond with exactly four sections, each starting on its own line with the label followed by a colon, in this order:
 
 TRANSFER: your recommendation on who to transfer out and in, or hold, and why.
 CAPTAIN: your captain and vice-captain pick for this gameweek and why.
