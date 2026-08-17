@@ -118,6 +118,9 @@ function TeamPageContent({ id }: { id: string }) {
           <Link href="/players" className="text-sm text-muted transition-colors hover:text-accent">
             All players
           </Link>
+          <Link href="/build" className="text-sm text-muted transition-colors hover:text-accent">
+            Build squad
+          </Link>
           <Link href="/trends" className="text-sm text-muted transition-colors hover:text-accent">
             Trends analysis &rarr;
           </Link>

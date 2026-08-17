@@ -92,6 +92,13 @@ export default function Home() {
         >
           See 3-season trends analysis &rarr;
         </Link>
+
+        <Link
+          href="/build"
+          className="mt-2 text-sm text-muted underline decoration-card-border underline-offset-4 transition-colors hover:text-accent hover:decoration-accent"
+        >
+          Build your squad from scratch &rarr;
+        </Link>
       </main>
     </div>
   );

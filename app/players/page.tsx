@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { SquadPlayer } from "@/lib/fpl";
 import { usePlayerInsight } from "@/lib/use-player-insight";
 import { PlayerModal } from "@/components/PlayerModal";
+import { statusBadgeClasses, statusLabel } from "@/lib/player-status";
 
 interface PlayersResponse {
   players: SquadPlayer[];
@@ -15,25 +16,6 @@ type SortKey = "name" | "club" | "position" | "price" | "form" | "totalPoints" |
 type SortDirection = "asc" | "desc";
 
 const POSITIONS = ["All", "GKP", "DEF", "MID", "FWD"] as const;
-
-const STATUS_LABELS: Record<string, string> = {
-  a: "Available",
-  d: "Doubtful",
-  i: "Injured",
-  s: "Suspended",
-  u: "Unavailable",
-  n: "Not eligible",
-};
-
-function statusLabel(status: string): string {
-  return STATUS_LABELS[status] ?? status;
-}
-
-function statusBadgeClasses(status: string): string {
-  if (status === "a") return "bg-accent/15 text-accent";
-  if (status === "d") return "bg-amber-500/15 text-amber-400";
-  return "bg-red-500/15 text-red-400";
-}
 
 export default function PlayersPage() {
   const [players, setPlayers] = useState<SquadPlayer[]>([]);
@@ -137,9 +119,14 @@ export default function PlayersPage() {
         <Link href="/" className="text-sm text-muted transition-colors hover:text-accent">
           &larr; Back
         </Link>
-        <Link href="/trends" className="text-sm text-muted transition-colors hover:text-accent">
-          Trends analysis &rarr;
-        </Link>
+        <div className="flex items-center gap-5">
+          <Link href="/build" className="text-sm text-muted transition-colors hover:text-accent">
+            Build squad
+          </Link>
+          <Link href="/trends" className="text-sm text-muted transition-colors hover:text-accent">
+            Trends analysis &rarr;
+          </Link>
+        </div>
       </div>
 
       <header className="mt-4 flex flex-col gap-1">

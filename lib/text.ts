@@ -22,3 +22,18 @@ export function splitLabeledSections<T extends string>(
 
   return result;
 }
+
+// Pulls the first {...} block out of a response and parses it — Claude
+// sometimes wraps JSON in a sentence or code fence despite instructions not
+// to. Returns null rather than throwing on anything malformed.
+export function extractJsonObject(text: string): unknown {
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start === -1 || end === -1 || end < start) return null;
+
+  try {
+    return JSON.parse(text.slice(start, end + 1));
+  } catch {
+    return null;
+  }
+}
