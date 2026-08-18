@@ -14,6 +14,12 @@ import {
   getLeagueStrengthRankings,
   getTeamRollingForm,
 } from "@/lib/team-stats";
+import {
+  getHeadToHeadForClub,
+  getInjuryForPlayer,
+  getLineupStatusForPlayer,
+  preloadMatchContextCache,
+} from "@/lib/api-football";
 
 interface AdviceRequestBody {
   teamName?: string;
@@ -115,6 +121,70 @@ function buildTeamStatsContext(squad: SquadPlayer[]): string {
   }
 }
 
+// Live availability (injury/suspension), expected-lineup and head-to-head
+// data from API-Football — the strongest possible signal for whether a
+// transfer is actually urgent (a declining trend is a reason to consider
+// moving someone on; being injured or benched is a reason to do it now) and
+// for whether a club's next fixture is a safe captaincy bet historically.
+// Deliberately excludes "lineup unknown" as a flagged line — that's the
+// default state most of the week and would just be prompt noise, not signal.
+async function buildMatchStatusContext(squad: SquadPlayer[]): Promise<string> {
+  try {
+    await preloadMatchContextCache();
+
+    const playerLines = (
+      await Promise.all(
+        squad.map(async (player) => {
+          const [injury, lineup] = await Promise.all([
+            getInjuryForPlayer(player.club, player.name).catch(() => null),
+            getLineupStatusForPlayer(player.club, player.name).catch(() => null),
+          ]);
+
+          if (!injury && lineup?.status !== "bench") return null;
+
+          const parts: string[] = [];
+          if (injury) {
+            parts.push(`${injury.type} — ${injury.reason} (as of ${injury.asOf.slice(0, 10)})`);
+          }
+          if (lineup?.status === "bench") {
+            parts.push(`expected on the BENCH for their next match vs ${lineup.opponentName}`);
+          }
+
+          return `${player.name} (${player.club}): ${parts.join("; ")}`;
+        }),
+      )
+    ).filter((line): line is string => line !== null);
+
+    const clubs = Array.from(new Set(squad.map((p) => p.club)));
+    const h2hLines = (
+      await Promise.all(
+        clubs.map(async (club) => {
+          const h2h = await getHeadToHeadForClub(club).catch(() => null);
+          if (!h2h || h2h.played === 0) return null;
+          return `${club} last ${h2h.played} vs ${h2h.opponentName}: ${h2h.wins}W ${h2h.draws}D ${h2h.losses}L, ${h2h.goalsFor}-${h2h.goalsAgainst} goals`;
+        }),
+      )
+    ).filter((line): line is string => line !== null);
+
+    if (playerLines.length === 0 && h2hLines.length === 0) return "";
+
+    const injurySection =
+      playerLines.length > 0
+        ? `Players with a current injury/suspension designation or expected on the bench:\n${playerLines.join("\n")}`
+        : "No squad player currently has an injury/suspension designation or a known bench status.";
+
+    const h2hSection =
+      h2hLines.length > 0
+        ? `Head-to-head record vs each club's next opponent (last 5 meetings, API-Football):\n${h2hLines.join("\n")}`
+        : "";
+
+    return `\nLive injury, lineup and head-to-head data (API-Football):\n\n${injurySection}\n\n${h2hSection}\n`;
+  } catch (error) {
+    console.error("Failed to load API-Football match status context", error);
+    return "";
+  }
+}
+
 function formatSquadForPrompt(squad: SquadPlayer[]): string {
   return squad
     .map((player) => {
@@ -155,7 +225,10 @@ export async function POST(request: NextRequest) {
   }
 
   const client = new Anthropic({ apiKey });
-  const trendContext = await buildTrendContext(squad);
+  const [trendContext, matchStatusContext] = await Promise.all([
+    buildTrendContext(squad),
+    buildMatchStatusContext(squad),
+  ]);
   const teamStatsContext = buildTeamStatsContext(squad);
 
   const prompt = `You are a sharp, friendly Fantasy Premier League expert giving advice to a mate ahead of gameweek ${gameweek ?? "the next gameweek"}.
@@ -166,10 +239,10 @@ Squad value: £${squadValue ?? 0}m
 
 Current 15-man squad (position, name, club, price, form, total points, role):
 ${formatSquadForPrompt(squad)}
-${trendContext}${teamStatsContext}
+${trendContext}${teamStatsContext}${matchStatusContext}
 Give advice in plain English, written like a knowledgeable friend chatting over a pint — no markdown, no bullet points, no headers other than the four labels below, no asterisks. Keep the TRANSFER, CAPTAIN and CHIP sections to two or three sentences each.
 
-${trendContext ? "Be trend-aware, not just form-aware: this week's form is a snapshot, the 3-season trend data above is the pattern behind it. If a squad player is flagged as declining, say so explicitly and treat that as a real reason to consider moving them on even if their current form looks okay. If a squad player is flagged as rising, that strengthens the case to keep or captain them. When recommending a transfer target, prefer someone from the trending-upward list if they fit the budget (bank plus a realistic sale price) and the position needed — name the specific trend evidence (e.g. \"his G+A jumped from X to Y last season\") rather than just their current form. Only fall back to reasoning from current price and form when the trend data doesn't cover a relevant player.\n\n" : ""}${teamStatsContext ? "Use the real xG data above to justify defensive picks (clean sheet potential for defenders/goalkeepers) and attacking picks (goal threat for midfielders/forwards) — cite the actual numbers (e.g. \"only 0.8 xG conceded per game in the last 5\") instead of vague statements like \"good fixtures\" or generic FPL fixture difficulty talk. A club ranked well for defense is a stronger case for captaining or keeping its defenders/goalkeeper; a club ranked well for attack strengthens the case for its midfielders/forwards. If a club isn't covered by this data, fall back to form and points as normal.\n\n" : ""}Respond with exactly four sections, each starting on its own line with the label followed by a colon, in this order:
+${trendContext ? "Be trend-aware, not just form-aware: this week's form is a snapshot, the 3-season trend data above is the pattern behind it. If a squad player is flagged as declining, say so explicitly and treat that as a real reason to consider moving them on even if their current form looks okay. If a squad player is flagged as rising, that strengthens the case to keep or captain them. When recommending a transfer target, prefer someone from the trending-upward list if they fit the budget (bank plus a realistic sale price) and the position needed — name the specific trend evidence (e.g. \"his G+A jumped from X to Y last season\") rather than just their current form. Only fall back to reasoning from current price and form when the trend data doesn't cover a relevant player.\n\n" : ""}${teamStatsContext ? "Use the real xG data above to justify defensive picks (clean sheet potential for defenders/goalkeepers) and attacking picks (goal threat for midfielders/forwards) — cite the actual numbers (e.g. \"only 0.8 xG conceded per game in the last 5\") instead of vague statements like \"good fixtures\" or generic FPL fixture difficulty talk. A club ranked well for defense is a stronger case for captaining or keeping its defenders/goalkeeper; a club ranked well for attack strengthens the case for its midfielders/forwards. If a club isn't covered by this data, fall back to form and points as normal.\n\n" : ""}${matchStatusContext ? "The live injury/lineup/head-to-head data above is your strongest signal — weigh it above trend and form. If a squad player has a current injury or suspension designation, or is expected on the bench, flag that STRONGLY in the TRANSFER section and treat it as reason enough to move them on now, even if their trend and price look fine — a player who can't play is worth zero points regardless of underlying numbers. For the CAPTAIN section, factor in each candidate's head-to-head record against their next opponent: a poor recent head-to-head (more losses than wins, or conceding more than scoring) is a real reason to downgrade a captaincy pick even if their current form is good, and a strong head-to-head record reinforces a captaincy pick. If a club has no head-to-head data (e.g. newly promoted opponent), just reason from form and team strength as normal.\n\n" : ""}Respond with exactly four sections, each starting on its own line with the label followed by a colon, in this order:
 
 TRANSFER: your recommendation on who to transfer out and in, or hold, and why.
 CAPTAIN: your captain and vice-captain pick for this gameweek and why.
@@ -180,9 +253,10 @@ ACTIONS: no fewer than 3 and no more than 5 lines total — pick the most import
     const response = await client.messages.create({
       model: "claude-opus-5",
       // Opus 5 thinks by default and max_tokens caps thinking + the visible
-      // answer together. Cross-referencing squad + trend data is a harder
-      // reasoning task than plain squad advice, so keep generous headroom.
-      max_tokens: 4096,
+      // answer together. Cross-referencing squad + trend + xG + live
+      // injury/lineup/h2h data is a harder reasoning task than plain squad
+      // advice, so keep generous headroom.
+      max_tokens: 5120,
       messages: [{ role: "user", content: prompt }],
     });
 

@@ -9,6 +9,7 @@ import {
   type FplPlayerTrend,
   type FplSeasonRow,
 } from "@/lib/fpl-history";
+import { getPlayerMatchContext, type PlayerMatchContext } from "@/lib/api-football";
 
 // The API-Football digest keys seasons by numeric year (2024); FPL history
 // keys them by "2024/25"-style labels. Converts a digest-sourced trend into
@@ -84,6 +85,46 @@ function describeSeasonHistory(position: string | undefined, seasons: FplSeasonR
   return `Official FPL season history (real bonus points and, where relevant, clean sheets — source: FPL's own historical archive, not API-Football):\n${lines.join("\n")}`;
 }
 
+// Injury/suspension, expected lineup and head-to-head context, as prompt
+// text — degrades to plain "no data" lines rather than omitting the
+// section, since a missing designation is itself a meaningful (good) signal.
+function describeMatchContext(context: PlayerMatchContext): string {
+  const lines: string[] = [];
+
+  if (context.injury) {
+    lines.push(
+      `Injury/suspension (API-Football): ${context.injury.type} — ${context.injury.reason} (as of ${context.injury.asOf.slice(0, 10)}).`,
+    );
+  } else {
+    lines.push("Injury/suspension (API-Football): no current designation.");
+  }
+
+  if (context.lineup) {
+    const statusText =
+      context.lineup.status === "starting"
+        ? "expected to START"
+        : context.lineup.status === "bench"
+          ? "expected on the BENCH"
+          : "lineup status unknown (not yet announced)";
+    lines.push(
+      `Next fixture: ${context.lineup.isHome ? "vs" : "at"} ${context.lineup.opponentName} on ${context.lineup.kickoff.slice(0, 10)} — ${statusText}.`,
+    );
+  }
+
+  if (context.headToHead) {
+    const h2h = context.headToHead;
+    if (h2h.played > 0) {
+      lines.push(
+        `Team's last ${h2h.played} vs ${h2h.opponentName}: ${h2h.wins}W ${h2h.draws}D ${h2h.losses}L, ${h2h.goalsFor}-${h2h.goalsAgainst} goals.`,
+      );
+    } else {
+      lines.push(`Team's head-to-head vs ${h2h.opponentName}: no recent meetings on record.`);
+    }
+  }
+
+  return lines.join("\n");
+}
+
 export async function POST(request: NextRequest) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey || apiKey === "placeholder") {
@@ -105,9 +146,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "A player name is required." }, { status: 400 });
   }
 
-  const [digest, fplSeasons] = await Promise.all([
+  const [digest, fplSeasons, matchContext] = await Promise.all([
     loadFootballDigest(),
     fetchFplSeasonHistory(id ?? 0),
+    club
+      ? getPlayerMatchContext(club, name).catch((error) => {
+          console.error("Failed to load API-Football match context", error);
+          return { injury: null, lineup: null, headToHead: null } satisfies PlayerMatchContext;
+        })
+      : Promise.resolve({ injury: null, lineup: null, headToHead: null } satisfies PlayerMatchContext),
   ]);
 
   // Goal-involvement trend: FPL's own history is the primary source (exact
@@ -144,9 +191,11 @@ ${describeTrend(trend)}${describeMinutesTrend(minutesTrend)}
 
 ${describeSeasonHistory(position, fplSeasons)}
 
+${describeMatchContext(matchContext)}
+
 Write a verdict on whether this player is worth keeping this season, structured as exactly 2 to 3 short paragraphs separated by a blank line (a real blank line between paragraphs, not just a sentence break) — for example, one paragraph weighing current form against the historical trend, and a second paragraph on the position-specific benchmark judgment and final call. Do not write one continuous block.
 
-In the first paragraph, weigh their current form against the goal-involvement trend above — if the trend and current form agree, say so plainly; if they conflict, call that out and explain which signal you'd trust more. If minutes are declining even while returns hold up, treat that as a real rotation-risk warning. In the next paragraph, using the official season history, judge the player against a position-specific benchmark: for a goalkeeper or defender, is their clean-sheet rate strong for a side of their club's level; for any position, is their bonus-points rate high (a proxy for good underlying performances, not just end product) or low for a player at this price; for attacking players, are goals+assists strong relative to price. Close with a direct call — keep, consider selling, or keep an eye on them. Name the actual numbers you're weighing throughout. Plain English, no markdown, no bullet points, no asterisks, write like a knowledgeable friend giving a direct opinion.`;
+In the first paragraph, weigh their current form against the goal-involvement trend above — if the trend and current form agree, say so plainly; if they conflict, call that out and explain which signal you'd trust more. If minutes are declining even while returns hold up, treat that as a real rotation-risk warning. In the next paragraph, using the official season history, judge the player against a position-specific benchmark: for a goalkeeper or defender, is their clean-sheet rate strong for a side of their club's level; for any position, is their bonus-points rate high (a proxy for good underlying performances, not just end product) or low for a player at this price; for attacking players, are goals+assists strong relative to price. If there's a current injury/suspension designation or the player is expected on the bench, that overrides everything else — say so plainly and near the top, since a player who can't play is worth nothing regardless of trend or price. Close with a direct call — keep, consider selling, or keep an eye on them. Name the actual numbers you're weighing throughout. Plain English, no markdown, no bullet points, no asterisks, write like a knowledgeable friend giving a direct opinion.`;
 
   try {
     const response = await client.messages.create({
@@ -161,7 +210,7 @@ In the first paragraph, weigh their current form against the goal-involvement tr
     const textBlock = response.content.find((block) => block.type === "text");
     const summary = textBlock && textBlock.type === "text" ? textBlock.text.trim() : "";
 
-    return NextResponse.json({ trend, minutesTrend, fplSeasons, summary });
+    return NextResponse.json({ trend, minutesTrend, fplSeasons, summary, matchContext });
   } catch (error) {
     console.error("Failed to generate player insight", error);
     return NextResponse.json(

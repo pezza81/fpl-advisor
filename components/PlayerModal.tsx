@@ -8,6 +8,7 @@ import {
   type FplPlayerTrend,
   type FplSeasonRow,
 } from "@/lib/fpl-history";
+import type { LineupStatus, PlayerMatchContext } from "@/lib/api-football";
 
 // Shared between the squad page and the /players browser — both open the
 // same modal for a clicked player, backed by the same /api/player-insight
@@ -17,6 +18,7 @@ export interface PlayerInsight {
   minutesTrend: FplMinutesTrend;
   fplSeasons: FplSeasonRow[];
   summary: string;
+  matchContext?: PlayerMatchContext;
   error?: string;
 }
 
@@ -62,6 +64,27 @@ function minutesTrendLabel(trend: FplMinutesTrend): string {
   if (trend.direction === "increasing") return "Increasing ↑";
   if (trend.direction === "decreasing") return "Decreasing ↓";
   if (trend.direction === "stable") return "Stable";
+  return "Unknown";
+}
+
+function formatShortDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
+function lineupBadgeClasses(status: LineupStatus["status"]): string {
+  switch (status) {
+    case "starting":
+      return "bg-emerald-800/70 text-emerald-100";
+    case "bench":
+      return "bg-amber-800/70 text-amber-100";
+    default:
+      return "bg-card-border text-muted";
+  }
+}
+
+function lineupLabel(status: LineupStatus["status"]): string {
+  if (status === "starting") return "Expected to start";
+  if (status === "bench") return "Expected on bench";
   return "Unknown";
 }
 
@@ -246,6 +269,62 @@ export function PlayerModal({
           <p className="mt-4 rounded-lg border border-amber-800/50 bg-amber-950/30 px-3 py-2 text-xs text-amber-200">
             {player.news}
           </p>
+        )}
+
+        {!loadingInsight && !insightError && insight?.matchContext && (
+          <div className="mt-5 border-t border-card-border pt-4">
+            <p className="text-xs font-bold uppercase tracking-widest text-muted">Match context</p>
+            <div className="mt-3 flex flex-col gap-3 text-sm">
+              <div className="flex items-start justify-between gap-3">
+                <span className="text-muted">Injury / suspension</span>
+                {insight.matchContext.injury ? (
+                  <div className="text-right">
+                    <span className="inline-flex items-center rounded-full bg-red-800/70 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-red-100">
+                      {insight.matchContext.injury.type}
+                    </span>
+                    <p className="mt-1 text-xs text-foreground">{insight.matchContext.injury.reason}</p>
+                    <p className="text-[10px] text-muted">
+                      as of {formatShortDate(insight.matchContext.injury.asOf)}
+                    </p>
+                  </div>
+                ) : (
+                  <span className="inline-flex items-center rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent">
+                    No designation
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-start justify-between gap-3">
+                <span className="text-muted">
+                  {insight.matchContext.lineup
+                    ? `Next: ${insight.matchContext.lineup.isHome ? "vs" : "at"} ${insight.matchContext.lineup.opponentName} (${formatShortDate(insight.matchContext.lineup.kickoff)})`
+                    : "Expected lineup"}
+                </span>
+                <span
+                  className={`inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${lineupBadgeClasses(insight.matchContext.lineup?.status ?? "unknown")}`}
+                >
+                  {lineupLabel(insight.matchContext.lineup?.status ?? "unknown")}
+                </span>
+              </div>
+
+              <div>
+                <span className="text-muted">
+                  {insight.matchContext.headToHead
+                    ? `Last ${insight.matchContext.headToHead.played} vs ${insight.matchContext.headToHead.opponentName}`
+                    : "Head-to-head"}
+                </span>
+                {insight.matchContext.headToHead && insight.matchContext.headToHead.played > 0 ? (
+                  <p className="mt-1 text-foreground">
+                    {insight.matchContext.headToHead.wins}W {insight.matchContext.headToHead.draws}D{" "}
+                    {insight.matchContext.headToHead.losses}L &middot; {insight.matchContext.headToHead.goalsFor}-
+                    {insight.matchContext.headToHead.goalsAgainst} goals
+                  </p>
+                ) : (
+                  <p className="mt-1 text-xs text-muted">No recent meetings on record.</p>
+                )}
+              </div>
+            </div>
+          </div>
         )}
 
         {!loadingInsight && !insightError && insight && insight.fplSeasons.length > 0 && (
