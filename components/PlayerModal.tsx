@@ -7,6 +7,7 @@ import {
   type FplMinutesTrend,
   type FplPlayerTrend,
   type FplSeasonRow,
+  type PointsBreakdown,
 } from "@/lib/fpl-history";
 import type { LineupStatus, PlayerMatchContext } from "@/lib/api-football";
 
@@ -121,41 +122,75 @@ type PositionCode = "GKP" | "DEF" | "MID" | "FWD";
 type NumericSeasonKey = Exclude<keyof FplSeasonRow, "seasonLabel">;
 
 interface SeasonStatColumn {
-  key: NumericSeasonKey | "shots";
+  key: NumericSeasonKey;
   label: string;
   invert?: boolean;
+  // When set, the cell also shows "(Npts)" in a muted color, sourced from
+  // this field of estimatePointsBreakdown — e.g. cleanSheets pairs with
+  // cleanSheetPoints. Omitted for columns that are already a point value
+  // (Bonus, Points), where a bracket suffix would just repeat the number.
+  pointsKey?: keyof PointsBreakdown;
+  tooltip: string;
 }
+
+const CLEAN_SHEET_TOOLTIP =
+  "Clean sheet = 6pts for GKP/DEF, 1pt for MID, 0pts for FWD (needs 60+ minutes played)";
+const SAVES_TOOLTIP = "Saves = 1pt per 3 saves (goalkeepers only)";
+const CONCEDED_TOOLTIP = "Goals conceded = -1pt for every 2 goals conceded (goalkeepers and defenders only)";
+const GOALS_TOOLTIP = "Goal scored = 10pts GKP, 6pts DEF, 5pts MID, 4pts FWD";
+const ASSISTS_TOOLTIP = "Assist = 3pts for every position";
+const BONUS_TOOLTIP =
+  "Bonus points = 1-3pts awarded to the best-performing players in a match, based on the Bonus Points System (BPS)";
+const TOTAL_POINTS_TOOLTIP = "Total FPL points scored that season — the real official total, not an estimate";
 
 const POSITION_SEASON_COLUMNS: Record<PositionCode, SeasonStatColumn[]> = {
   GKP: [
-    { key: "cleanSheets", label: "Clean sheets" },
-    { key: "saves", label: "Saves" },
-    { key: "goalsConceded", label: "Conceded", invert: true },
-    { key: "bonus", label: "Bonus" },
+    { key: "cleanSheets", label: "Clean sheets", pointsKey: "cleanSheetPoints", tooltip: CLEAN_SHEET_TOOLTIP },
+    { key: "saves", label: "Saves", pointsKey: "savePoints", tooltip: SAVES_TOOLTIP },
+    {
+      key: "goalsConceded",
+      label: "Conceded",
+      invert: true,
+      pointsKey: "concededPoints",
+      tooltip: CONCEDED_TOOLTIP,
+    },
+    { key: "bonus", label: "Bonus", tooltip: BONUS_TOOLTIP },
   ],
   DEF: [
-    { key: "cleanSheets", label: "Clean sheets" },
-    { key: "goals", label: "Goals" },
-    { key: "assists", label: "Assists" },
-    { key: "bonus", label: "Bonus" },
+    { key: "cleanSheets", label: "Clean sheets", pointsKey: "cleanSheetPoints", tooltip: CLEAN_SHEET_TOOLTIP },
+    { key: "goals", label: "Goals", pointsKey: "goalPoints", tooltip: GOALS_TOOLTIP },
+    { key: "assists", label: "Assists", pointsKey: "assistPoints", tooltip: ASSISTS_TOOLTIP },
+    { key: "bonus", label: "Bonus", tooltip: BONUS_TOOLTIP },
   ],
   MID: [
-    { key: "goals", label: "Goals" },
-    { key: "assists", label: "Assists" },
-    { key: "involvements", label: "G+A" },
-    { key: "bonus", label: "Bonus" },
+    { key: "goals", label: "Goals", pointsKey: "goalPoints", tooltip: GOALS_TOOLTIP },
+    { key: "assists", label: "Assists", pointsKey: "assistPoints", tooltip: ASSISTS_TOOLTIP },
+    { key: "cleanSheets", label: "Clean sheets", pointsKey: "cleanSheetPoints", tooltip: CLEAN_SHEET_TOOLTIP },
+    { key: "bonus", label: "Bonus", tooltip: BONUS_TOOLTIP },
   ],
   FWD: [
-    { key: "goals", label: "Goals" },
-    { key: "assists", label: "Assists" },
-    { key: "shots", label: "Shots" },
-    { key: "bonus", label: "Bonus" },
+    { key: "goals", label: "Goals", pointsKey: "goalPoints", tooltip: GOALS_TOOLTIP },
+    { key: "assists", label: "Assists", pointsKey: "assistPoints", tooltip: ASSISTS_TOOLTIP },
+    { key: "bonus", label: "Bonus", tooltip: BONUS_TOOLTIP },
   ],
 };
 
 function seasonColumnsFor(position: string): SeasonStatColumn[] {
   const normalized = position.toUpperCase() as PositionCode;
   return POSITION_SEASON_COLUMNS[normalized] ?? POSITION_SEASON_COLUMNS.MID;
+}
+
+// A small hover-title info icon next to a column header — plain HTML
+// `title`, no extra state/tooltip library needed for a "small tooltip".
+function InfoIcon({ tooltip }: { tooltip: string }) {
+  return (
+    <span
+      title={tooltip}
+      className="ml-1 inline-flex h-3.5 w-3.5 shrink-0 cursor-help items-center justify-center rounded-full border border-muted/60 align-middle text-[9px] font-bold leading-none text-muted"
+    >
+      i
+    </span>
+  );
 }
 
 // Claude is asked to separate paragraphs with a blank line; this falls back
@@ -243,7 +278,7 @@ export function PlayerModal({
       onClick={onClose}
     >
       <div
-        className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-xl border border-card-border bg-card p-6 shadow-2xl"
+        className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-xl border border-card-border bg-card p-6 shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4">
@@ -364,13 +399,21 @@ export function PlayerModal({
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-[10px] uppercase tracking-wide text-muted">
-                    <th className="pb-1 text-left font-semibold">Season</th>
+                    <th className="pb-1 pr-2 text-left font-semibold">Season</th>
                     {seasonColumnsFor(player.position).map((col) => (
-                      <th key={col.key} className="pb-1 text-right font-semibold">
-                        {col.label}
+                      <th key={col.key} className="whitespace-nowrap pb-1 pl-2 text-right font-semibold">
+                        <span className="inline-flex items-center justify-end">
+                          {col.label}
+                          <InfoIcon tooltip={col.tooltip} />
+                        </span>
                       </th>
                     ))}
-                    <th className="pb-1 text-right font-semibold">Points</th>
+                    <th className="whitespace-nowrap pb-1 pl-2 text-right font-semibold">
+                      <span className="inline-flex items-center justify-end">
+                        Points
+                        <InfoIcon tooltip={TOTAL_POINTS_TOOLTIP} />
+                      </span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -387,36 +430,40 @@ export function PlayerModal({
                           onClick={() => toggleSeason(row.seasonLabel)}
                           className="cursor-pointer border-t border-card-border/50 hover:bg-white/5"
                         >
-                          <td className="py-1.5 text-foreground">
+                          <td className="whitespace-nowrap py-1.5 pr-2 text-foreground">
                             <span className="mr-1 inline-block w-3 text-muted">
                               {expanded ? "▾" : "▸"}
                             </span>
                             {row.seasonLabel}
                           </td>
                           {seasonColumnsFor(player.position).map((col) => {
-                            if (col.key === "shots") {
-                              return (
-                                <td key={col.key} className="py-1.5 text-right text-muted">
-                                  &mdash;
-                                </td>
-                              );
-                            }
                             const value = row[col.key];
                             const previousValue = previous?.[col.key];
+                            const points = col.pointsKey ? breakdown[col.pointsKey] : null;
                             return (
-                              <td key={col.key} className="py-1.5 text-right text-foreground">
-                                {value}
-                                {previous && previousValue !== undefined && (
-                                  <TrendArrow
-                                    current={value}
-                                    previous={previousValue}
-                                    invert={col.invert}
-                                  />
+                              <td
+                                key={col.key}
+                                className="whitespace-nowrap py-1.5 pl-2 text-right text-foreground"
+                              >
+                                <div>
+                                  {value}
+                                  {previous && previousValue !== undefined && (
+                                    <TrendArrow
+                                      current={value}
+                                      previous={previousValue}
+                                      invert={col.invert}
+                                    />
+                                  )}
+                                </div>
+                                {points != null && (
+                                  <div className="text-[10px] font-normal text-muted">
+                                    ({points}pts)
+                                  </div>
                                 )}
                               </td>
                             );
                           })}
-                          <td className="py-1.5 text-right font-semibold text-foreground">
+                          <td className="whitespace-nowrap py-1.5 pl-2 text-right font-semibold text-foreground">
                             {row.totalPoints}
                           </td>
                         </tr>
@@ -432,12 +479,14 @@ export function PlayerModal({
                                 <BreakdownItem label="Clean sheet" value={breakdown.cleanSheetPoints} />
                                 <BreakdownItem label="Goals" value={breakdown.goalPoints} />
                                 <BreakdownItem label="Assists" value={breakdown.assistPoints} />
+                                <BreakdownItem label="Saves" value={breakdown.savePoints} />
+                                <BreakdownItem label="Conceded" value={breakdown.concededPoints} />
                                 <BreakdownItem label="Bonus" value={breakdown.bonusPoints} />
                               </div>
                               <p className="mt-2 text-[10px] text-muted">
                                 Estimated total: {breakdown.estimatedTotal} pts &middot; actual:{" "}
                                 {breakdown.actualTotal} pts. Estimate is approximate — it excludes
-                                save points, cards and other minor categories.
+                                cards, own goals and other minor categories.
                               </p>
                             </td>
                           </tr>
@@ -447,11 +496,6 @@ export function PlayerModal({
                   })}
                 </tbody>
               </table>
-              {player.position.toUpperCase() === "FWD" && (
-                <p className="mt-2 text-[10px] text-muted">
-                  Shot counts aren&apos;t available from our current data sources.
-                </p>
-              )}
             </div>
           </div>
         )}

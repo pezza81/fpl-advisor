@@ -166,6 +166,8 @@ export interface PointsBreakdown {
   cleanSheetPoints: number;
   goalPoints: number;
   assistPoints: number;
+  savePoints: number;
+  concededPoints: number; // negative — a deduction
   bonusPoints: number;
   appearancePoints: number;
   estimatedMatches: number;
@@ -179,20 +181,26 @@ const CLEAN_SHEET_POINTS: Record<string, number> = { GKP: 6, DEF: 6, MID: 1, FWD
 const GOAL_POINTS: Record<string, number> = { GKP: 10, DEF: 6, MID: 5, FWD: 4 };
 const ASSIST_POINTS = 3;
 const POINTS_PER_APPEARANCE = 2;
+const SAVES_PER_POINT = 3; // 1pt per 3 saves, goalkeepers only
+const GOALS_CONCEDED_PER_DEDUCTION = 2; // -1pt per 2 goals conceded, GKP/DEF only
+const CONCEDED_PENALTY_POSITIONS = new Set(["GKP", "DEF"]);
 
 // Estimates how a season's real total splits across scoring categories.
 // This is necessarily approximate — history_past gives season totals, not
 // per-match logs, so "appearances" is inferred as minutes / 90 (rounded)
 // rather than actual 60+-minute appearances, and categories FPL scores but
-// doesn't expose here (goalkeeper save points, cards, own goals, penalty
-// events) aren't included. estimatedTotal is shown alongside the real
-// actualTotal specifically so that gap stays visible rather than implied
-// away.
+// doesn't expose here (cards, own goals, penalty events) aren't included.
+// estimatedTotal is shown alongside the real actualTotal specifically so
+// that gap stays visible rather than implied away.
 export function estimatePointsBreakdown(position: string, season: FplSeasonRow): PointsBreakdown {
   const normalizedPosition = position.toUpperCase();
   const cleanSheetPoints = (CLEAN_SHEET_POINTS[normalizedPosition] ?? 0) * season.cleanSheets;
   const goalPoints = (GOAL_POINTS[normalizedPosition] ?? GOAL_POINTS.FWD) * season.goals;
   const assistPoints = ASSIST_POINTS * season.assists;
+  const savePoints = Math.floor(season.saves / SAVES_PER_POINT);
+  const concededPoints = CONCEDED_PENALTY_POSITIONS.has(normalizedPosition)
+    ? -Math.floor(season.goalsConceded / GOALS_CONCEDED_PER_DEDUCTION)
+    : 0;
   const bonusPoints = season.bonus;
   const estimatedMatches = Math.round(season.minutes / 90);
   const appearancePoints = estimatedMatches * POINTS_PER_APPEARANCE;
@@ -201,10 +209,19 @@ export function estimatePointsBreakdown(position: string, season: FplSeasonRow):
     cleanSheetPoints,
     goalPoints,
     assistPoints,
+    savePoints,
+    concededPoints,
     bonusPoints,
     appearancePoints,
     estimatedMatches,
-    estimatedTotal: cleanSheetPoints + goalPoints + assistPoints + bonusPoints + appearancePoints,
+    estimatedTotal:
+      cleanSheetPoints +
+      goalPoints +
+      assistPoints +
+      savePoints +
+      concededPoints +
+      bonusPoints +
+      appearancePoints,
     actualTotal: season.totalPoints,
   };
 }
