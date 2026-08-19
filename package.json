@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "fetch:football": "node --env-file=.env.local scripts/fetch-football-data.mjs"
+    "fetch:football": "node --env-file=.env.local scripts/fetch-football-data.mjs",
+    "sync:shared-db": "node scripts/sync-shared-db.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",

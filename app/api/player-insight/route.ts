@@ -138,10 +138,14 @@ function describeRestDays(club: string | undefined, restDays: ClubRestDays | nul
 
   const teamName = fplClubToTeamName(club);
   if (teamName) {
-    const bucket = restBucketFor(days);
-    const stats = getRestDaysImpact(teamName).find((b) => b.bucket === bucket);
-    if (stats && stats.matches > 0) {
-      historicalLine = ` Historically with ${REST_BUCKET_LABELS[bucket]} rest, this club has averaged ${stats.avgXgFor} xG created and ${stats.avgXgAgainst} xG conceded per game (${stats.matches} matches on record in the shared database).`;
+    try {
+      const bucket = restBucketFor(days);
+      const stats = getRestDaysImpact(teamName).find((b) => b.bucket === bucket);
+      if (stats && stats.matches > 0) {
+        historicalLine = ` Historically with ${REST_BUCKET_LABELS[bucket]} rest, this club has averaged ${stats.avgXgFor} xG created and ${stats.avgXgAgainst} xG conceded per game (${stats.matches} matches on record in the shared database).`;
+      }
+    } catch (error) {
+      console.error("Failed to load rest-days impact from shared DB", error);
     }
   }
 

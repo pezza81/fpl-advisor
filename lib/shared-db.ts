@@ -1,7 +1,12 @@
 import Database from "better-sqlite3";
+import path from "node:path";
 
-const SHARED_DB_PATH =
-  "C:\\Users\\lperr\\OneDrive\\Documents\\football-data-collector\\shared_data.db";
+// A committed point-in-time snapshot, not a live connection to the original
+// football-data-collector database — Vercel's serverless functions can't
+// reach a file on the local machine. Refresh it with `npm run sync:shared-db`
+// (copies from the original local path) whenever the source data updates,
+// then commit and redeploy.
+const SHARED_DB_PATH = path.join(process.cwd(), "data", "shared_data.db");
 
 let db: Database.Database | null = null;
 
