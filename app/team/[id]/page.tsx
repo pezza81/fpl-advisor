@@ -150,109 +150,137 @@ function TeamPageContent({ id }: { id: string }) {
               </span>
             )}
             <h1 className="text-3xl font-bold text-foreground">{team.teamName}</h1>
-            <p className="text-muted">
-              {team.managerName} &middot; Gameweek {team.gameweek} &middot;{" "}
-              {team.overallPoints} pts &middot; Rank{" "}
-              {team.overallRank.toLocaleString()}
-            </p>
-            <p className="text-sm text-muted">
-              Squad value £{team.squadValue}m &middot; Bank £{team.bank}m
-            </p>
+            {team.seasonStarted ? (
+              <>
+                <p className="text-muted">
+                  {team.managerName} &middot; Gameweek {team.gameweek} &middot;{" "}
+                  {team.overallPoints} pts &middot; Rank{" "}
+                  {team.overallRank.toLocaleString()}
+                </p>
+                <p className="text-sm text-muted">
+                  Squad value £{team.squadValue}m &middot; Bank £{team.bank}m
+                </p>
+              </>
+            ) : (
+              <p className="text-muted">
+                {team.managerName} &middot; {team.overallPoints} pts
+              </p>
+            )}
           </header>
 
-          <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {team.squad.map((player) => (
-              <button
-                key={player.id}
-                type="button"
-                onClick={() => openPlayerModal(player)}
-                className={`relative rounded-lg border bg-card p-4 text-left transition-colors hover:border-accent/60 ${
-                  player.isStarting ? "border-card-border" : "border-card-border/50 opacity-70"
-                }`}
-              >
-                <span
-                  className={`absolute right-3 top-3 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
-                    player.flag === "KEEP"
-                      ? "bg-accent/15 text-accent"
-                      : "bg-red-500/15 text-red-400"
-                  }`}
+          {!team.seasonStarted && (
+            <div className="mt-10 rounded-xl border border-card-border bg-card p-6 text-center">
+              <p className="text-foreground">
+                Your gameweek squad will appear here once the season starts on 21 August. In the
+                meantime, use the{" "}
+                <Link
+                  href="/build"
+                  className="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
                 >
-                  {player.flag}
-                </span>
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">
-                  {player.position} &middot; {player.club}
-                </p>
-                <p className="mt-1 pr-10 font-semibold text-foreground">
-                  {player.name}
-                  {player.isCaptain && <span className="ml-1 text-accent">(C)</span>}
-                  {player.isViceCaptain && <span className="ml-1 text-muted">(V)</span>}
-                </p>
-                <div className="mt-3 flex items-center justify-between text-xs text-muted">
-                  <span>£{player.price}m</span>
-                  <span>Form {player.form}</span>
-                  <span>{player.totalPoints} pts</span>
-                </div>
-                {!player.isStarting && (
-                  <p className="mt-2 text-[10px] uppercase tracking-wide text-muted">Bench</p>
-                )}
-              </button>
-            ))}
-          </section>
-
-          <div className="mt-10 flex justify-center">
-            <button
-              onClick={handleGetAdvice}
-              disabled={loadingAdvice}
-              className="rounded-lg bg-accent-strong px-8 py-3 font-semibold text-[#04140b] transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {loadingAdvice ? "Thinking it through..." : "Get AI Advice"}
-            </button>
-          </div>
-
-          {adviceError && (
-            <div className="mt-6 rounded-lg border border-red-900/50 bg-red-950/30 px-5 py-4 text-center text-red-300">
-              {adviceError}
+                  Build
+                </Link>{" "}
+                page to plan your squad.
+              </p>
             </div>
           )}
 
-          {advice && (
+          {team.seasonStarted && (
             <>
-              <section className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
-                <AdviceCard title="Transfer" body={advice.transfer} tone="green" />
-                <AdviceCard title="Captain" body={advice.captain} tone="red" />
-                <AdviceCard title="Chip" body={advice.chip} tone="blue" />
+              <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                {team.squad.map((player) => (
+                  <button
+                    key={player.id}
+                    type="button"
+                    onClick={() => openPlayerModal(player)}
+                    className={`relative rounded-lg border bg-card p-4 text-left transition-colors hover:border-accent/60 ${
+                      player.isStarting ? "border-card-border" : "border-card-border/50 opacity-70"
+                    }`}
+                  >
+                    <span
+                      className={`absolute right-3 top-3 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                        player.flag === "KEEP"
+                          ? "bg-accent/15 text-accent"
+                          : "bg-red-500/15 text-red-400"
+                      }`}
+                    >
+                      {player.flag}
+                    </span>
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+                      {player.position} &middot; {player.club}
+                    </p>
+                    <p className="mt-1 pr-10 font-semibold text-foreground">
+                      {player.name}
+                      {player.isCaptain && <span className="ml-1 text-accent">(C)</span>}
+                      {player.isViceCaptain && <span className="ml-1 text-muted">(V)</span>}
+                    </p>
+                    <div className="mt-3 flex items-center justify-between text-xs text-muted">
+                      <span>£{player.price}m</span>
+                      <span>Form {player.form}</span>
+                      <span>{player.totalPoints} pts</span>
+                    </div>
+                    {!player.isStarting && (
+                      <p className="mt-2 text-[10px] uppercase tracking-wide text-muted">Bench</p>
+                    )}
+                  </button>
+                ))}
               </section>
 
-              {advice.actions.length > 0 && (
-                <section className="mt-6 rounded-xl border border-card-border bg-card p-5">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-muted">
-                    Your gameweek actions
-                  </h3>
-                  <ul className="mt-4 flex flex-col gap-2.5">
-                    {advice.actions.map((action, index) => {
-                      const checked = checkedActions.has(index);
-                      return (
-                        <li key={index}>
-                          <label className="flex cursor-pointer items-start gap-3 text-sm">
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              onChange={() => toggleAction(index)}
-                              className="mt-0.5 h-4 w-4 shrink-0 accent-accent-strong"
-                            />
-                            <span
-                              className={
-                                checked ? "text-muted line-through" : "text-foreground"
-                              }
-                            >
-                              {action}
-                            </span>
-                          </label>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </section>
+              <div className="mt-10 flex justify-center">
+                <button
+                  onClick={handleGetAdvice}
+                  disabled={loadingAdvice}
+                  className="rounded-lg bg-accent-strong px-8 py-3 font-semibold text-[#04140b] transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loadingAdvice ? "Thinking it through..." : "Get AI Advice"}
+                </button>
+              </div>
+
+              {adviceError && (
+                <div className="mt-6 rounded-lg border border-red-900/50 bg-red-950/30 px-5 py-4 text-center text-red-300">
+                  {adviceError}
+                </div>
+              )}
+
+              {advice && (
+                <>
+                  <section className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <AdviceCard title="Transfer" body={advice.transfer} tone="green" />
+                    <AdviceCard title="Captain" body={advice.captain} tone="red" />
+                    <AdviceCard title="Chip" body={advice.chip} tone="blue" />
+                  </section>
+
+                  {advice.actions.length > 0 && (
+                    <section className="mt-6 rounded-xl border border-card-border bg-card p-5">
+                      <h3 className="text-xs font-bold uppercase tracking-widest text-muted">
+                        Your gameweek actions
+                      </h3>
+                      <ul className="mt-4 flex flex-col gap-2.5">
+                        {advice.actions.map((action, index) => {
+                          const checked = checkedActions.has(index);
+                          return (
+                            <li key={index}>
+                              <label className="flex cursor-pointer items-start gap-3 text-sm">
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={() => toggleAction(index)}
+                                  className="mt-0.5 h-4 w-4 shrink-0 accent-accent-strong"
+                                />
+                                <span
+                                  className={
+                                    checked ? "text-muted line-through" : "text-foreground"
+                                  }
+                                >
+                                  {action}
+                                </span>
+                              </label>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </section>
+                  )}
+                </>
               )}
             </>
           )}

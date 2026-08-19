@@ -66,8 +66,10 @@ export interface EntryResponse {
   player_first_name: string;
   player_last_name: string;
   name: string;
-  summary_overall_points: number;
-  summary_overall_rank: number;
+  // Both are null before the entry has completed a gameweek — most notably
+  // pre-season, when the fixture calendar hasn't started yet.
+  summary_overall_points: number | null;
+  summary_overall_rank: number | null;
 }
 
 export interface SquadPlayer {
@@ -98,6 +100,11 @@ export interface TeamData {
   squadValue: number;
   squad: SquadPlayer[];
   isDemo?: boolean;
+  // False when the FPL picks endpoint has no gameweek squad to return yet
+  // (typically pre-season) — squad/gameweek/bank/squadValue are then
+  // placeholder zero values and callers should show a "check back once the
+  // season starts" state instead of the squad grid.
+  seasonStarted: boolean;
 }
 
 async function fplFetch<T>(path: string): Promise<T> {
@@ -288,5 +295,6 @@ export function getDemoTeamData(): TeamData {
     squadValue,
     squad,
     isDemo: true,
+    seasonStarted: true,
   };
 }

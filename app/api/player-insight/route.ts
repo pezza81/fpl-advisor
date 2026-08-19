@@ -9,7 +9,8 @@ import {
   type FplPlayerTrend,
   type FplSeasonRow,
 } from "@/lib/fpl-history";
-import { getPlayerMatchContext, type PlayerMatchContext } from "@/lib/api-football";
+import { getPlayerMatchContext, type ClubRestDays, type PlayerMatchContext } from "@/lib/api-football";
+import { fplClubToTeamName, getRestDaysImpact, restBucketFor, REST_BUCKET_LABELS } from "@/lib/team-stats";
 
 // The API-Football digest keys seasons by numeric year (2024); FPL history
 // keys them by "2024/25"-style labels. Converts a digest-sourced trend into
@@ -125,6 +126,28 @@ function describeMatchContext(context: PlayerMatchContext): string {
   return lines.join("\n");
 }
 
+// Live rest-days number (API-Football) cross-referenced against how this
+// club has historically performed in that exact rest bucket (shared xG
+// database) — gives the verdict real numbers to cite rather than just "they
+// have short rest" with nothing to back it up.
+function describeRestDays(club: string | undefined, restDays: ClubRestDays | null): string {
+  if (!club || !restDays || restDays.restDays == null) return "";
+
+  const days = restDays.restDays;
+  let historicalLine = "";
+
+  const teamName = fplClubToTeamName(club);
+  if (teamName) {
+    const bucket = restBucketFor(days);
+    const stats = getRestDaysImpact(teamName).find((b) => b.bucket === bucket);
+    if (stats && stats.matches > 0) {
+      historicalLine = ` Historically with ${REST_BUCKET_LABELS[bucket]} rest, this club has averaged ${stats.avgXgFor} xG created and ${stats.avgXgAgainst} xG conceded per game (${stats.matches} matches on record in the shared database).`;
+    }
+  }
+
+  return `Rest before next fixture: ${days} days (${restDays.daysSinceLastMatch} days since their last match, ${restDays.daysUntilNextMatch} days until the next one).${historicalLine}`;
+}
+
 export async function POST(request: NextRequest) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey || apiKey === "placeholder") {
@@ -152,9 +175,19 @@ export async function POST(request: NextRequest) {
     club
       ? getPlayerMatchContext(club, name).catch((error) => {
           console.error("Failed to load API-Football match context", error);
-          return { injury: null, lineup: null, headToHead: null } satisfies PlayerMatchContext;
+          return {
+            injury: null,
+            lineup: null,
+            headToHead: null,
+            restDays: null,
+          } satisfies PlayerMatchContext;
         })
-      : Promise.resolve({ injury: null, lineup: null, headToHead: null } satisfies PlayerMatchContext),
+      : Promise.resolve({
+          injury: null,
+          lineup: null,
+          headToHead: null,
+          restDays: null,
+        } satisfies PlayerMatchContext),
   ]);
 
   // Goal-involvement trend: FPL's own history is the primary source (exact
@@ -192,10 +225,11 @@ ${describeTrend(trend)}${describeMinutesTrend(minutesTrend)}
 ${describeSeasonHistory(position, fplSeasons)}
 
 ${describeMatchContext(matchContext)}
+${describeRestDays(club, matchContext.restDays)}
 
 Write a verdict on whether this player is worth keeping this season, structured as exactly 2 to 3 short paragraphs separated by a blank line (a real blank line between paragraphs, not just a sentence break) — for example, one paragraph weighing current form against the historical trend, and a second paragraph on the position-specific benchmark judgment and final call. Do not write one continuous block.
 
-In the first paragraph, weigh their current form against the goal-involvement trend above — if the trend and current form agree, say so plainly; if they conflict, call that out and explain which signal you'd trust more. If minutes are declining even while returns hold up, treat that as a real rotation-risk warning. In the next paragraph, using the official season history, judge the player against a position-specific benchmark: for a goalkeeper or defender, is their clean-sheet rate strong for a side of their club's level; for any position, is their bonus-points rate high (a proxy for good underlying performances, not just end product) or low for a player at this price; for attacking players, are goals+assists strong relative to price. If there's a current injury/suspension designation or the player is expected on the bench, that overrides everything else — say so plainly and near the top, since a player who can't play is worth nothing regardless of trend or price. Close with a direct call — keep, consider selling, or keep an eye on them. Name the actual numbers you're weighing throughout. Plain English, no markdown, no bullet points, no asterisks, write like a knowledgeable friend giving a direct opinion.`;
+In the first paragraph, weigh their current form against the goal-involvement trend above — if the trend and current form agree, say so plainly; if they conflict, call that out and explain which signal you'd trust more. If minutes are declining even while returns hold up, treat that as a real rotation-risk warning. In the next paragraph, using the official season history, judge the player against a position-specific benchmark: for a goalkeeper or defender, is their clean-sheet rate strong for a side of their club's level; for any position, is their bonus-points rate high (a proxy for good underlying performances, not just end product) or low for a player at this price; for attacking players, are goals+assists strong relative to price. If there's a current injury/suspension designation or the player is expected on the bench, that overrides everything else — say so plainly and near the top, since a player who can't play is worth nothing regardless of trend or price. If their club has 3 days or fewer rest before the next fixture, flag it as a real rotation-risk factor and cite the historical xG-with-short-rest number if it's given above; if they have 7+ days rest, mention it as a freshness advantage the same way. Close with a direct call — keep, consider selling, or keep an eye on them. Name the actual numbers you're weighing throughout. Plain English, no markdown, no bullet points, no asterisks, write like a knowledgeable friend giving a direct opinion.`;
 
   try {
     const response = await client.messages.create({

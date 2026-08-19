@@ -162,6 +162,88 @@ export function getFixtureDifficulty(
   };
 }
 
+// Shared bucket definitions for "days rest before a match" — used both for
+// the historical xG-by-rest analysis below and (as a live, current-fixture
+// number from lib/api-football.ts) for the player modal's rest-days badge.
+// Keep these two call sites' thresholds in sync if this ever changes.
+export type RestBucket = "3_or_fewer" | "4_to_5" | "6_or_more";
+
+export const REST_BUCKET_LABELS: Record<RestBucket, string> = {
+  "3_or_fewer": "3 days or fewer",
+  "4_to_5": "4-5 days",
+  "6_or_more": "6+ days",
+};
+
+export function restBucketFor(days: number): RestBucket {
+  if (days <= 3) return "3_or_fewer";
+  if (days <= 5) return "4_to_5";
+  return "6_or_more";
+}
+
+export interface RestDaysBucketStats {
+  bucket: RestBucket;
+  label: string;
+  matches: number;
+  avgXgFor: number;
+  avgXgAgainst: number;
+}
+
+// A single-day-or-less or absurdly long gap between "consecutive" matches
+// almost always means a data gap (season boundary, cup withdrawal) rather
+// than a real rest period — excluded so it doesn't skew the 6+ bucket.
+const MAX_PLAUSIBLE_REST_DAYS = 21;
+
+// How a team's xG for/against varies with how many days rest they had
+// coming into the match (gap since their previous match in the dataset, any
+// competition). Uses the full Premier League history in the shared DB
+// (every season present, not just the current one) for a decent sample
+// size in the rarer short-rest bucket.
+export function getRestDaysImpact(teamName: string): RestDaysBucketStats[] {
+  const rows = query<Pick<MatchRow, "match_date" | "home_team" | "away_team" | "home_xg" | "away_xg">>(
+    `SELECT match_date, home_team, away_team, home_xg, away_xg
+     FROM matches
+     WHERE league_id = ? AND (home_team = ? OR away_team = ?)
+       AND home_xg IS NOT NULL AND away_xg IS NOT NULL
+     ORDER BY match_date ASC`,
+    [PREMIER_LEAGUE_ID, teamName, teamName],
+  );
+
+  const totals: Record<RestBucket, { xgFor: number; xgAgainst: number; matches: number }> = {
+    "3_or_fewer": { xgFor: 0, xgAgainst: 0, matches: 0 },
+    "4_to_5": { xgFor: 0, xgAgainst: 0, matches: 0 },
+    "6_or_more": { xgFor: 0, xgAgainst: 0, matches: 0 },
+  };
+
+  let previousDate: Date | null = null;
+  for (const row of rows) {
+    const matchDate = new Date(row.match_date);
+    if (previousDate) {
+      const restDays = Math.round(
+        (matchDate.getTime() - previousDate.getTime()) / (24 * 60 * 60 * 1000),
+      );
+      if (restDays > 0 && restDays <= MAX_PLAUSIBLE_REST_DAYS) {
+        const bucket = restBucketFor(restDays);
+        const isHome = row.home_team === teamName;
+        totals[bucket].xgFor += (isHome ? row.home_xg : row.away_xg) ?? 0;
+        totals[bucket].xgAgainst += (isHome ? row.away_xg : row.home_xg) ?? 0;
+        totals[bucket].matches += 1;
+      }
+    }
+    previousDate = matchDate;
+  }
+
+  return (Object.keys(totals) as RestBucket[]).map((bucket) => {
+    const { xgFor, xgAgainst, matches } = totals[bucket];
+    return {
+      bucket,
+      label: REST_BUCKET_LABELS[bucket],
+      matches,
+      avgXgFor: matches > 0 ? round2(xgFor / matches) : 0,
+      avgXgAgainst: matches > 0 ? round2(xgAgainst / matches) : 0,
+    };
+  });
+}
+
 export interface TeamStrengthRanking {
   teamName: string;
   matchesPlayed: number;

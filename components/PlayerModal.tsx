@@ -88,6 +88,15 @@ function lineupLabel(status: LineupStatus["status"]): string {
   return "Unknown";
 }
 
+// Mirrors the 3 / 4-5 / 6+ day buckets in lib/team-stats.ts (restBucketFor)
+// — kept as a small local duplicate rather than importing that server-only,
+// SQLite-backed module into a client component.
+function restDaysBadgeClasses(days: number): string {
+  if (days <= 3) return "bg-red-800/70 text-red-100";
+  if (days <= 5) return "bg-amber-800/70 text-amber-100";
+  return "bg-emerald-800/70 text-emerald-100";
+}
+
 // Small up/down/flat indicator comparing one season's stat to the prior row.
 // `invert` flips the color semantics for stats where lower is better (goals
 // conceded) — the arrow direction itself always reflects the raw number.
@@ -306,6 +315,18 @@ export function PlayerModal({
                   {lineupLabel(insight.matchContext.lineup?.status ?? "unknown")}
                 </span>
               </div>
+
+              {insight.matchContext.restDays?.restDays != null && (
+                <div className="flex items-start justify-between gap-3">
+                  <span className="text-muted">Rest before next match</span>
+                  <span
+                    className={`inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${restDaysBadgeClasses(insight.matchContext.restDays.restDays)}`}
+                  >
+                    {insight.matchContext.restDays.restDays} day
+                    {insight.matchContext.restDays.restDays === 1 ? "" : "s"} rest
+                  </span>
+                </div>
+              )}
 
               <div>
                 <span className="text-muted">

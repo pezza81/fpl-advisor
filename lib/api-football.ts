@@ -170,6 +170,60 @@ async function getUpcomingFixturesByTeamId(): Promise<Map<number, UpcomingFixtur
   return map;
 }
 
+// --- rest days -----------------------------------------------------------------
+
+export interface ClubRestDays {
+  daysSinceLastMatch: number | null;
+  daysUntilNextMatch: number | null;
+  // The gap between the last match played and the next one — daysSinceLastMatch
+  // + daysUntilNextMatch, since "today" always falls between the two. This is
+  // the number the "X days rest" badge and rotation-risk advice are built on.
+  restDays: number | null;
+}
+
+interface RawTeamFixture {
+  fixture: { date: string };
+}
+
+function daysBetween(from: Date, to: Date): number {
+  return Math.round((to.getTime() - from.getTime()) / (24 * 60 * 60 * 1000));
+}
+
+// Most recent completed fixture across ANY competition, not just the
+// Premier League — a midweek cup match still tires players out before
+// Saturday's league game, so it's the right basis for a fatigue reading.
+// Team-scoped rather than season-scoped so it still finds a sensible answer
+// across a season boundary (pre-season, the "last match" is whatever the
+// club most recently played, however long ago that was).
+async function getLastPlayedFixtureDate(teamId: number): Promise<string | null> {
+  const fixtures = await apiFootballGet<RawTeamFixture[]>("/fixtures", {
+    team: teamId,
+    last: 1,
+  });
+  return fixtures[0]?.fixture.date ?? null;
+}
+
+export async function getClubRestDays(clubCode: string): Promise<ClubRestDays | null> {
+  const teamId = fplClubToApiFootballTeamId(clubCode);
+  if (!teamId) return null;
+
+  const [lastMatchDate, fixtures] = await Promise.all([
+    getLastPlayedFixtureDate(teamId),
+    getUpcomingFixturesByTeamId(),
+  ]);
+  const upcoming = fixtures.get(teamId);
+
+  const now = new Date();
+  const daysSinceLastMatch = lastMatchDate ? daysBetween(new Date(lastMatchDate), now) : null;
+  const daysUntilNextMatch = upcoming ? daysBetween(now, new Date(upcoming.kickoff)) : null;
+  const restDays =
+    daysSinceLastMatch != null && daysUntilNextMatch != null
+      ? daysSinceLastMatch + daysUntilNextMatch
+      : null;
+
+  return { daysSinceLastMatch, daysUntilNextMatch, restDays };
+}
+
 // --- injuries ------------------------------------------------------------------
 
 export interface InjuryInfo {
@@ -336,10 +390,11 @@ export interface PlayerMatchContext {
   injury: InjuryInfo | null;
   lineup: LineupStatus | null;
   headToHead: HeadToHeadSummary | null;
+  restDays: ClubRestDays | null;
 }
 
 export async function getPlayerMatchContext(club: string, webName: string): Promise<PlayerMatchContext> {
-  const [injury, lineup, headToHead] = await Promise.all([
+  const [injury, lineup, headToHead, restDays] = await Promise.all([
     getInjuryForPlayer(club, webName).catch((error) => {
       console.error("Failed to load injury data", error);
       return null;
@@ -352,7 +407,11 @@ export async function getPlayerMatchContext(club: string, webName: string): Prom
       console.error("Failed to load head-to-head data", error);
       return null;
     }),
+    getClubRestDays(club).catch((error) => {
+      console.error("Failed to load rest-days data", error);
+      return null;
+    }),
   ]);
 
-  return { injury, lineup, headToHead };
+  return { injury, lineup, headToHead, restDays };
 }
