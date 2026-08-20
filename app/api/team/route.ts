@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  DEMO_TEAM_ID,
   buildSquad,
   fetchBootstrapStatic,
   fetchEntry,
   fetchPicks,
   getCurrentGameweek,
   getDemoTeamData,
+  isDemoTeamId,
 } from "@/lib/fpl";
 
 export async function GET(request: NextRequest) {
   const teamId = request.nextUrl.searchParams.get("teamId");
 
-  if (teamId?.toLowerCase() === DEMO_TEAM_ID) {
+  if (teamId && isDemoTeamId(teamId)) {
     return NextResponse.json(getDemoTeamData());
   }
 

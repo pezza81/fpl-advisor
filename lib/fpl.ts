@@ -190,6 +190,64 @@ export async function fetchEntryHistory(teamId: string | number): Promise<EntryH
   };
 }
 
+export interface LeagueStandingRow {
+  entry: number;
+  entryName: string;
+  managerName: string;
+  rank: number;
+  lastRank: number;
+  total: number;
+  eventTotal: number;
+}
+
+export interface LeagueStandings {
+  leagueName: string;
+  hasMore: boolean;
+  rows: LeagueStandingRow[];
+}
+
+interface RawLeagueStandingsResponse {
+  league: { name: string };
+  standings: {
+    has_next: boolean;
+    results: {
+      entry: number;
+      entry_name: string;
+      player_name: string;
+      rank: number;
+      last_rank: number;
+      total: number;
+      event_total: number;
+    }[];
+  };
+}
+
+// Classic mini-league standings, one page at a time (FPL's own default page
+// size, 50 entries) — the source for the /league table. Legitimately empty
+// before a season has any completed gameweeks, not an error case.
+export async function fetchLeagueStandings(
+  leagueId: string | number,
+  page = 1,
+): Promise<LeagueStandings> {
+  const raw = await fplFetch<RawLeagueStandingsResponse>(
+    `/leagues-classic/${leagueId}/standings/?page_standings=${page}`,
+  );
+
+  return {
+    leagueName: raw.league.name,
+    hasMore: raw.standings.has_next,
+    rows: raw.standings.results.map((row) => ({
+      entry: row.entry,
+      entryName: row.entry_name,
+      managerName: row.player_name,
+      rank: row.rank,
+      lastRank: row.last_rank,
+      total: row.total,
+      eventTotal: row.event_total,
+    })),
+  };
+}
+
 export function getCurrentGameweek(bootstrap: BootstrapStatic): number {
   const current = bootstrap.events.find((event) => event.is_current);
   if (current) return current.id;
@@ -279,6 +337,15 @@ export function buildAllPlayers(bootstrap: BootstrapStatic): SquadPlayer[] {
 }
 
 export const DEMO_TEAM_ID = "demo";
+
+// The demo league (see /league/demo) references several synthetic manager
+// ids ("demo1".."demo6") so each row's "expand squad" can resolve through
+// the same /api/team code path as a real numeric id — all of them return
+// the same fabricated squad below, since the point is demonstrating the
+// interaction, not unique data per fake manager.
+export function isDemoTeamId(teamId: string): boolean {
+  return teamId.toLowerCase().startsWith(DEMO_TEAM_ID);
+}
 
 interface DemoPlayerInput {
   // Real FPL element id where the player is still in the current game (used

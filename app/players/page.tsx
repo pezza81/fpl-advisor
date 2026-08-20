@@ -123,6 +123,9 @@ export default function PlayersPage() {
           <Link href="/build" className="text-sm text-muted transition-colors hover:text-accent">
             Build squad
           </Link>
+          <Link href="/league/demo" className="text-sm text-muted transition-colors hover:text-accent">
+            League
+          </Link>
           <Link href="/trends" className="text-sm text-muted transition-colors hover:text-accent">
             Trends analysis &rarr;
           </Link>

@@ -8,6 +8,8 @@ export default function Home() {
   const router = useRouter();
   const [teamId, setTeamId] = useState("");
   const [error, setError] = useState("");
+  const [leagueId, setLeagueId] = useState("");
+  const [leagueError, setLeagueError] = useState("");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -18,6 +20,17 @@ export default function Home() {
     }
     setError("");
     router.push(`/team/${trimmed}`);
+  }
+
+  function handleLeagueSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const trimmed = leagueId.trim();
+    if (!/^\d+$/.test(trimmed)) {
+      setLeagueError("Enter a valid numeric league ID.");
+      return;
+    }
+    setLeagueError("");
+    router.push(`/league/${trimmed}`);
   }
 
   return (
@@ -98,6 +111,43 @@ export default function Home() {
           className="mt-2 text-sm text-muted underline decoration-card-border underline-offset-4 transition-colors hover:text-accent hover:decoration-accent"
         >
           Build your squad from scratch &rarr;
+        </Link>
+
+        <div className="mt-8 flex w-full items-center gap-3 text-xs uppercase tracking-wide text-muted">
+          <span className="h-px flex-1 bg-card-border" />
+          mini-league
+          <span className="h-px flex-1 bg-card-border" />
+        </div>
+
+        <form onSubmit={handleLeagueSubmit} className="mt-6 w-full">
+          <label htmlFor="leagueId" className="sr-only">
+            FPL League ID
+          </label>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <input
+              id="leagueId"
+              type="text"
+              inputMode="numeric"
+              placeholder="Enter your mini-league ID"
+              value={leagueId}
+              onChange={(event) => setLeagueId(event.target.value)}
+              className="w-full rounded-lg border border-card-border bg-card px-4 py-3 text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+            />
+            <button
+              type="submit"
+              className="shrink-0 rounded-lg border border-card-border bg-card px-6 py-3 font-semibold text-foreground transition-colors hover:border-accent hover:text-accent"
+            >
+              View league
+            </button>
+          </div>
+          {leagueError && <p className="mt-3 text-sm text-red-400">{leagueError}</p>}
+        </form>
+
+        <Link
+          href="/league/demo"
+          className="mt-4 text-sm text-muted underline decoration-card-border underline-offset-4 transition-colors hover:text-accent hover:decoration-accent"
+        >
+          Try the demo league &rarr;
         </Link>
       </main>
     </div>
