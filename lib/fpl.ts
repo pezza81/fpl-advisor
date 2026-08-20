@@ -14,9 +14,18 @@ export interface FplElementType {
 
 export interface FplEvent {
   id: number;
+  deadline_time: string;
+  is_previous: boolean;
   is_current: boolean;
   is_next: boolean;
   finished: boolean;
+  average_entry_score: number;
+}
+
+export interface FplChip {
+  name: string; // "wildcard" | "freehit" | "bboost" | "3xc"
+  start_event: number;
+  stop_event: number;
 }
 
 export interface FplElement {
@@ -39,6 +48,7 @@ export interface BootstrapStatic {
   teams: FplTeam[];
   element_types: FplElementType[];
   events: FplEvent[];
+  chips: FplChip[];
 }
 
 export interface FplPick {
@@ -131,6 +141,53 @@ export function fetchPicks(
   gameweek: number,
 ): Promise<PicksResponse> {
   return fplFetch<PicksResponse>(`/entry/${teamId}/event/${gameweek}/picks/`);
+}
+
+export interface GameweekHistoryRow {
+  event: number;
+  points: number;
+  totalPoints: number;
+  overallRank: number;
+  pointsOnBench: number;
+}
+
+export interface EntryHistoryChip {
+  name: string;
+  event: number;
+}
+
+export interface EntryHistory {
+  gameweeks: GameweekHistoryRow[];
+  chipsUsed: EntryHistoryChip[];
+}
+
+interface RawEntryHistoryResponse {
+  current: {
+    event: number;
+    points: number;
+    total_points: number;
+    overall_rank: number;
+    points_on_bench: number;
+  }[];
+  chips: { name: string; event: number }[];
+}
+
+// The full gameweek-by-gameweek record for this season (points, rank, bench
+// points per event) plus which chips have been played and when — the raw
+// material for the dashboard's season story and chip-reminder panel. Empty
+// arrays are the normal, expected shape before the season has any results.
+export async function fetchEntryHistory(teamId: string | number): Promise<EntryHistory> {
+  const raw = await fplFetch<RawEntryHistoryResponse>(`/entry/${teamId}/history/`);
+  return {
+    gameweeks: raw.current.map((row) => ({
+      event: row.event,
+      points: row.points,
+      totalPoints: row.total_points,
+      overallRank: row.overall_rank,
+      pointsOnBench: row.points_on_bench,
+    })),
+    chipsUsed: raw.chips.map((chip) => ({ name: chip.name, event: chip.event })),
+  };
 }
 
 export function getCurrentGameweek(bootstrap: BootstrapStatic): number {

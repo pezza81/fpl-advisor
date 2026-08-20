@@ -115,6 +115,9 @@ function TeamPageContent({ id }: { id: string }) {
           &larr; Back
         </Link>
         <div className="flex items-center gap-5">
+          <Link href={`/dashboard/${id}`} className="text-sm text-muted transition-colors hover:text-accent">
+            Dashboard
+          </Link>
           <Link href="/players" className="text-sm text-muted transition-colors hover:text-accent">
             All players
           </Link>
