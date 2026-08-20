@@ -4,17 +4,21 @@ import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import type { SquadPlayer } from "@/lib/fpl";
 import type { LeagueData, LeagueManagerRow } from "@/lib/league-types";
+import {
+  countUnread,
+  loadChatMessages,
+  loadChatName,
+  loadDirectMessages,
+  markChatSeen,
+  recordLeagueVisit,
+  saveChatMessages,
+  saveChatName,
+  saveDirectMessages,
+  type ChatMessage,
+} from "@/lib/league-chat-storage";
 
 interface LeagueResponse extends LeagueData {
   error?: string;
-}
-
-interface ChatMessage {
-  id: string;
-  author: string;
-  text: string;
-  timestamp: string;
-  isAi?: boolean;
 }
 
 // ---- helpers ----------------------------------------------------------------
@@ -39,34 +43,12 @@ function scoreColorClass(score: number): string {
   return "bg-red-800/70 text-red-100";
 }
 
-function chatStorageKey(leagueId: string): string {
-  return `fpl-advisor:league-chat:${leagueId}`;
-}
-
-function chatNameStorageKey(): string {
-  return "fpl-advisor:chat-name";
-}
-
-function loadChatMessages(leagueId: string): ChatMessage[] {
-  try {
-    const raw = localStorage.getItem(chatStorageKey(leagueId));
-    if (raw) return JSON.parse(raw) as ChatMessage[];
-  } catch {
-    // ignore malformed/unavailable storage
-  }
-  return [];
-}
-
-function saveChatMessages(leagueId: string, messages: ChatMessage[]) {
-  try {
-    localStorage.setItem(chatStorageKey(leagueId), JSON.stringify(messages));
-  } catch {
-    // localStorage unavailable — chat just won't persist this session
-  }
-}
-
 function formatChatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+}
+
+function truncateText(text: string, maxLength: number): string {
+  return text.length > maxLength ? `${text.slice(0, maxLength - 1).trim()}…` : text;
 }
 
 // ---- small components --------------------------------------------------------
@@ -159,15 +141,124 @@ function ManagerRow({
   );
 }
 
+function DirectTab({
+  leagueId,
+  managers,
+  name,
+}: {
+  leagueId: string;
+  managers: LeagueManagerRow[];
+  name: string;
+}) {
+  const [selectedEntry, setSelectedEntry] = useState<string | number | null>(null);
+  const [dmMessages, setDmMessages] = useState<ChatMessage[]>([]);
+  const [draft, setDraft] = useState("");
+
+  const selectedManager = managers.find((manager) => manager.entry === selectedEntry) ?? null;
+
+  function selectManager(manager: LeagueManagerRow) {
+    setSelectedEntry(manager.entry);
+    setDmMessages(loadDirectMessages(leagueId, manager.entry));
+  }
+
+  function handleSend() {
+    if (!selectedManager) return;
+    const text = draft.trim();
+    if (!text) return;
+    const next = [
+      ...dmMessages,
+      { id: crypto.randomUUID(), author: name.trim() || "You", text, timestamp: new Date().toISOString() },
+    ];
+    setDmMessages(next);
+    saveDirectMessages(leagueId, selectedManager.entry, next);
+    setDraft("");
+  }
+
+  if (!selectedManager) {
+    return (
+      <div className="flex-1 overflow-y-auto p-4" style={{ maxHeight: 380 }}>
+        <p className="mb-2 text-xs text-muted">Select a manager to message privately.</p>
+        <div className="space-y-1.5">
+          {managers.map((manager) => (
+            <button
+              key={manager.entry}
+              type="button"
+              onClick={() => selectManager(manager)}
+              className="w-full rounded-lg border border-card-border/70 bg-background/40 px-3 py-2 text-left text-sm transition-colors hover:border-accent/50"
+            >
+              <span className="font-semibold text-foreground">{manager.entryName}</span>{" "}
+              <span className="text-muted">({manager.managerName})</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex items-center justify-between border-b border-card-border/50 px-4 py-2.5">
+        <button
+          type="button"
+          onClick={() => setSelectedEntry(null)}
+          className="text-xs text-muted transition-colors hover:text-accent"
+        >
+          &larr; All managers
+        </button>
+        <span className="text-xs font-semibold text-foreground">{selectedManager.entryName}</span>
+      </div>
+
+      <div className="flex-1 space-y-3 overflow-y-auto p-4" style={{ maxHeight: 300 }}>
+        <p className="text-[10px] text-muted">
+          Private notes to this manager — stored only on your device, not delivered to them.
+        </p>
+        {dmMessages.length === 0 && <p className="text-xs text-muted">No messages yet.</p>}
+        {dmMessages.map((message) => (
+          <div key={message.id}>
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="text-xs font-semibold text-foreground">{message.author}</span>
+              <span className="text-[10px] text-muted">{formatChatTime(message.timestamp)}</span>
+            </div>
+            <p className="mt-0.5 whitespace-pre-wrap text-sm text-foreground/90">{message.text}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="border-t border-card-border p-4">
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") handleSend();
+            }}
+            placeholder={`Message ${selectedManager.entryName}...`}
+            className="w-full rounded-lg border border-card-border bg-background/40 px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+          />
+          <button
+            type="button"
+            onClick={handleSend}
+            className="shrink-0 rounded-lg bg-accent-strong px-4 py-2 text-sm font-semibold text-[#04140b] transition-colors hover:bg-accent"
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
 function ChatPanel({ leagueId, managers }: { leagueId: string; managers: LeagueManagerRow[] }) {
+  const [expanded, setExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState<"group" | "direct">("group");
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadChatMessages(leagueId));
-  const [name, setName] = useState(() => {
-    try {
-      return localStorage.getItem(chatNameStorageKey()) ?? "You";
-    } catch {
-      return "You";
-    }
-  });
+  // Frozen the moment the panel mounts — "how many were unread when I
+  // arrived" — independent of markChatSeen updating storage once opened, so
+  // the catch-up banner still reflects what the user actually missed.
+  const [unreadCount] = useState(() => countUnread(leagueId));
+  const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [name, setName] = useState(() => loadChatName());
   const [draft, setDraft] = useState("");
   const [askingAi, setAskingAi] = useState(false);
   const [aiError, setAiError] = useState("");
@@ -189,11 +280,15 @@ function ChatPanel({ leagueId, managers }: { leagueId: string; managers: LeagueM
 
   function handleNameChange(value: string) {
     setName(value);
-    try {
-      localStorage.setItem(chatNameStorageKey(), value);
-    } catch {
-      // ignore
-    }
+    saveChatName(value);
+  }
+
+  function openChat() {
+    // A discrete user action, not an effect — marking as seen here (rather
+    // than reactively) keeps the frozen unreadCount snapshot above accurate
+    // for the catch-up banner.
+    markChatSeen(leagueId);
+    setExpanded(true);
   }
 
   async function handleAskAi() {
@@ -236,68 +331,173 @@ function ChatPanel({ leagueId, managers }: { leagueId: string; managers: LeagueM
     }
   }
 
-  return (
-    <div className="flex h-full flex-col rounded-xl border border-card-border bg-card">
-      <div className="border-b border-card-border p-4">
-        <h2 className="text-xs font-bold uppercase tracking-widest text-muted">League chat</h2>
-        <input
-          type="text"
-          value={name}
-          onChange={(event) => handleNameChange(event.target.value)}
-          placeholder="Your name"
-          className="mt-2 w-full rounded-md border border-card-border bg-background/40 px-2 py-1 text-xs text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
-        />
-      </div>
-
-      <div className="flex-1 space-y-3 overflow-y-auto p-4" style={{ maxHeight: 420 }}>
-        {messages.length === 0 && (
-          <p className="text-xs text-muted">
-            No messages yet — say something to your league, or ask the AI for its take.
-          </p>
-        )}
-        {messages.map((message) => (
-          <div key={message.id} className={message.isAi ? "rounded-lg border border-accent/30 bg-accent/5 p-2.5" : ""}>
-            <div className="flex items-baseline justify-between gap-2">
-              <span className={`text-xs font-semibold ${message.isAi ? "text-accent" : "text-foreground"}`}>
-                {message.author}
-              </span>
-              <span className="text-[10px] text-muted">{formatChatTime(message.timestamp)}</span>
-            </div>
-            <p className="mt-0.5 whitespace-pre-wrap text-sm text-foreground/90">{message.text}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="border-t border-card-border p-4">
-        {aiError && <p className="mb-2 text-xs text-red-400">{aiError}</p>}
+  if (!expanded) {
+    const previewMessages = messages.slice(-3);
+    return (
+      <div className="rounded-xl border border-card-border bg-card p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-muted">League chat</h2>
+          {unreadCount > 0 && (
+            <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold text-accent">
+              {unreadCount} new
+            </span>
+          )}
+        </div>
+        <div className="mt-3 space-y-1.5">
+          {previewMessages.length === 0 ? (
+            <p className="text-xs text-muted">No messages yet — be the first to say something.</p>
+          ) : (
+            previewMessages.map((message) => (
+              <p key={message.id} className="text-xs">
+                <span className="font-semibold text-foreground">{message.author}: </span>
+                <span className="text-muted">{truncateText(message.text, 90)}</span>
+              </p>
+            ))
+          )}
+        </div>
         <button
           type="button"
-          onClick={handleAskAi}
-          disabled={askingAi || managers.length === 0}
-          className="mb-2 w-full rounded-lg border border-accent/40 bg-accent/10 px-3 py-2 text-xs font-semibold text-accent transition-colors hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-60"
+          onClick={openChat}
+          className="mt-3 w-full rounded-lg bg-accent-strong px-3 py-2 text-xs font-semibold text-[#04140b] transition-colors hover:bg-accent"
         >
-          {askingAi ? "Thinking it through..." : "Ask AI for league banter"}
+          Open chat
         </button>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") handleSend();
-            }}
-            placeholder="Say something..."
-            className="w-full rounded-lg border border-card-border bg-background/40 px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
-          />
-          <button
-            type="button"
-            onClick={handleSend}
-            className="shrink-0 rounded-lg bg-accent-strong px-4 py-2 text-sm font-semibold text-[#04140b] transition-colors hover:bg-accent"
-          >
-            Send
-          </button>
-        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="flex h-full flex-col rounded-xl border border-card-border bg-card">
+      <div className="flex items-center justify-between border-b border-card-border p-4">
+        <h2 className="text-xs font-bold uppercase tracking-widest text-muted">League chat</h2>
+        <button
+          type="button"
+          onClick={() => setExpanded(false)}
+          className="text-xs text-muted transition-colors hover:text-accent"
+        >
+          Collapse
+        </button>
+      </div>
+
+      <div className="flex border-b border-card-border">
+        <button
+          type="button"
+          onClick={() => setActiveTab("group")}
+          className={`flex-1 py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${
+            activeTab === "group" ? "border-b-2 border-accent text-accent" : "text-muted hover:text-foreground"
+          }`}
+        >
+          Group
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("direct")}
+          className={`flex-1 py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${
+            activeTab === "direct" ? "border-b-2 border-accent text-accent" : "text-muted hover:text-foreground"
+          }`}
+        >
+          Direct
+        </button>
+      </div>
+
+      {activeTab === "group" ? (
+        <>
+          <div className="p-4 pb-0">
+            <input
+              type="text"
+              value={name}
+              onChange={(event) => handleNameChange(event.target.value)}
+              placeholder="Your name"
+              className="w-full rounded-md border border-card-border bg-background/40 px-2 py-1 text-xs text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+            />
+          </div>
+
+          <div className="flex-1 space-y-3 overflow-y-auto p-4" style={{ maxHeight: 340 }}>
+            {unreadCount > 0 && !bannerDismissed && (
+              <div className="rounded-lg border border-accent/40 bg-accent/10 p-2.5">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold text-accent">
+                    Catch up: {unreadCount} new message{unreadCount === 1 ? "" : "s"}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setBannerDismissed(true)}
+                    aria-label="Dismiss"
+                    className="text-muted transition-colors hover:text-foreground"
+                  >
+                    &times;
+                  </button>
+                </div>
+                <div className="mt-1.5 space-y-1">
+                  {messages.slice(-2).map((message) => (
+                    <p key={message.id} className="text-xs">
+                      <span className="font-semibold text-foreground">{message.author}: </span>
+                      <span className="text-muted">{truncateText(message.text, 90)}</span>
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {messages.length === 0 && (
+              <p className="text-xs text-muted">
+                No messages yet — say something to your league, or ask the AI for its take.
+              </p>
+            )}
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={message.isAi ? "rounded-lg border border-accent/30 bg-accent/5 p-2.5" : ""}
+              >
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className={`text-xs font-semibold ${message.isAi ? "text-accent" : "text-foreground"}`}>
+                    {message.author}
+                  </span>
+                  <span className="text-[10px] text-muted">{formatChatTime(message.timestamp)}</span>
+                </div>
+                <p className="mt-0.5 whitespace-pre-wrap text-sm text-foreground/90">{message.text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="border-t border-card-border p-4">
+            {aiError && <p className="mb-2 text-xs text-red-400">{aiError}</p>}
+            <p className="mb-1.5 text-[10px] leading-relaxed text-muted">
+              Get Claude&apos;s take on your league — who&apos;s flying, who&apos;s struggling, and some
+              friendly predictions.
+            </p>
+            <button
+              type="button"
+              onClick={handleAskAi}
+              disabled={askingAi || managers.length === 0}
+              className="mb-3 w-full rounded-lg bg-accent-strong px-3 py-2.5 text-sm font-bold text-[#04140b] transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {askingAi ? "Thinking it through..." : "Ask AI for league banter"}
+            </button>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={draft}
+                onChange={(event) => setDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") handleSend();
+                }}
+                placeholder="Say something..."
+                className="w-full rounded-lg border border-card-border bg-background/40 px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={handleSend}
+                className="shrink-0 rounded-lg border border-card-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-accent hover:text-accent"
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        </>
+      ) : (
+        <DirectTab leagueId={leagueId} managers={managers} name={name} />
+      )}
     </div>
   );
 }
@@ -322,7 +522,10 @@ function LeagueContent({ leagueId }: { leagueId: string }) {
       .then(async (res) => {
         const data = (await res.json()) as LeagueResponse;
         if (!res.ok) throw new Error(data.error ?? "Failed to load league.");
-        if (!cancelled) setLeague(data);
+        if (!cancelled) {
+          setLeague(data);
+          if (data.hasStandings) recordLeagueVisit(leagueId, data.leagueName);
+        }
       })
       .catch((err: Error) => {
         if (!cancelled) setError(err.message);
