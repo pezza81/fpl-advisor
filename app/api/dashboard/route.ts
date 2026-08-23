@@ -232,6 +232,7 @@ async function buildDemoDashboard(): Promise<DashboardData> {
     teamName: demo.teamName,
     overallPoints: demo.overallPoints,
     overallRank: demo.overallRank,
+    totalPlayers: demo.totalPlayers,
     gameweek: demo.gameweek,
     seasonStarted: true,
     isDemo: true,
@@ -317,6 +318,7 @@ export async function GET(request: NextRequest) {
 
   const data: DashboardData = {
     ...baseInfo,
+    totalPlayers: bootstrap.total_players,
     gameweek,
     seasonStarted,
     lastGameweekPoints: lastPlayedRow?.points ?? null,

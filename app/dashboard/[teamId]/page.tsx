@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
-import { DEMO_TEAM_ID } from "@/lib/fpl";
+import { DEMO_TEAM_ID, formatRankWithTotal, rankPercentile } from "@/lib/fpl";
 import type {
   DashboardData,
   DashboardLeague,
@@ -938,6 +938,8 @@ function DashboardContent({ teamId }: { teamId: string }) {
   const benchPlayers = dashboard ? dashboard.squad.filter((player) => !player.isStarting) : [];
   const flaggedBenchPlayers = benchPlayers.filter(looksLikeAStarter);
 
+  const rankTopPercent = dashboard ? rankPercentile(dashboard.overallRank, dashboard.totalPlayers) : null;
+
   const history = dashboard?.seasonHistory ?? [];
   const bestGw = history.length > 0 ? history.reduce((a, b) => (b.points > a.points ? b : a)) : null;
   const worstGw = history.length > 0 ? history.reduce((a, b) => (b.points < a.points ? b : a)) : null;
@@ -1036,7 +1038,11 @@ function DashboardContent({ teamId }: { teamId: string }) {
           )}
 
           <section className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatTile label="Overall rank" value={dashboard.overallRank > 0 ? dashboard.overallRank.toLocaleString() : "—"} />
+            <StatTile
+              label="Overall rank"
+              value={formatRankWithTotal(dashboard.overallRank, dashboard.totalPlayers)}
+              sub={rankTopPercent != null ? `Top ${rankTopPercent}%` : undefined}
+            />
             <StatTile label="Total points" value={dashboard.overallPoints} />
             <StatTile
               label="Last gameweek"

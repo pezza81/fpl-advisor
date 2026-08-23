@@ -60,6 +60,7 @@ export interface BootstrapStatic {
   element_types: FplElementType[];
   events: FplEvent[];
   chips: FplChip[];
+  total_players: number;
 }
 
 export interface FplPick {
@@ -159,6 +160,23 @@ export function flagBadgeClasses(flag: SquadPlayer["flag"]): string {
   return "bg-sky-500/15 text-sky-300";
 }
 
+// "8,556,826 of 9,335,966" — falls back to just the rank (or "—") when
+// either number isn't known yet (pre-season, or a bootstrap fetch failure).
+export function formatRankWithTotal(rank: number, totalPlayers: number): string {
+  if (rank <= 0) return "—";
+  if (totalPlayers <= 0) return rank.toLocaleString();
+  return `${rank.toLocaleString()} of ${totalPlayers.toLocaleString()}`;
+}
+
+// Where a manager's rank falls as a percentage of the way down the full
+// player list (rank 1 -> ~0%, last place -> ~100%) — the "Top X%" framing
+// FPL managers already use to talk about their rank, not a percentile in
+// the "beats X% of players" sense.
+export function rankPercentile(rank: number, totalPlayers: number): number | null {
+  if (rank <= 0 || totalPlayers <= 0) return null;
+  return Math.floor((rank / totalPlayers) * 100);
+}
+
 export interface TeamData {
   teamId: string;
   gameweek: number;
@@ -166,6 +184,7 @@ export interface TeamData {
   teamName: string;
   overallPoints: number;
   overallRank: number;
+  totalPlayers: number;
   bank: number;
   squadValue: number;
   squad: SquadPlayer[];
@@ -505,6 +524,7 @@ export function getDemoTeamData(bootstrap?: BootstrapStatic | null): TeamData {
     teamName: "Demo FC",
     overallPoints: 178,
     overallRank: 452301,
+    totalPlayers: bootstrap?.total_players ?? 0,
     bank: 0.4,
     squadValue,
     squad,

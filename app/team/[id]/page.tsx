@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
-import { flagBadgeClasses, flagLabel, type TeamData } from "@/lib/fpl";
+import { flagBadgeClasses, flagLabel, formatRankWithTotal, rankPercentile, type TeamData } from "@/lib/fpl";
 import { usePlayerInsight } from "@/lib/use-player-insight";
 import { PlayerModal } from "@/components/PlayerModal";
 import { AdviceCard } from "@/components/AdviceCard";
@@ -118,6 +118,8 @@ function TeamPageContent({ id }: { id: string }) {
     router.push("/");
   }
 
+  const rankTopPercent = team ? rankPercentile(team.overallRank, team.totalPlayers) : null;
+
   return (
     <div className="mx-auto w-full max-w-5xl px-6 py-12">
       <div className="flex items-center justify-between">
@@ -180,7 +182,8 @@ function TeamPageContent({ id }: { id: string }) {
                 <p className="text-muted">
                   {team.managerName} &middot; Gameweek {team.gameweek} &middot;{" "}
                   {team.overallPoints} pts &middot; Rank{" "}
-                  {team.overallRank.toLocaleString()}
+                  {formatRankWithTotal(team.overallRank, team.totalPlayers)}
+                  {rankTopPercent != null && <> &middot; Top {rankTopPercent}%</>}
                 </p>
                 <p className="text-sm text-muted">
                   Squad value £{team.squadValue}m &middot; Bank £{team.bank}m

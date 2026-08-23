@@ -7,13 +7,20 @@ import {
   getCurrentGameweek,
   getDemoTeamData,
   isDemoTeamId,
+  type BootstrapStatic,
 } from "@/lib/fpl";
 
 export async function GET(request: NextRequest) {
   const teamId = request.nextUrl.searchParams.get("teamId");
 
   if (teamId && isDemoTeamId(teamId)) {
-    return NextResponse.json(getDemoTeamData());
+    let bootstrap: BootstrapStatic | null = null;
+    try {
+      bootstrap = await fetchBootstrapStatic();
+    } catch (error) {
+      console.error("Failed to load bootstrap for demo team", error);
+    }
+    return NextResponse.json(getDemoTeamData(bootstrap));
   }
 
   if (!teamId || !/^\d+$/.test(teamId)) {
@@ -37,16 +44,17 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const baseInfo = {
-    teamId,
-    managerName: `${entry.player_first_name} ${entry.player_last_name}`,
-    teamName: entry.name,
-    overallPoints: entry.summary_overall_points ?? 0,
-    overallRank: entry.summary_overall_rank ?? 0,
-  };
-
   try {
     const bootstrap = await fetchBootstrapStatic();
+    const baseInfo = {
+      teamId,
+      managerName: `${entry.player_first_name} ${entry.player_last_name}`,
+      teamName: entry.name,
+      overallPoints: entry.summary_overall_points ?? 0,
+      overallRank: entry.summary_overall_rank ?? 0,
+      totalPlayers: bootstrap.total_players,
+    };
+
     const gameweek = getCurrentGameweek(bootstrap);
     const picksResponse = await fetchPicks(teamId, gameweek);
     const squad = buildSquad(picksResponse.picks, bootstrap);
@@ -64,7 +72,12 @@ export async function GET(request: NextRequest) {
     // real team — fall back to the entry-only info rather than erroring.
     console.error("Gameweek picks not available yet, falling back to entry-only data", error);
     return NextResponse.json({
-      ...baseInfo,
+      teamId,
+      managerName: `${entry.player_first_name} ${entry.player_last_name}`,
+      teamName: entry.name,
+      overallPoints: entry.summary_overall_points ?? 0,
+      overallRank: entry.summary_overall_rank ?? 0,
+      totalPlayers: 0,
       gameweek: 0,
       bank: 0,
       squadValue: 0,

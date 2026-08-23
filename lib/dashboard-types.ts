@@ -43,6 +43,7 @@ export interface DashboardData {
   teamName: string;
   overallPoints: number;
   overallRank: number;
+  totalPlayers: number;
   gameweek: number;
   seasonStarted: boolean;
   isDemo: boolean;
