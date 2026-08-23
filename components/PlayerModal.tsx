@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
-import type { SquadPlayer } from "@/lib/fpl";
+import { flagLabel, type SquadPlayer } from "@/lib/fpl";
 import {
   estimatePointsBreakdown,
   type FplMinutesTrend,
@@ -306,7 +306,7 @@ export function PlayerModal({
           <StatBlock label="Price" value={`£${player.price}m`} />
           <StatBlock label="Form" value={String(player.form)} />
           <StatBlock label="Total points" value={String(player.totalPoints)} />
-          <StatBlock label="Status" value={player.flag} />
+          <StatBlock label="Status" value={flagLabel(player.flag)} />
         </div>
 
         {player.news && (

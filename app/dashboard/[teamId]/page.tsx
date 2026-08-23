@@ -132,6 +132,66 @@ function StatTile({ label, value, sub }: { label: string; value: React.ReactNode
   );
 }
 
+const CHIP_EXPLANATIONS: { name: string; description: string; whenToUse: string }[] = [
+  {
+    name: "Wildcard",
+    description: "Make unlimited free transfers for one gameweek with no points penalty.",
+    whenToUse:
+      "Best used when your squad needs a real overhaul — an injury crisis, a bad run of fixtures, or replanning around a new fixture swing. You get two per season.",
+  },
+  {
+    name: "Free Hit",
+    description:
+      "A one-week wildcard — unlimited free changes, but your squad automatically reverts to how it was as soon as the gameweek ends.",
+    whenToUse:
+      "Best saved for a single unusual gameweek: a blank gameweek (several of your players have no fixture) or a double gameweek where you want to load up on players with two matches.",
+  },
+  {
+    name: "Bench Boost",
+    description: "Your bench players' points count towards your total this gameweek too, not just your starting XI.",
+    whenToUse:
+      "Best used when your full 15-man squad is fit and starting, ideally in a double gameweek so the bench also benefits from two sets of fixtures.",
+  },
+  {
+    name: "Triple Captain",
+    description: "Your captain scores 3x points this gameweek instead of the usual 2x.",
+    whenToUse:
+      "Best used on a premium, nailed-on player with a great fixture — ideally one playing twice in a double gameweek.",
+  },
+];
+
+function ChipsInfoModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
+      <div
+        className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-xl border border-card-border bg-card p-6 shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <h2 className="text-lg font-bold text-foreground">Chips explained</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="shrink-0 rounded-full p-1.5 text-lg leading-none text-muted transition-colors hover:bg-white/10 hover:text-foreground"
+          >
+            &times;
+          </button>
+        </div>
+        <div className="mt-4 flex flex-col gap-4">
+          {CHIP_EXPLANATIONS.map((chip) => (
+            <div key={chip.name} className="border-t border-card-border/50 pt-3 first:border-t-0 first:pt-0">
+              <p className="text-sm font-bold text-accent">{chip.name}</p>
+              <p className="mt-1 text-sm text-foreground/90">{chip.description}</p>
+              <p className="mt-1.5 text-xs text-muted">{chip.whenToUse}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function LeagueCard({ league }: { league: DashboardLeague }) {
   // Read directly at render time — a plain localStorage lookup, not state —
   // so the unread count always reflects whatever's currently stored.
@@ -446,6 +506,7 @@ function DashboardContent({ teamId }: { teamId: string }) {
 
   const [advice, setAdvice] = useState<AdviceResponse | null>(null);
   const [adviceError, setAdviceError] = useState("");
+  const [showChipsInfo, setShowChipsInfo] = useState(false);
   // Derived rather than a separate setState-in-effect: true exactly while
   // the auto-fetch effect below has fired but neither advice nor an error
   // has landed yet.
@@ -634,6 +695,19 @@ function DashboardContent({ teamId }: { teamId: string }) {
                     {!loadingAdvice && advice && (
                       <p className="mt-1 text-sm text-foreground">{condenseToOneLine(advice.captain)}</p>
                     )}
+                    <p className="mt-1.5 text-[10px] text-muted">
+                      This is a recommendation, not a setting — your actual captain is whoever you&apos;ve
+                      picked on{" "}
+                      <a
+                        href="https://fantasy.premierleague.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted underline decoration-muted/40 underline-offset-2 hover:text-accent hover:decoration-accent"
+                      >
+                        fantasy.premierleague.com
+                      </a>{" "}
+                      — this app just reads it automatically, it can&apos;t change it for you.
+                    </p>
                   </div>
 
                   <div>
@@ -663,7 +737,19 @@ function DashboardContent({ teamId }: { teamId: string }) {
                   </div>
 
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-muted">Chips available</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-muted">
+                        Chips available
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShowChipsInfo(true)}
+                        aria-label="What do the chips do?"
+                        className="inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border border-muted/60 text-[9px] font-bold leading-none text-muted transition-colors hover:border-accent hover:text-accent"
+                      >
+                        i
+                      </button>
+                    </div>
                     {availableChips.length === 0 ? (
                       <p className="mt-1 text-sm text-muted">None left in this window.</p>
                     ) : (
@@ -787,6 +873,8 @@ function DashboardContent({ teamId }: { teamId: string }) {
           )}
         </>
       )}
+
+      {showChipsInfo && <ChipsInfoModal onClose={() => setShowChipsInfo(false)} />}
     </div>
   );
 }

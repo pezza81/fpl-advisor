@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { loadSavedTeamId, saveTeamId } from "@/lib/team-id-storage";
 
 export default function Home() {
   const router = useRouter();
@@ -10,6 +11,18 @@ export default function Home() {
   const [error, setError] = useState("");
   const [leagueId, setLeagueId] = useState("");
   const [leagueError, setLeagueError] = useState("");
+
+  // Deliberately not read into state via a lazy initializer: localStorage
+  // doesn't exist during server rendering, so that would make the very
+  // first client render disagree with the server-rendered HTML (a real
+  // hydration mismatch, not just a redirect). Reading it only inside the
+  // effect means the page always renders the same form on first paint —
+  // matching SSR exactly — and a returning user is bounced on immediately
+  // afterward, a standard and effectively imperceptible tradeoff.
+  useEffect(() => {
+    const saved = loadSavedTeamId();
+    if (saved) router.replace(`/team/${saved}`);
+  }, [router]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -19,6 +32,7 @@ export default function Home() {
       return;
     }
     setError("");
+    saveTeamId(trimmed);
     router.push(`/team/${trimmed}`);
   }
 

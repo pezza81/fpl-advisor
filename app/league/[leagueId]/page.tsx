@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
-import type { SquadPlayer } from "@/lib/fpl";
+import { flagBadgeClasses, flagLabel, type SquadPlayer } from "@/lib/fpl";
 import type { LeagueData, LeagueManagerRow } from "@/lib/league-types";
 import {
   countUnread,
@@ -60,11 +60,9 @@ function CompactPlayerCard({ player }: { player: SquadPlayer }) {
           {player.position} &middot; {player.club}
         </p>
         <span
-          className={`shrink-0 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wide ${
-            player.flag === "KEEP" ? "bg-accent/15 text-accent" : "bg-red-500/15 text-red-400"
-          }`}
+          className={`shrink-0 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wide ${flagBadgeClasses(player.flag)}`}
         >
-          {player.flag}
+          {flagLabel(player.flag)}
         </span>
       </div>
       <p className="truncate text-xs font-semibold text-foreground">

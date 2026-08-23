@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
-import type { TeamData } from "@/lib/fpl";
+import { flagBadgeClasses, flagLabel, type TeamData } from "@/lib/fpl";
 import { usePlayerInsight } from "@/lib/use-player-insight";
 import { PlayerModal } from "@/components/PlayerModal";
+import { clearSavedTeamId } from "@/lib/team-id-storage";
 
 interface TeamResponse extends TeamData {
   error?: string;
@@ -31,6 +33,7 @@ export default function TeamPage({
 }
 
 function TeamPageContent({ id }: { id: string }) {
+  const router = useRouter();
   const [team, setTeam] = useState<TeamResponse | null>(null);
   const [teamError, setTeamError] = useState("");
   const [loadingTeam, setLoadingTeam] = useState(true);
@@ -108,12 +111,26 @@ function TeamPageContent({ id }: { id: string }) {
     });
   }
 
+  function handleChangeTeam() {
+    clearSavedTeamId();
+    router.push("/");
+  }
+
   return (
     <div className="mx-auto w-full max-w-5xl px-6 py-12">
       <div className="flex items-center justify-between">
-        <Link href="/" className="text-sm text-muted transition-colors hover:text-accent">
-          &larr; Back
-        </Link>
+        <div className="flex items-center gap-5">
+          <Link href="/" className="text-sm text-muted transition-colors hover:text-accent">
+            &larr; Back
+          </Link>
+          <button
+            type="button"
+            onClick={handleChangeTeam}
+            className="text-sm text-muted transition-colors hover:text-accent"
+          >
+            Change team
+          </button>
+        </div>
         <div className="flex items-center gap-5">
           <Link href={`/dashboard/${id}`} className="text-sm text-muted transition-colors hover:text-accent">
             Dashboard
@@ -203,13 +220,9 @@ function TeamPageContent({ id }: { id: string }) {
                     }`}
                   >
                     <span
-                      className={`absolute right-3 top-3 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
-                        player.flag === "KEEP"
-                          ? "bg-accent/15 text-accent"
-                          : "bg-red-500/15 text-red-400"
-                      }`}
+                      className={`absolute right-3 top-3 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${flagBadgeClasses(player.flag)}`}
                     >
-                      {player.flag}
+                      {flagLabel(player.flag)}
                     </span>
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">
                       {player.position} &middot; {player.club}

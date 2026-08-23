@@ -126,7 +126,21 @@ export interface SquadPlayer {
   isStarting: boolean;
   status: string;
   news: string;
-  flag: "KEEP" | "SELL";
+  // EARLY_SEASON: gameweeks 1-4, not injured/suspended — form is too noisy
+  // this early to call a sell, so this is a deliberately neutral "not
+  // enough data yet" state rather than an endorsement either way.
+  flag: "KEEP" | "SELL" | "EARLY_SEASON";
+}
+
+export function flagLabel(flag: SquadPlayer["flag"]): string {
+  if (flag === "EARLY_SEASON") return "Early season";
+  return flag;
+}
+
+export function flagBadgeClasses(flag: SquadPlayer["flag"]): string {
+  if (flag === "KEEP") return "bg-accent/15 text-accent";
+  if (flag === "SELL") return "bg-red-500/15 text-red-400";
+  return "bg-sky-500/15 text-sky-300";
 }
 
 export interface TeamData {
@@ -289,7 +303,18 @@ export function getCurrentGameweek(bootstrap: BootstrapStatic): number {
   return lastFinished?.id ?? 1;
 }
 
-function computeFlag(status: string, form: number): SquadPlayer["flag"] {
+// Gameweeks 1-4: a player's `form` (average points over recent matches) is
+// still mostly noise this early — one blank or one haul swings it wildly —
+// so a low-form sell call isn't trustworthy yet. Only a confirmed injury
+// ('i') or suspension ('s') is treated as a real signal in that window;
+// everything else (including "doubtful") gets a neutral EARLY_SEASON flag.
+const EARLY_SEASON_CUTOFF_GAMEWEEK = 4;
+const CONFIRMED_UNAVAILABLE_STATUSES = new Set(["i", "s"]);
+
+function computeFlag(status: string, form: number, gameweek: number): SquadPlayer["flag"] {
+  if (CONFIRMED_UNAVAILABLE_STATUSES.has(status)) return "SELL";
+  if (gameweek <= EARLY_SEASON_CUTOFF_GAMEWEEK) return "EARLY_SEASON";
+
   const isUnavailable = status !== "a";
   return isUnavailable || form < 2 ? "SELL" : "KEEP";
 }
@@ -302,6 +327,7 @@ function mapElementFields(
   element: FplElement,
   teamsById: Map<number, FplTeam>,
   typesById: Map<number, FplElementType>,
+  gameweek: number,
 ): Omit<SquadPlayer, "isCaptain" | "isViceCaptain" | "isStarting"> {
   const form = Number.parseFloat(element.form) || 0;
 
@@ -316,7 +342,7 @@ function mapElementFields(
     selectedByPercent: Number.parseFloat(element.selected_by_percent) || 0,
     status: element.status,
     news: element.news,
-    flag: computeFlag(element.status, form),
+    flag: computeFlag(element.status, form, gameweek),
   };
 }
 
@@ -331,6 +357,7 @@ export function buildSquad(
   const elementsById = new Map(
     bootstrap.elements.map((element) => [element.id, element]),
   );
+  const gameweek = getCurrentGameweek(bootstrap);
 
   return picks
     .map((pick): SquadPlayer | null => {
@@ -338,7 +365,7 @@ export function buildSquad(
       if (!element) return null;
 
       return {
-        ...mapElementFields(element, teamsById, typesById),
+        ...mapElementFields(element, teamsById, typesById, gameweek),
         isCaptain: pick.is_captain,
         isViceCaptain: pick.is_vice_captain,
         isStarting: pick.position <= 11,
@@ -357,9 +384,10 @@ export function buildAllPlayers(bootstrap: BootstrapStatic): SquadPlayer[] {
   const typesById = new Map(
     bootstrap.element_types.map((type) => [type.id, type]),
   );
+  const gameweek = getCurrentGameweek(bootstrap);
 
   return bootstrap.elements.map((element) => ({
-    ...mapElementFields(element, teamsById, typesById),
+    ...mapElementFields(element, teamsById, typesById, gameweek),
     isCaptain: false,
     isViceCaptain: false,
     isStarting: true,
@@ -416,6 +444,8 @@ const DEMO_SQUAD_INPUT: DemoPlayerInput[] = [
   { fplId: 0, name: "Jesus", position: "FWD", club: "ARS", form: 0.5, price: 6.9, totalPoints: 20, selectedByPercent: 1.1, isStarting: false, status: "s", news: "Suspended until 30 Aug" },
 ];
 
+const DEMO_GAMEWEEK = 3;
+
 export function getDemoTeamData(): TeamData {
   const squad: SquadPlayer[] = DEMO_SQUAD_INPUT.map((player, index) => ({
     // Real FPL id where we have one (so per-player history lookups work);
@@ -433,14 +463,14 @@ export function getDemoTeamData(): TeamData {
     isStarting: player.isStarting,
     status: player.status,
     news: player.news,
-    flag: computeFlag(player.status, player.form),
+    flag: computeFlag(player.status, player.form, DEMO_GAMEWEEK),
   }));
 
   const squadValue = Math.round(squad.reduce((sum, p) => sum + p.price, 0) * 10) / 10;
 
   return {
     teamId: DEMO_TEAM_ID,
-    gameweek: 3,
+    gameweek: DEMO_GAMEWEEK,
     managerName: "Demo Manager",
     teamName: "Demo FC",
     overallPoints: 178,
