@@ -7,18 +7,23 @@ import { usePlayerInsight } from "@/lib/use-player-insight";
 import { PlayerModal } from "@/components/PlayerModal";
 import { statusBadgeClasses, statusLabel } from "@/lib/player-status";
 
+interface PlayerWithXG extends SquadPlayer {
+  xG: number | null;
+  xA: number | null;
+}
+
 interface PlayersResponse {
-  players: SquadPlayer[];
+  players: PlayerWithXG[];
   error?: string;
 }
 
-type SortKey = "name" | "club" | "position" | "price" | "form" | "totalPoints" | "status";
+type SortKey = "name" | "club" | "position" | "price" | "form" | "totalPoints" | "status" | "xG" | "xA";
 type SortDirection = "asc" | "desc";
 
 const POSITIONS = ["All", "GKP", "DEF", "MID", "FWD"] as const;
 
 export default function PlayersPage() {
-  const [players, setPlayers] = useState<SquadPlayer[]>([]);
+  const [players, setPlayers] = useState<PlayerWithXG[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -107,6 +112,12 @@ export default function PlayersPage() {
           break;
         case "totalPoints":
           result = a.totalPoints - b.totalPoints;
+          break;
+        case "xG":
+          result = (a.xG ?? -1) - (b.xG ?? -1);
+          break;
+        case "xA":
+          result = (a.xA ?? -1) - (b.xA ?? -1);
           break;
       }
       return result * direction;
@@ -210,6 +221,8 @@ export default function PlayersPage() {
                   <SortableHeader label="Price" sortKey="price" activeKey={sortKey} direction={sortDirection} onSort={toggleSort} align="right" />
                   <SortableHeader label="Form" sortKey="form" activeKey={sortKey} direction={sortDirection} onSort={toggleSort} align="right" />
                   <SortableHeader label="Points" sortKey="totalPoints" activeKey={sortKey} direction={sortDirection} onSort={toggleSort} align="right" />
+                  <SortableHeader label="xG" sortKey="xG" activeKey={sortKey} direction={sortDirection} onSort={toggleSort} align="right" />
+                  <SortableHeader label="xA" sortKey="xA" activeKey={sortKey} direction={sortDirection} onSort={toggleSort} align="right" />
                   <SortableHeader label="Status" sortKey="status" activeKey={sortKey} direction={sortDirection} onSort={toggleSort} />
                 </tr>
               </thead>
@@ -228,6 +241,8 @@ export default function PlayersPage() {
                     <td className="px-3 py-2.5 text-right font-semibold text-foreground">
                       {player.totalPoints}
                     </td>
+                    <td className="px-3 py-2.5 text-right text-foreground">{player.xG ?? "—"}</td>
+                    <td className="px-3 py-2.5 text-right text-foreground">{player.xA ?? "—"}</td>
                     <td className="px-3 py-2.5">
                       <span
                         className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${statusBadgeClasses(player.status)}`}
@@ -239,7 +254,7 @@ export default function PlayersPage() {
                 ))}
                 {visiblePlayers.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-3 py-8 text-center text-muted">
+                    <td colSpan={9} className="px-3 py-8 text-center text-muted">
                       No players match your filters.
                     </td>
                   </tr>

@@ -10,6 +10,7 @@ import {
   type PointsBreakdown,
 } from "@/lib/fpl-history";
 import type { LineupStatus, PlayerMatchContext } from "@/lib/api-football";
+import type { UnderstatPlayer } from "@/lib/understat";
 
 // Shared between the squad page and the /players browser — both open the
 // same modal for a clicked player, backed by the same /api/player-insight
@@ -20,6 +21,7 @@ export interface PlayerInsight {
   fplSeasons: FplSeasonRow[];
   summary: string;
   matchContext?: PlayerMatchContext;
+  understatXG?: UnderstatPlayer | null;
   error?: string;
 }
 
@@ -509,6 +511,29 @@ export function PlayerModal({
               No official FPL season history for this player yet — likely new to the Premier
               League.
             </p>
+          </div>
+        )}
+
+        {!loadingInsight && !insightError && insight && (
+          <div className="mt-5 border-t border-card-border pt-4">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs font-bold uppercase tracking-widest text-muted">
+                Expected performance (xG)
+              </p>
+              <span className="text-[10px] text-muted">via Understat</span>
+            </div>
+            {insight.understatXG ? (
+              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <StatBlock label="xG this season" value={String(insight.understatXG.xG)} />
+                <StatBlock label="xA this season" value={String(insight.understatXG.xA)} />
+                <StatBlock label="xG per 90" value={String(insight.understatXG.xG90)} />
+                <StatBlock label="xA per 90" value={String(insight.understatXG.xA90)} />
+              </div>
+            ) : (
+              <p className="mt-2 text-sm text-muted">
+                No Understat xG data available yet for this player this season.
+              </p>
+            )}
           </div>
         )}
 

@@ -11,6 +11,7 @@ import {
 } from "@/lib/fpl-history";
 import { getPlayerMatchContext, type ClubRestDays, type PlayerMatchContext } from "@/lib/api-football";
 import { fplClubToTeamName, getRestDaysImpact, restBucketFor, REST_BUCKET_LABELS } from "@/lib/team-stats";
+import { getPlayerXG } from "@/lib/understat";
 
 // The API-Football digest keys seasons by numeric year (2024); FPL history
 // keys them by "2024/25"-style labels. Converts a digest-sourced trend into
@@ -173,7 +174,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "A player name is required." }, { status: 400 });
   }
 
-  const [digest, fplSeasons, matchContext] = await Promise.all([
+  const [digest, fplSeasons, matchContext, understatXG] = await Promise.all([
     loadFootballDigest(),
     fetchFplSeasonHistory(id ?? 0),
     club
@@ -192,6 +193,10 @@ export async function POST(request: NextRequest) {
           headToHead: null,
           restDays: null,
         } satisfies PlayerMatchContext),
+    getPlayerXG(name).catch((error) => {
+      console.error("Failed to load Understat xG data", error);
+      return null;
+    }),
   ]);
 
   // Goal-involvement trend: FPL's own history is the primary source (exact
@@ -248,7 +253,7 @@ In the first paragraph, weigh their current form against the goal-involvement tr
     const textBlock = response.content.find((block) => block.type === "text");
     const summary = textBlock && textBlock.type === "text" ? textBlock.text.trim() : "";
 
-    return NextResponse.json({ trend, minutesTrend, fplSeasons, summary, matchContext });
+    return NextResponse.json({ trend, minutesTrend, fplSeasons, summary, matchContext, understatXG });
   } catch (error) {
     console.error("Failed to generate player insight", error);
     return NextResponse.json(
