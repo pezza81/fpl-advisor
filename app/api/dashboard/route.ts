@@ -8,6 +8,7 @@ import {
   fetchPicks,
   getCurrentGameweek,
   getDemoTeamData,
+  getPrivateLeagues,
   type BootstrapStatic,
   type EntryHistoryChip,
   type FplChip,
@@ -25,6 +26,7 @@ import {
 import type {
   ChipStatus,
   DashboardData,
+  DashboardLeague,
   SeasonHistoryRow,
   SquadHealthPlayer,
 } from "@/lib/dashboard-types";
@@ -167,6 +169,11 @@ async function buildDemoDashboard(): Promise<DashboardData> {
 
   const squad = await buildSquadHealth(demo.squad);
 
+  // No real numeric FPL entry behind the demo account, so no real
+  // leagues.classic to filter — points at the same "demo" league id that
+  // /league/demo and /api/league already serve.
+  const leagues: DashboardLeague[] = [{ id: "demo", name: "Demo Mini-League" }];
+
   return {
     teamId: DEMO_TEAM_ID,
     managerName: demo.managerName,
@@ -184,6 +191,7 @@ async function buildDemoDashboard(): Promise<DashboardData> {
     chips,
     squad,
     seasonHistory,
+    leagues,
   };
 }
 
@@ -266,6 +274,7 @@ export async function GET(request: NextRequest) {
     chips,
     squad: squadHealth,
     seasonHistory: buildSeasonHistory(history.gameweeks, bootstrap.events),
+    leagues: getPrivateLeagues(entry),
   };
 
   return NextResponse.json(data);

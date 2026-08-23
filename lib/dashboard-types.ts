@@ -26,6 +26,11 @@ export interface ChipStatus {
   available: boolean;
 }
 
+export interface DashboardLeague {
+  id: string;
+  name: string;
+}
+
 export interface DashboardData {
   teamId: string;
   managerName: string;
@@ -43,4 +48,5 @@ export interface DashboardData {
   chips: ChipStatus[];
   squad: SquadHealthPlayer[];
   seasonHistory: SeasonHistoryRow[];
+  leagues: DashboardLeague[];
 }

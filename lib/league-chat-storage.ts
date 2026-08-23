@@ -1,7 +1,7 @@
 // All client-only, localStorage-backed — there's no backend for league chat,
 // so "shared" messages only exist within one browser. Centralized here since
 // both the league page and the dashboard's league cards need to read/write
-// the same data (chat log, last-seen timestamps, recently visited leagues).
+// the same data (chat log, last-seen timestamps).
 
 export interface ChatMessage {
   id: string;
@@ -11,14 +11,6 @@ export interface ChatMessage {
   isAi?: boolean;
 }
 
-export interface RecentLeagueEntry {
-  leagueId: string;
-  leagueName: string;
-  visitedAt: string;
-}
-
-const RECENT_LEAGUES_KEY = "fpl-advisor:recent-leagues";
-const MAX_RECENT_LEAGUES = 5;
 const CHAT_NAME_KEY = "fpl-advisor:chat-name";
 
 function chatKey(leagueId: string): string {
@@ -83,21 +75,6 @@ export function countUnread(leagueId: string, messages?: ChatMessage[]): number 
   const log = messages ?? loadChatMessages(leagueId);
   const cutoff = new Date(lastSeen).getTime();
   return log.filter((message) => new Date(message.timestamp).getTime() > cutoff).length;
-}
-
-export function loadRecentLeagues(): RecentLeagueEntry[] {
-  return readJson(RECENT_LEAGUES_KEY, []);
-}
-
-// Upserts this league to the front of the recent-leagues list, called once a
-// league page has loaded enough to know its real name.
-export function recordLeagueVisit(leagueId: string, leagueName: string): void {
-  const existing = loadRecentLeagues().filter((entry) => entry.leagueId !== leagueId);
-  const next = [{ leagueId, leagueName, visitedAt: new Date().toISOString() }, ...existing].slice(
-    0,
-    MAX_RECENT_LEAGUES,
-  );
-  writeJson(RECENT_LEAGUES_KEY, next);
 }
 
 export function loadDirectMessages(leagueId: string, managerEntry: string | number): ChatMessage[] {

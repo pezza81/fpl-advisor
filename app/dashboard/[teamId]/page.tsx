@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { DEMO_TEAM_ID } from "@/lib/fpl";
-import type { DashboardData, SeasonHistoryRow, SquadHealthPlayer } from "@/lib/dashboard-types";
-import { countUnread, loadRecentLeagues, type RecentLeagueEntry } from "@/lib/league-chat-storage";
+import type { DashboardData, DashboardLeague, SeasonHistoryRow, SquadHealthPlayer } from "@/lib/dashboard-types";
+import { countUnread } from "@/lib/league-chat-storage";
 
 interface DashboardResponse extends DashboardData {
   error?: string;
@@ -132,22 +132,27 @@ function StatTile({ label, value, sub }: { label: string; value: React.ReactNode
   );
 }
 
-function LeagueCard({ league }: { league: RecentLeagueEntry }) {
+function LeagueCard({ league }: { league: DashboardLeague }) {
   // Read directly at render time — a plain localStorage lookup, not state —
   // so the unread count always reflects whatever's currently stored.
-  const unread = countUnread(league.leagueId);
+  const unread = countUnread(league.id);
   return (
-    <Link
-      href={`/league/${league.leagueId}`}
-      className="flex items-center justify-between gap-2 rounded-lg border border-card-border/70 bg-background/40 px-3 py-2.5 transition-colors hover:border-accent/50"
-    >
-      <span className="truncate text-sm font-semibold text-foreground">{league.leagueName}</span>
-      {unread > 0 && (
-        <span className="shrink-0 rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold text-accent">
-          {unread} new
-        </span>
-      )}
-    </Link>
+    <div className="flex items-center justify-between gap-3 rounded-lg border border-card-border/70 bg-background/40 px-3 py-2.5">
+      <div className="min-w-0">
+        <p className="truncate text-sm font-semibold text-foreground">{league.name}</p>
+        {unread > 0 && (
+          <span className="mt-0.5 inline-block rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold text-accent">
+            {unread} new
+          </span>
+        )}
+      </div>
+      <Link
+        href={`/league/${league.id}`}
+        className="shrink-0 rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent/20"
+      >
+        View league
+      </Link>
+    </div>
   );
 }
 
@@ -438,7 +443,6 @@ function DashboardContent({ teamId }: { teamId: string }) {
   const [dashboard, setDashboard] = useState<DashboardResponse | null>(null);
   const [dashboardError, setDashboardError] = useState("");
   const [loadingDashboard, setLoadingDashboard] = useState(true);
-  const [recentLeagues] = useState<RecentLeagueEntry[]>(() => loadRecentLeagues());
 
   const [advice, setAdvice] = useState<AdviceResponse | null>(null);
   const [adviceError, setAdviceError] = useState("");
@@ -588,12 +592,12 @@ function DashboardContent({ teamId }: { teamId: string }) {
             <StatTile label="Next deadline" value={<CountdownTimer deadline={dashboard.nextDeadline} />} />
           </section>
 
-          {recentLeagues.length > 0 && (
+          {dashboard.leagues.length > 0 && (
             <section className="mt-5">
               <h2 className="text-xs font-bold uppercase tracking-widest text-muted">Your leagues</h2>
               <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {recentLeagues.map((league) => (
-                  <LeagueCard key={league.leagueId} league={league} />
+                {dashboard.leagues.map((league) => (
+                  <LeagueCard key={league.id} league={league} />
                 ))}
               </div>
             </section>

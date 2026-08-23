@@ -71,6 +71,17 @@ export interface PicksResponse {
   };
 }
 
+export interface FplClassicLeagueMembership {
+  id: number;
+  name: string;
+  short_name: string | null;
+  // "s" = FPL-system-generated (Overall, per-team, per-region, per-gameweek,
+  // top-1%/top-10%, broadcast-partner leagues like Sky Sports/TNT/Viaplay —
+  // verified against real accounts, not just "Overall" or a naming pattern).
+  // "x" = a genuine private/invitational mini-league a manager joined by code.
+  league_type: string;
+}
+
 export interface EntryResponse {
   id: number;
   player_first_name: string;
@@ -80,6 +91,25 @@ export interface EntryResponse {
   // pre-season, when the fixture calendar hasn't started yet.
   summary_overall_points: number | null;
   summary_overall_rank: number | null;
+  leagues: {
+    classic: FplClassicLeagueMembership[];
+  };
+}
+
+export interface PrivateLeague {
+  id: string;
+  name: string;
+}
+
+// The manager's own private mini-leagues, filtering out every FPL-generated
+// system league. league_type is the reliable signal for this (see
+// FplClassicLeagueMembership) — checked against several real accounts, name
+// or id-based heuristics ("Overall", "S1...", large ids) would have missed
+// system leagues like "Sky Sports League" or "Top 10% 25/26 League".
+export function getPrivateLeagues(entry: EntryResponse): PrivateLeague[] {
+  return entry.leagues.classic
+    .filter((league) => league.league_type !== "s")
+    .map((league) => ({ id: String(league.id), name: league.name }));
 }
 
 export interface SquadPlayer {

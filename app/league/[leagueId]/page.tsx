@@ -10,7 +10,6 @@ import {
   loadChatName,
   loadDirectMessages,
   markChatSeen,
-  recordLeagueVisit,
   saveChatMessages,
   saveChatName,
   saveDirectMessages,
@@ -522,10 +521,7 @@ function LeagueContent({ leagueId }: { leagueId: string }) {
       .then(async (res) => {
         const data = (await res.json()) as LeagueResponse;
         if (!res.ok) throw new Error(data.error ?? "Failed to load league.");
-        if (!cancelled) {
-          setLeague(data);
-          if (data.hasStandings) recordLeagueVisit(leagueId, data.leagueName);
-        }
+        if (!cancelled) setLeague(data);
       })
       .catch((err: Error) => {
         if (!cancelled) setError(err.message);
