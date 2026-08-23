@@ -24,6 +24,12 @@ import {
   getLineupStatusForPlayer,
   preloadMatchContextCache,
 } from "@/lib/api-football";
+import { chipExplanationFor } from "@/lib/chips";
+
+interface AdviceChip {
+  name: string;
+  label: string;
+}
 
 interface AdviceRequestBody {
   teamName?: string;
@@ -31,6 +37,7 @@ interface AdviceRequestBody {
   bank?: number;
   squadValue?: number;
   squad?: SquadPlayer[];
+  availableChips?: AdviceChip[];
 }
 
 const SECTION_LABELS = ["TRANSFER", "CAPTAIN", "CHIP", "ACTIONS"] as const;
@@ -242,6 +249,23 @@ function formatSquadForPrompt(squad: SquadPlayer[]): string {
     .join("\n");
 }
 
+// Any chip the manager could play right now (per the FPL app's own chip
+// windows) — surfaced explicitly so the CHIP section can give a real
+// recommendation instead of the generic "consider a chip" footnote it'd
+// otherwise default to with no chip-availability signal at all.
+function buildChipContext(availableChips?: AdviceChip[]): string {
+  if (!availableChips || availableChips.length === 0) return "";
+
+  const lines = availableChips.map((chip) => {
+    const info = chipExplanationFor(chip.name);
+    return info
+      ? `${chip.label}: ${info.description} ${info.whenToUse}`
+      : `${chip.label}: available to play this gameweek.`;
+  });
+
+  return `\nChips available to play this gameweek (per this manager's own FPL chip windows):\n${lines.join("\n")}\n`;
+}
+
 export async function POST(request: NextRequest) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey || apiKey === "placeholder") {
@@ -258,7 +282,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  const { squad, teamName, gameweek, bank, squadValue } = body;
+  const { squad, teamName, gameweek, bank, squadValue, availableChips } = body;
   if (!squad || !Array.isArray(squad) || squad.length === 0) {
     return NextResponse.json(
       { error: "A non-empty squad array is required." },
@@ -273,6 +297,7 @@ export async function POST(request: NextRequest) {
     buildRestDaysContext(squad),
   ]);
   const teamStatsContext = buildTeamStatsContext(squad);
+  const chipContext = buildChipContext(availableChips);
 
   const prompt = `You are a sharp, friendly Fantasy Premier League expert giving advice to a mate ahead of gameweek ${gameweek ?? "the next gameweek"}.
 
@@ -282,10 +307,10 @@ Squad value: £${squadValue ?? 0}m
 
 Current 15-man squad (position, name, club, price, form, total points, role):
 ${formatSquadForPrompt(squad)}
-${trendContext}${teamStatsContext}${matchStatusContext}${restDaysContext}
-Give advice in plain English, written like a knowledgeable friend chatting over a pint — no markdown, no bullet points, no headers other than the four labels below, no asterisks. Keep the TRANSFER, CAPTAIN and CHIP sections to two or three sentences each.
+${trendContext}${teamStatsContext}${matchStatusContext}${restDaysContext}${chipContext}
+Give advice in plain English, written like a knowledgeable friend chatting over a pint — no markdown, no bullet points, no headers other than the four labels below, no asterisks. Keep the TRANSFER and CAPTAIN sections to two or three sentences each. ${chipContext ? "The CHIP section is different this week: see the dedicated instruction below." : "Keep the CHIP section to two or three sentences as well."}
 
-${trendContext ? "Be trend-aware, not just form-aware: this week's form is a snapshot, the 3-season trend data above is the pattern behind it. If a squad player is flagged as declining, say so explicitly and treat that as a real reason to consider moving them on even if their current form looks okay. If a squad player is flagged as rising, that strengthens the case to keep or captain them. When recommending a transfer target, prefer someone from the trending-upward list if they fit the budget (bank plus a realistic sale price) and the position needed — name the specific trend evidence (e.g. \"his G+A jumped from X to Y last season\") rather than just their current form. Only fall back to reasoning from current price and form when the trend data doesn't cover a relevant player.\n\n" : ""}${teamStatsContext ? "Use the real xG data above to justify defensive picks (clean sheet potential for defenders/goalkeepers) and attacking picks (goal threat for midfielders/forwards) — cite the actual numbers (e.g. \"only 0.8 xG conceded per game in the last 5\") instead of vague statements like \"good fixtures\" or generic FPL fixture difficulty talk. A club ranked well for defense is a stronger case for captaining or keeping its defenders/goalkeeper; a club ranked well for attack strengthens the case for its midfielders/forwards. If a club isn't covered by this data, fall back to form and points as normal.\n\n" : ""}${matchStatusContext ? "The live injury/lineup/head-to-head data above is your strongest signal — weigh it above trend and form. If a squad player has a current injury or suspension designation, or is expected on the bench, flag that STRONGLY in the TRANSFER section and treat it as reason enough to move them on now, even if their trend and price look fine — a player who can't play is worth zero points regardless of underlying numbers. For the CAPTAIN section, factor in each candidate's head-to-head record against their next opponent: a poor recent head-to-head (more losses than wins, or conceding more than scoring) is a real reason to downgrade a captaincy pick even if their current form is good, and a strong head-to-head record reinforces a captaincy pick. If a club has no head-to-head data (e.g. newly promoted opponent), just reason from form and team strength as normal.\n\n" : ""}${restDaysContext ? "Rest days matter too: if a squad player's club has 3 days or fewer rest before their next fixture, flag it as a real rotation-risk factor in the TRANSFER section (fatigue increases injury and squad-rotation risk, and the historical xG-in-that-bracket number above shows whether it actually hurts this specific club's output) — cite the actual xG figures given rather than just saying \"short rest\". If a club has 7+ days rest, mention it as a freshness advantage worth factoring into the CAPTAIN pick, again citing the historical numbers if they support it. Don't invent a rest-days claim for a club not listed above.\n\n" : ""}Respond with exactly four sections, each starting on its own line with the label followed by a colon, in this order:
+${trendContext ? "Be trend-aware, not just form-aware: this week's form is a snapshot, the 3-season trend data above is the pattern behind it. If a squad player is flagged as declining, say so explicitly and treat that as a real reason to consider moving them on even if their current form looks okay. If a squad player is flagged as rising, that strengthens the case to keep or captain them. When recommending a transfer target, prefer someone from the trending-upward list if they fit the budget (bank plus a realistic sale price) and the position needed — name the specific trend evidence (e.g. \"his G+A jumped from X to Y last season\") rather than just their current form. Only fall back to reasoning from current price and form when the trend data doesn't cover a relevant player.\n\n" : ""}${teamStatsContext ? "Use the real xG data above to justify defensive picks (clean sheet potential for defenders/goalkeepers) and attacking picks (goal threat for midfielders/forwards) — cite the actual numbers (e.g. \"only 0.8 xG conceded per game in the last 5\") instead of vague statements like \"good fixtures\" or generic FPL fixture difficulty talk. A club ranked well for defense is a stronger case for captaining or keeping its defenders/goalkeeper; a club ranked well for attack strengthens the case for its midfielders/forwards. If a club isn't covered by this data, fall back to form and points as normal.\n\n" : ""}${matchStatusContext ? "The live injury/lineup/head-to-head data above is your strongest signal — weigh it above trend and form. If a squad player has a current injury or suspension designation, or is expected on the bench, flag that STRONGLY in the TRANSFER section and treat it as reason enough to move them on now, even if their trend and price look fine — a player who can't play is worth zero points regardless of underlying numbers. For the CAPTAIN section, factor in each candidate's head-to-head record against their next opponent: a poor recent head-to-head (more losses than wins, or conceding more than scoring) is a real reason to downgrade a captaincy pick even if their current form is good, and a strong head-to-head record reinforces a captaincy pick. If a club has no head-to-head data (e.g. newly promoted opponent), just reason from form and team strength as normal.\n\n" : ""}${restDaysContext ? "Rest days matter too: if a squad player's club has 3 days or fewer rest before their next fixture, flag it as a real rotation-risk factor in the TRANSFER section (fatigue increases injury and squad-rotation risk, and the historical xG-in-that-bracket number above shows whether it actually hurts this specific club's output) — cite the actual xG figures given rather than just saying \"short rest\". If a club has 7+ days rest, mention it as a freshness advantage worth factoring into the CAPTAIN pick, again citing the historical numbers if they support it. Don't invent a rest-days claim for a club not listed above.\n\n" : ""}${chipContext ? "This manager has at least one chip available to play RIGHT NOW — treat the CHIP section as a genuine dedicated recommendation, not a brief footnote. Write five or six sentences that: name the specific available chip(s) listed above; give a clear, direct verdict on whether to play one this gameweek or hold off; explain exactly why, using that chip's own description above and this specific squad and gameweek (e.g. an injury crisis or bad fixture run for a wildcard, a nailed-on premium player with a great fixture for triple captain, a fully-fit strong bench for bench boost, a blank or double gameweek for free hit); and give a concrete estimate of the realistic extra points return playing it now could bring, or, if holding is the right call, what specific future gameweek or condition to wait for instead. If more than one chip is available, cover each by name rather than picking only one to discuss.\n\n" : ""}Respond with exactly four sections, each starting on its own line with the label followed by a colon, in this order:
 
 TRANSFER: your recommendation on who to transfer out and in, or hold, and why.
 CAPTAIN: your captain and vice-captain pick for this gameweek and why.
@@ -298,8 +323,9 @@ ACTIONS: no fewer than 3 and no more than 5 lines total — pick the most import
       // Opus 5 thinks by default and max_tokens caps thinking + the visible
       // answer together. Cross-referencing squad + trend + xG + live
       // injury/lineup/h2h/rest-days data is a harder reasoning task than
-      // plain squad advice, so keep generous headroom.
-      max_tokens: 6144,
+      // plain squad advice, and a dedicated multi-sentence CHIP section adds
+      // more visible output on top, so keep generous headroom.
+      max_tokens: 7168,
       messages: [{ role: "user", content: prompt }],
     });
 

@@ -31,6 +31,12 @@ export interface DashboardLeague {
   name: string;
 }
 
+export interface WhatsHappeningTile {
+  label: string;
+  value: string;
+  context: string;
+}
+
 export interface DashboardData {
   teamId: string;
   managerName: string;
@@ -49,4 +55,5 @@ export interface DashboardData {
   squad: SquadHealthPlayer[];
   seasonHistory: SeasonHistoryRow[];
   leagues: DashboardLeague[];
+  whatsHappening: WhatsHappeningTile[];
 }

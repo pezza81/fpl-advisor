@@ -23,20 +23,15 @@ import {
   getLineupStatusForPlayer,
   preloadMatchContextCache,
 } from "@/lib/api-football";
+import { CHIP_LABELS } from "@/lib/chips";
 import type {
   ChipStatus,
   DashboardData,
   DashboardLeague,
   SeasonHistoryRow,
   SquadHealthPlayer,
+  WhatsHappeningTile,
 } from "@/lib/dashboard-types";
-
-const CHIP_LABELS: Record<string, string> = {
-  wildcard: "Wildcard",
-  freehit: "Free Hit",
-  bboost: "Bench Boost",
-  "3xc": "Triple Captain",
-};
 
 // A chip counts as "available" if the current gameweek falls inside one of
 // its windows (each chip type gets two windows a season, first/second half)
@@ -66,6 +61,62 @@ function computeChipStatus(
   }
 
   return Array.from(byName.values());
+}
+
+// FPL exposes an official "most transferred in" field on the current event,
+// but has no equivalent "most transferred out" — so that one tile is derived
+// by sorting elements ourselves, and is labelled as our own read of the data
+// rather than an official FPL ranking.
+function buildWhatsHappening(bootstrap: BootstrapStatic): WhatsHappeningTile[] {
+  const currentEvent =
+    bootstrap.events.find((event) => event.is_current) ??
+    bootstrap.events.find((event) => event.is_previous);
+  if (!currentEvent) return [];
+
+  const elementById = new Map(bootstrap.elements.map((element) => [element.id, element]));
+  const tiles: WhatsHappeningTile[] = [];
+
+  const captainPick = currentEvent.most_captained != null ? elementById.get(currentEvent.most_captained) : undefined;
+  if (captainPick) {
+    tiles.push({
+      label: "Most captained",
+      value: captainPick.web_name,
+      context: `${captainPick.selected_by_percent}% of managers own ${captainPick.web_name} this week — is your captain a rarer pick?`,
+    });
+  }
+
+  const transferredInPick =
+    currentEvent.most_transferred_in != null ? elementById.get(currentEvent.most_transferred_in) : undefined;
+  if (transferredInPick) {
+    tiles.push({
+      label: "Most transferred in",
+      value: transferredInPick.web_name,
+      context: `${transferredInPick.transfers_in_event.toLocaleString()} managers have brought in ${transferredInPick.web_name} this gameweek.`,
+    });
+  }
+
+  const transferredOutPick = [...bootstrap.elements].sort(
+    (a, b) => b.transfers_out_event - a.transfers_out_event,
+  )[0];
+  if (transferredOutPick && transferredOutPick.transfers_out_event > 0) {
+    tiles.push({
+      label: "Most transferred out",
+      value: transferredOutPick.web_name,
+      context: `${transferredOutPick.transfers_out_event.toLocaleString()} managers have sold ${transferredOutPick.web_name} this gameweek.`,
+    });
+  }
+
+  const topChip = [...(currentEvent.chip_plays ?? [])].sort((a, b) => b.num_played - a.num_played)[0];
+  if (topChip) {
+    const label = CHIP_LABELS[topChip.chip_name] ?? topChip.chip_name;
+    tiles.push({
+      label: "Most-played chip",
+      value: label,
+      context: `${topChip.num_played.toLocaleString()} managers have played ${label} this gameweek.`,
+    });
+  }
+
+  return tiles;
 }
 
 // Joins this manager's gameweek-by-gameweek record with the league-wide
@@ -146,14 +197,14 @@ async function buildSquadHealth(squad: SquadPlayer[]): Promise<SquadHealthPlayer
 // them — squad health still runs on real, live data for the real players in
 // the demo squad, same as the rest of the app's demo experience.
 async function buildDemoDashboard(): Promise<DashboardData> {
-  const demo = getDemoTeamData();
-
   let bootstrap: BootstrapStatic | null = null;
   try {
     bootstrap = await fetchBootstrapStatic();
   } catch (error) {
     console.error("Failed to load bootstrap for demo dashboard", error);
   }
+
+  const demo = getDemoTeamData(bootstrap);
 
   const chipsUsed: EntryHistoryChip[] = [{ name: "wildcard", event: 2 }];
   const chips = bootstrap ? computeChipStatus(bootstrap.chips, chipsUsed, demo.gameweek) : [];
@@ -173,6 +224,7 @@ async function buildDemoDashboard(): Promise<DashboardData> {
   // leagues.classic to filter — points at the same "demo" league id that
   // /league/demo and /api/league already serve.
   const leagues: DashboardLeague[] = [{ id: "demo", name: "Demo Mini-League" }];
+  const whatsHappening = bootstrap ? buildWhatsHappening(bootstrap) : [];
 
   return {
     teamId: DEMO_TEAM_ID,
@@ -192,6 +244,7 @@ async function buildDemoDashboard(): Promise<DashboardData> {
     squad,
     seasonHistory,
     leagues,
+    whatsHappening,
   };
 }
 
@@ -275,6 +328,7 @@ export async function GET(request: NextRequest) {
     squad: squadHealth,
     seasonHistory: buildSeasonHistory(history.gameweeks, bootstrap.events),
     leagues: getPrivateLeagues(entry),
+    whatsHappening: buildWhatsHappening(bootstrap),
   };
 
   return NextResponse.json(data);

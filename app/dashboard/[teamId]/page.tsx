@@ -3,8 +3,21 @@
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { DEMO_TEAM_ID } from "@/lib/fpl";
-import type { DashboardData, DashboardLeague, SeasonHistoryRow, SquadHealthPlayer } from "@/lib/dashboard-types";
+import type {
+  DashboardData,
+  DashboardLeague,
+  SeasonHistoryRow,
+  SquadHealthPlayer,
+  WhatsHappeningTile,
+} from "@/lib/dashboard-types";
 import { countUnread } from "@/lib/league-chat-storage";
+import { CHIP_EXPLANATIONS, chipExplanationFor } from "@/lib/chips";
+import {
+  loadBriefingSnapshot,
+  loadLastVisitDate,
+  saveBriefingSnapshot,
+  saveLastVisitDate,
+} from "@/lib/briefing-storage";
 
 interface DashboardResponse extends DashboardData {
   error?: string;
@@ -98,6 +111,10 @@ function formatDeadlineDate(iso: string): string {
   });
 }
 
+function formatUpdatedTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+}
+
 // Claude is asked to name specific players; this finds whichever squad
 // player's name appears earliest in the captain prose and treats that as
 // "who was recommended" — used both for the one-line priority summary and
@@ -132,33 +149,261 @@ function StatTile({ label, value, sub }: { label: string; value: React.ReactNode
   );
 }
 
-const CHIP_EXPLANATIONS: { name: string; description: string; whenToUse: string }[] = [
-  {
-    name: "Wildcard",
-    description: "Make unlimited free transfers for one gameweek with no points penalty.",
-    whenToUse:
-      "Best used when your squad needs a real overhaul — an injury crisis, a bad run of fixtures, or replanning around a new fixture swing. You get two per season.",
-  },
-  {
-    name: "Free Hit",
-    description:
-      "A one-week wildcard — unlimited free changes, but your squad automatically reverts to how it was as soon as the gameweek ends.",
-    whenToUse:
-      "Best saved for a single unusual gameweek: a blank gameweek (several of your players have no fixture) or a double gameweek where you want to load up on players with two matches.",
-  },
-  {
-    name: "Bench Boost",
-    description: "Your bench players' points count towards your total this gameweek too, not just your starting XI.",
-    whenToUse:
-      "Best used when your full 15-man squad is fit and starting, ideally in a double gameweek so the bench also benefits from two sets of fixtures.",
-  },
-  {
-    name: "Triple Captain",
-    description: "Your captain scores 3x points this gameweek instead of the usual 2x.",
-    whenToUse:
-      "Best used on a premium, nailed-on player with a great fixture — ideally one playing twice in a double gameweek.",
-  },
-];
+interface ActionAlert {
+  id: string;
+  tone: "red" | "amber" | "green";
+  title: string;
+  body: string;
+  link?: { href: string; label: string };
+}
+
+// Pure derivation from already-fetched dashboard data — no chip/captain
+// checks need their own state, they're just filters over dashboard.squad
+// and dashboard.chips evaluated fresh on every render.
+function buildActionCards(dashboard: DashboardData): ActionAlert[] {
+  const cards: ActionAlert[] = [];
+
+  const captain = dashboard.squad.find((player) => player.isCaptain);
+  if (!captain) {
+    cards.push({
+      id: "captain-missing",
+      tone: "red",
+      title: "Set your captain before the deadline",
+      body: "No captain is set for your squad. Pick one on the FPL site before the gameweek deadline, or you'll miss out on your captain's double points entirely.",
+    });
+  } else if (captain.health === "red") {
+    cards.push({
+      id: "captain-injured",
+      tone: "red",
+      title: "Set your captain before the deadline",
+      body: `Your captain ${captain.name} is ${statusLabel(captain.status).toLowerCase()}. Change your captain before the deadline or you risk losing your armband's double points.`,
+    });
+  }
+
+  if (!dashboard.squad.some((player) => player.isViceCaptain)) {
+    cards.push({
+      id: "vice-captain-missing",
+      tone: "amber",
+      title: "Set a vice-captain",
+      body: "No vice-captain is set. Your vice-captain automatically gets the armband (and double points) if your captain doesn't play — without one, you could lose those points completely.",
+    });
+  }
+
+  for (const player of dashboard.squad) {
+    if (player.isCaptain || player.health !== "red") continue;
+    cards.push({
+      id: `flagged-${player.id}`,
+      tone: "red",
+      title: `${player.name} needs attention`,
+      body: `${player.name} is ${statusLabel(player.status).toLowerCase()}${
+        player.injuryReason ? ` (${player.injuryReason})` : ""
+      }. Consider using a transfer to bring in a replacement before the deadline.`,
+    });
+  }
+
+  for (const chip of dashboard.chips.filter((c) => c.available)) {
+    const info = chipExplanationFor(chip.name);
+    cards.push({
+      id: `chip-${chip.name}`,
+      tone: "amber",
+      title: `${chip.label} is available`,
+      body: info
+        ? `${info.description} ${info.whenToUse}`
+        : `Your ${chip.label} chip is available to play this gameweek.`,
+      link: { href: "https://fantasy.premierleague.com", label: "Play it on the FPL site" },
+    });
+  }
+
+  if (dashboard.nextDeadline) {
+    const msRemaining = new Date(dashboard.nextDeadline).getTime() - Date.now();
+    if (msRemaining > 0 && msRemaining <= 48 * 60 * 60 * 1000) {
+      cards.push({
+        id: "deadline-soon",
+        tone: "red",
+        title: "Deadline is close",
+        body: `The gameweek ${dashboard.gameweek} deadline is in ${formatCountdown(
+          msRemaining,
+        )}. Make sure your transfers, captain and chips are locked in before then.`,
+      });
+    }
+  }
+
+  if (cards.length === 0) {
+    cards.push({
+      id: "all-good",
+      tone: "green",
+      title: `Your squad looks set for gameweek ${dashboard.gameweek}`,
+      body: "No urgent issues found — check this week's AI recommendations below.",
+    });
+  }
+
+  return cards;
+}
+
+const ACTION_CARD_TONE_CLASSES: Record<ActionAlert["tone"], string> = {
+  red: "border-red-800/60 bg-red-950/25 text-red-100",
+  amber: "border-amber-800/60 bg-amber-950/20 text-amber-100",
+  green: "border-emerald-800/60 bg-emerald-950/20 text-emerald-100",
+};
+
+const ACTION_CARD_TITLE_CLASSES: Record<ActionAlert["tone"], string> = {
+  red: "text-red-300",
+  amber: "text-amber-300",
+  green: "text-emerald-300",
+};
+
+function ActionCard({ alert }: { alert: ActionAlert }) {
+  return (
+    <div className={`rounded-lg border p-4 ${ACTION_CARD_TONE_CLASSES[alert.tone]}`}>
+      <p className={`text-sm font-bold ${ACTION_CARD_TITLE_CLASSES[alert.tone]}`}>{alert.title}</p>
+      <p className="mt-1.5 text-sm leading-relaxed">{alert.body}</p>
+      {alert.link && (
+        <a
+          href={alert.link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-block text-xs font-semibold underline decoration-current/40 underline-offset-2 hover:decoration-current"
+        >
+          {alert.link.label} &rarr;
+        </a>
+      )}
+    </div>
+  );
+}
+
+interface BriefingItem {
+  id: string;
+  kind: "price" | "injury" | "transfer";
+  message: string;
+}
+
+const TRANSFER_OUT_WARNING_THRESHOLD = 100_000;
+
+// Pure diff of the current squad against whatever status snapshot was
+// stored on a previous visit (null on a brand-new team, in which case no
+// injury is "new" yet — there's nothing to compare against). Price changes
+// and transfer-out volume need no stored snapshot at all: FPL's bootstrap
+// already tracks cost_change_event as the running total for this gameweek,
+// and transfers_out_event is already a live gameweek-to-date count.
+function computeBriefingItems(
+  squad: SquadHealthPlayer[],
+  previousStatuses: Record<number, string> | null,
+): BriefingItem[] {
+  const items: BriefingItem[] = [];
+
+  for (const player of squad) {
+    if (player.costChangeEvent === 0) continue;
+    const direction = player.costChangeEvent > 0 ? "risen" : "fallen";
+    const amount = (Math.abs(player.costChangeEvent) / 10).toFixed(1);
+    items.push({
+      id: `price-${player.id}`,
+      kind: "price",
+      message: `${player.name}'s price has ${direction} by £${amount}m.`,
+    });
+  }
+
+  if (previousStatuses) {
+    for (const player of squad) {
+      const previousStatus = previousStatuses[player.id];
+      const wasFlagged = previousStatus != null && previousStatus !== "a";
+      const isFlagged = player.status !== "a";
+      if (isFlagged && !wasFlagged) {
+        items.push({
+          id: `injury-${player.id}`,
+          kind: "injury",
+          message: `${player.name} has been newly flagged as ${statusLabel(player.status).toLowerCase()}.`,
+        });
+      }
+    }
+  }
+
+  for (const player of squad) {
+    if (player.transfersOutEvent > TRANSFER_OUT_WARNING_THRESHOLD) {
+      items.push({
+        id: `transfer-${player.id}`,
+        kind: "transfer",
+        message: `${player.transfersOutEvent.toLocaleString()} managers have transferred out ${player.name} this gameweek.`,
+      });
+    }
+  }
+
+  return items;
+}
+
+function summarizeBriefing(items: BriefingItem[]): string {
+  const priceCount = items.filter((item) => item.kind === "price").length;
+  const injuryCount = items.filter((item) => item.kind === "injury").length;
+  const transferCount = items.filter((item) => item.kind === "transfer").length;
+
+  const parts: string[] = [];
+  if (priceCount > 0) parts.push(`${priceCount} price change${priceCount === 1 ? "" : "s"}`);
+  if (injuryCount > 0) parts.push(`${injuryCount} injury update${injuryCount === 1 ? "" : "s"}`);
+  if (transferCount > 0) parts.push(`${transferCount} transfer warning${transferCount === 1 ? "" : "s"}`);
+
+  if (parts.length === 0) return "no major changes";
+  if (parts.length === 1) return parts[0];
+  if (parts.length === 2) return `${parts[0]} and ${parts[1]}`;
+  return `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
+}
+
+const BRIEFING_ITEM_CLASSES: Record<BriefingItem["kind"], string> = {
+  price: "border-sky-800/60 bg-sky-950/20 text-sky-100",
+  injury: "border-red-800/60 bg-red-950/20 text-red-100",
+  transfer: "border-amber-800/60 bg-amber-950/20 text-amber-100",
+};
+
+function BriefingList({ items }: { items: BriefingItem[] }) {
+  if (items.length === 0) {
+    return <p className="mt-3 text-sm text-muted">No changes since your last visit.</p>;
+  }
+  return (
+    <ul className="mt-3 flex flex-col gap-2">
+      {items.map((item) => (
+        <li key={item.id} className={`rounded-lg border px-3 py-2 text-sm ${BRIEFING_ITEM_CLASSES[item.kind]}`}>
+          {item.message}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// Loads the previous snapshot, diffs it against the freshly-fetched squad,
+// then immediately overwrites the snapshot with the current state — so the
+// stored baseline always reflects "as of the last time this ran", whether
+// that was yesterday or a refresh two minutes ago. The daily banner is a
+// separate, coarser signal (calendar day, not per-fetch) layered on top:
+// it only fires the first time in a new calendar day, and only when there's
+// a previously recorded visit to compare against (a brand-new team has
+// nothing to say "changed since yesterday" yet).
+function useDailyBriefing(teamId: string, dashboard: DashboardData | null) {
+  const [items, setItems] = useState<BriefingItem[]>([]);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [showDailyBanner, setShowDailyBanner] = useState(false);
+
+  useEffect(() => {
+    if (!dashboard || !dashboard.seasonStarted || dashboard.squad.length === 0) return;
+
+    Promise.resolve().then(() => {
+      const previous = loadBriefingSnapshot(teamId);
+      const nextItems = computeBriefingItems(dashboard.squad, previous?.statuses ?? null);
+      setItems(nextItems);
+      setLastUpdated(new Date().toISOString());
+
+      saveBriefingSnapshot(teamId, {
+        statuses: Object.fromEntries(dashboard.squad.map((player) => [player.id, player.status])),
+      });
+
+      const today = new Date().toISOString().slice(0, 10);
+      const lastVisitDate = loadLastVisitDate(teamId);
+      if (lastVisitDate && lastVisitDate !== today && nextItems.length > 0) {
+        setShowDailyBanner(true);
+      }
+      saveLastVisitDate(teamId, today);
+    });
+  }, [dashboard, teamId]);
+
+  return { items, lastUpdated, showDailyBanner, dismissBanner: () => setShowDailyBanner(false) };
+}
 
 function ChipsInfoModal({ onClose }: { onClose: () => void }) {
   return (
@@ -181,7 +426,7 @@ function ChipsInfoModal({ onClose }: { onClose: () => void }) {
         <div className="mt-4 flex flex-col gap-4">
           {CHIP_EXPLANATIONS.map((chip) => (
             <div key={chip.name} className="border-t border-card-border/50 pt-3 first:border-t-0 first:pt-0">
-              <p className="text-sm font-bold text-accent">{chip.name}</p>
+              <p className="text-sm font-bold text-accent">{chip.label}</p>
               <p className="mt-1 text-sm text-foreground/90">{chip.description}</p>
               <p className="mt-1.5 text-xs text-muted">{chip.whenToUse}</p>
             </div>
@@ -212,6 +457,20 @@ function LeagueCard({ league }: { league: DashboardLeague }) {
       >
         View league
       </Link>
+    </div>
+  );
+}
+
+function WhatsHappeningGrid({ tiles }: { tiles: WhatsHappeningTile[] }) {
+  return (
+    <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {tiles.map((tile) => (
+        <div key={tile.label} className="rounded-lg border border-card-border/70 bg-background/40 p-3.5">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-muted">{tile.label}</p>
+          <p className="mt-1 text-lg font-bold text-foreground">{tile.value}</p>
+          <p className="mt-1 text-xs leading-relaxed text-muted">{tile.context}</p>
+        </div>
+      ))}
     </div>
   );
 }
@@ -370,6 +629,35 @@ function GameweekChart({ rows }: { rows: SeasonHistoryRow[] }) {
   );
 }
 
+// ---- shared fetch helpers ----------------------------------------------------
+// Factored out so both the initial-load effects and the manual Refresh
+// button call the exact same request shape.
+
+async function fetchDashboardData(teamId: string): Promise<DashboardResponse> {
+  const res = await fetch(`/api/dashboard?teamId=${teamId}`);
+  const data = (await res.json()) as DashboardResponse;
+  if (!res.ok) throw new Error(data.error ?? "Failed to load dashboard.");
+  return data;
+}
+
+async function fetchAdviceData(dashboard: DashboardData): Promise<AdviceResponse> {
+  const res = await fetch("/api/advice", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      teamName: dashboard.teamName,
+      gameweek: dashboard.gameweek,
+      bank: dashboard.bank,
+      squadValue: dashboard.squadValue,
+      squad: dashboard.squad,
+      availableChips: dashboard.chips.filter((chip) => chip.available),
+    }),
+  });
+  const data = (await res.json()) as AdviceResponse;
+  if (!res.ok) throw new Error(data.error ?? "Failed to generate advice.");
+  return data;
+}
+
 // ---- accuracy tracker hook --------------------------------------------------
 
 function loadLog(teamId: string): AccuracyLogEntry[] {
@@ -507,18 +795,18 @@ function DashboardContent({ teamId }: { teamId: string }) {
   const [advice, setAdvice] = useState<AdviceResponse | null>(null);
   const [adviceError, setAdviceError] = useState("");
   const [showChipsInfo, setShowChipsInfo] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshError, setRefreshError] = useState("");
   // Derived rather than a separate setState-in-effect: true exactly while
-  // the auto-fetch effect below has fired but neither advice nor an error
-  // has landed yet.
+  // the auto-fetch effect below (or a manual refresh) has fired but neither
+  // advice nor an error has landed yet.
   const loadingAdvice = Boolean(dashboard?.seasonStarted) && (dashboard?.squad.length ?? 0) > 0 && !advice && !adviceError;
 
   useEffect(() => {
     let cancelled = false;
 
-    fetch(`/api/dashboard?teamId=${teamId}`)
-      .then(async (res) => {
-        const data = (await res.json()) as DashboardResponse;
-        if (!res.ok) throw new Error(data.error ?? "Failed to load dashboard.");
+    fetchDashboardData(teamId)
+      .then((data) => {
         if (!cancelled) setDashboard(data);
       })
       .catch((err: Error) => {
@@ -539,20 +827,8 @@ function DashboardContent({ teamId }: { teamId: string }) {
     if (!dashboard || !dashboard.seasonStarted || dashboard.squad.length === 0) return;
     let cancelled = false;
 
-    fetch("/api/advice", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        teamName: dashboard.teamName,
-        gameweek: dashboard.gameweek,
-        bank: dashboard.bank,
-        squadValue: dashboard.squadValue,
-        squad: dashboard.squad,
-      }),
-    })
-      .then(async (res) => {
-        const data = (await res.json()) as AdviceResponse;
-        if (!res.ok) throw new Error(data.error ?? "Failed to generate advice.");
+    fetchAdviceData(dashboard)
+      .then((data) => {
         if (!cancelled) setAdvice(data);
       })
       .catch((err: Error) => {
@@ -568,6 +844,36 @@ function DashboardContent({ teamId }: { teamId: string }) {
   }, [dashboard?.teamId, dashboard?.gameweek, dashboard?.seasonStarted]);
 
   const accuracyLog = useAccuracyTracker(teamId, dashboard, advice);
+  const { items: briefingItems, lastUpdated, showDailyBanner, dismissBanner } = useDailyBriefing(teamId, dashboard);
+
+  // Re-fetches live dashboard data and re-runs AI advice on demand, without
+  // a full page reload. Doesn't touch loadingDashboard (the dashboard stays
+  // on screen throughout) — refreshing/refreshError drive a small inline
+  // status next to the Refresh button instead.
+  async function handleRefresh() {
+    setRefreshing(true);
+    setRefreshError("");
+    setAdvice(null);
+    setAdviceError("");
+
+    try {
+      const freshDashboard = await fetchDashboardData(teamId);
+      setDashboard(freshDashboard);
+
+      if (freshDashboard.seasonStarted && freshDashboard.squad.length > 0) {
+        try {
+          const freshAdvice = await fetchAdviceData(freshDashboard);
+          setAdvice(freshAdvice);
+        } catch (err) {
+          setAdviceError(err instanceof Error ? err.message : "Failed to generate advice.");
+        }
+      }
+    } catch (err) {
+      setRefreshError(err instanceof Error ? err.message : "Failed to refresh dashboard.");
+    } finally {
+      setRefreshing(false);
+    }
+  }
 
   const flaggedPlayers = dashboard
     ? dashboard.squad.filter(
@@ -576,6 +882,9 @@ function DashboardContent({ teamId }: { teamId: string }) {
     : [];
 
   const availableChips = dashboard ? dashboard.chips.filter((chip) => chip.available) : [];
+
+  const actionCards =
+    dashboard && dashboard.seasonStarted && dashboard.squad.length > 0 ? buildActionCards(dashboard) : [];
 
   const history = dashboard?.seasonHistory ?? [];
   const bestGw = history.length > 0 ? history.reduce((a, b) => (b.points > a.points ? b : a)) : null;
@@ -624,19 +933,55 @@ function DashboardContent({ teamId }: { teamId: string }) {
       {!loadingDashboard && dashboard && (
         <>
           {/* 1. Header */}
-          <header className="mt-4 flex flex-col gap-1">
-            {dashboard.isDemo && (
-              <span className="mb-1 inline-flex w-fit items-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
-                <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                Demo squad
-              </span>
+          <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
+            <header className="flex flex-col gap-1">
+              {dashboard.isDemo && (
+                <span className="mb-1 inline-flex w-fit items-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                  Demo squad
+                </span>
+              )}
+              <h1 className="text-3xl font-bold text-foreground">{dashboard.teamName}</h1>
+              <p className="text-muted">
+                {dashboard.managerName}
+                {dashboard.seasonStarted ? ` · Gameweek ${dashboard.gameweek}` : ""}
+              </p>
+            </header>
+
+            {dashboard.seasonStarted && (
+              <div className="flex flex-col items-end gap-1">
+                <button
+                  type="button"
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="rounded-lg border border-card-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {refreshing ? "Refreshing..." : "Refresh"}
+                </button>
+                {lastUpdated && !refreshError && (
+                  <p className="text-[11px] text-muted">Last updated {formatUpdatedTime(lastUpdated)}</p>
+                )}
+                {refreshError && <p className="text-[11px] text-red-400">{refreshError}</p>}
+              </div>
             )}
-            <h1 className="text-3xl font-bold text-foreground">{dashboard.teamName}</h1>
-            <p className="text-muted">
-              {dashboard.managerName}
-              {dashboard.seasonStarted ? ` · Gameweek ${dashboard.gameweek}` : ""}
-            </p>
-          </header>
+          </div>
+
+          {showDailyBanner && (
+            <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-sm text-foreground">
+              <p>
+                <span className="font-semibold text-accent">Your daily briefing is ready</span> — here&apos;s
+                what&apos;s changed since yesterday: {summarizeBriefing(briefingItems)}.
+              </p>
+              <button
+                type="button"
+                onClick={dismissBanner}
+                aria-label="Dismiss"
+                className="shrink-0 rounded-full p-1 text-lg leading-none text-muted transition-colors hover:bg-white/10 hover:text-foreground"
+              >
+                &times;
+              </button>
+            </div>
+          )}
 
           <section className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <StatTile label="Overall rank" value={dashboard.overallRank > 0 ? dashboard.overallRank.toLocaleString() : "—"} />
@@ -652,6 +997,36 @@ function DashboardContent({ teamId }: { teamId: string }) {
             />
             <StatTile label="Next deadline" value={<CountdownTimer deadline={dashboard.nextDeadline} />} />
           </section>
+
+          {actionCards.length > 0 && (
+            <section className="mt-5">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-muted">Actions needed</h2>
+              <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {actionCards.map((alert) => (
+                  <ActionCard key={alert.id} alert={alert} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {dashboard.seasonStarted && dashboard.squad.length > 0 && (
+            <section className="mt-5 rounded-xl border border-card-border bg-card p-5">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-xs font-bold uppercase tracking-widest text-muted">Today&apos;s briefing</h2>
+                {lastUpdated && (
+                  <span className="text-[10px] text-muted">Updated {formatUpdatedTime(lastUpdated)}</span>
+                )}
+              </div>
+              <BriefingList items={briefingItems} />
+            </section>
+          )}
+
+          {dashboard.whatsHappening.length > 0 && (
+            <section className="mt-5 rounded-xl border border-card-border bg-card p-5">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-muted">What&apos;s happening in FPL</h2>
+              <WhatsHappeningGrid tiles={dashboard.whatsHappening} />
+            </section>
+          )}
 
           {dashboard.leagues.length > 0 && (
             <section className="mt-5">

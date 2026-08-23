@@ -20,6 +20,13 @@ export interface FplEvent {
   is_next: boolean;
   finished: boolean;
   average_entry_score: number;
+  most_captained: number | null;
+  most_vice_captained: number | null;
+  most_transferred_in: number | null;
+  most_selected: number | null;
+  top_element: number | null;
+  top_element_info: { id: number; points: number } | null;
+  chip_plays: { chip_name: string; num_played: number }[];
 }
 
 export interface FplChip {
@@ -41,6 +48,9 @@ export interface FplElement {
   selected_by_percent: string;
   status: string;
   news: string;
+  transfers_in_event: number;
+  transfers_out_event: number;
+  cost_change_event: number;
 }
 
 export interface BootstrapStatic {
@@ -130,6 +140,11 @@ export interface SquadPlayer {
   // this early to call a sell, so this is a deliberately neutral "not
   // enough data yet" state rather than an endorsement either way.
   flag: "KEEP" | "SELL" | "EARLY_SEASON";
+  // In tenths of £m, matching `price`'s own raw unit (e.g. 1 = +£0.1m) —
+  // FPL's own running total of this player's price movement so far this
+  // gameweek, used as the daily briefing's price-change signal.
+  costChangeEvent: number;
+  transfersOutEvent: number;
 }
 
 export function flagLabel(flag: SquadPlayer["flag"]): string {
@@ -343,6 +358,8 @@ function mapElementFields(
     status: element.status,
     news: element.news,
     flag: computeFlag(element.status, form, gameweek),
+    costChangeEvent: element.cost_change_event,
+    transfersOutEvent: element.transfers_out_event,
   };
 }
 
@@ -446,25 +463,37 @@ const DEMO_SQUAD_INPUT: DemoPlayerInput[] = [
 
 const DEMO_GAMEWEEK = 3;
 
-export function getDemoTeamData(): TeamData {
-  const squad: SquadPlayer[] = DEMO_SQUAD_INPUT.map((player, index) => ({
-    // Real FPL id where we have one (so per-player history lookups work);
-    // otherwise a sentinel well outside FPL's id range (~1-800 today).
-    id: player.fplId > 0 ? player.fplId : 900000 + index,
-    name: player.name,
-    position: player.position,
-    club: player.club,
-    form: player.form,
-    price: player.price,
-    totalPoints: player.totalPoints,
-    selectedByPercent: player.selectedByPercent,
-    isCaptain: player.isCaptain ?? false,
-    isViceCaptain: player.isViceCaptain ?? false,
-    isStarting: player.isStarting,
-    status: player.status,
-    news: player.news,
-    flag: computeFlag(player.status, player.form, DEMO_GAMEWEEK),
-  }));
+// bootstrap is optional and, when supplied, is used only to enrich the
+// fabricated demo squad with real live cost-change/transfer-activity numbers
+// for the handful of demo players who have a real fplId — keeps the daily
+// briefing demo-able with genuine data rather than invented figures.
+export function getDemoTeamData(bootstrap?: BootstrapStatic | null): TeamData {
+  const elementsById = new Map(bootstrap?.elements.map((element) => [element.id, element]) ?? []);
+
+  const squad: SquadPlayer[] = DEMO_SQUAD_INPUT.map((player, index) => {
+    const liveElement = player.fplId > 0 ? elementsById.get(player.fplId) : undefined;
+
+    return {
+      // Real FPL id where we have one (so per-player history lookups work);
+      // otherwise a sentinel well outside FPL's id range (~1-800 today).
+      id: player.fplId > 0 ? player.fplId : 900000 + index,
+      name: player.name,
+      position: player.position,
+      club: player.club,
+      form: player.form,
+      price: player.price,
+      totalPoints: player.totalPoints,
+      selectedByPercent: player.selectedByPercent,
+      isCaptain: player.isCaptain ?? false,
+      isViceCaptain: player.isViceCaptain ?? false,
+      isStarting: player.isStarting,
+      status: player.status,
+      news: player.news,
+      flag: computeFlag(player.status, player.form, DEMO_GAMEWEEK),
+      costChangeEvent: liveElement?.cost_change_event ?? 0,
+      transfersOutEvent: liveElement?.transfers_out_event ?? 0,
+    };
+  });
 
   const squadValue = Math.round(squad.reduce((sum, p) => sum + p.price, 0) * 10) / 10;
 
