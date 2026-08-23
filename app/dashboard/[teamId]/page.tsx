@@ -18,6 +18,8 @@ import {
   saveBriefingSnapshot,
   saveLastVisitDate,
 } from "@/lib/briefing-storage";
+import { AdviceCard } from "@/components/AdviceCard";
+import { ActionChecklist } from "@/components/ActionChecklist";
 
 interface DashboardResponse extends DashboardData {
   error?: string;
@@ -79,6 +81,17 @@ function trendColorClass(trend: SquadHealthPlayer["trend"]): string {
   if (trend === "rising") return "text-emerald-400";
   if (trend === "declining") return "text-red-400";
   return "text-muted";
+}
+
+// A rough, explainable heuristic for "this bench player looks too good to be
+// benched" — not injured/suspended (that already explains the benching) and
+// either priced or owned like a first-choice pick rather than squad depth.
+const BENCH_STARTER_PRICE_THRESHOLD = 5.5;
+const BENCH_STARTER_OWNERSHIP_THRESHOLD = 10;
+
+function looksLikeAStarter(player: SquadHealthPlayer): boolean {
+  if (player.health === "red") return false;
+  return player.price >= BENCH_STARTER_PRICE_THRESHOLD || player.selectedByPercent >= BENCH_STARTER_OWNERSHIP_THRESHOLD;
 }
 
 // Mirrors the 3 / 4-5 / 6+ day buckets used elsewhere in the app (see
@@ -203,13 +216,22 @@ function buildActionCards(dashboard: DashboardData): ActionAlert[] {
 
   for (const chip of dashboard.chips.filter((c) => c.available)) {
     const info = chipExplanationFor(chip.name);
+    let body = info
+      ? `${info.description} ${info.whenToUse}`
+      : `Your ${chip.label} chip is available to play this gameweek.`;
+
+    if (chip.name === "bboost") {
+      const lastPlayedGameweek = dashboard.seasonHistory[dashboard.seasonHistory.length - 1];
+      if (lastPlayedGameweek && lastPlayedGameweek.pointsOnBench > 0) {
+        body += ` Your bench scored ${lastPlayedGameweek.pointsOnBench} points last week — Bench Boost would have added those to your total.`;
+      }
+    }
+
     cards.push({
       id: `chip-${chip.name}`,
       tone: "amber",
       title: `${chip.label} is available`,
-      body: info
-        ? `${info.description} ${info.whenToUse}`
-        : `Your ${chip.label} chip is available to play this gameweek.`,
+      body,
       link: { href: "https://fantasy.premierleague.com", label: "Play it on the FPL site" },
     });
   }
@@ -797,6 +819,8 @@ function DashboardContent({ teamId }: { teamId: string }) {
   const [showChipsInfo, setShowChipsInfo] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshError, setRefreshError] = useState("");
+  const [showFullAdvice, setShowFullAdvice] = useState(false);
+  const [checkedActions, setCheckedActions] = useState<Set<number>>(new Set());
   // Derived rather than a separate setState-in-effect: true exactly while
   // the auto-fetch effect below (or a manual refresh) has fired but neither
   // advice nor an error has landed yet.
@@ -850,11 +874,35 @@ function DashboardContent({ teamId }: { teamId: string }) {
   // a full page reload. Doesn't touch loadingDashboard (the dashboard stays
   // on screen throughout) — refreshing/refreshError drive a small inline
   // status next to the Refresh button instead.
+  // Reveals the advice cards using whatever the background auto-fetch has
+  // already produced (the common case, since that fetch starts on mount) —
+  // only issuing a fresh request itself if the background fetch already
+  // failed, so a click can also serve as a retry.
+  function handleShowAdvice() {
+    setShowFullAdvice(true);
+    if (adviceError && dashboard) {
+      setAdviceError("");
+      fetchAdviceData(dashboard)
+        .then(setAdvice)
+        .catch((err: Error) => setAdviceError(err.message));
+    }
+  }
+
+  function toggleAction(index: number) {
+    setCheckedActions((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  }
+
   async function handleRefresh() {
     setRefreshing(true);
     setRefreshError("");
     setAdvice(null);
     setAdviceError("");
+    setCheckedActions(new Set());
 
     try {
       const freshDashboard = await fetchDashboardData(teamId);
@@ -885,6 +933,10 @@ function DashboardContent({ teamId }: { teamId: string }) {
 
   const actionCards =
     dashboard && dashboard.seasonStarted && dashboard.squad.length > 0 ? buildActionCards(dashboard) : [];
+
+  const startingPlayers = dashboard ? dashboard.squad.filter((player) => player.isStarting) : [];
+  const benchPlayers = dashboard ? dashboard.squad.filter((player) => !player.isStarting) : [];
+  const flaggedBenchPlayers = benchPlayers.filter(looksLikeAStarter);
 
   const history = dashboard?.seasonHistory ?? [];
   const bestGw = history.length > 0 ? history.reduce((a, b) => (b.points > a.points ? b : a)) : null;
@@ -1136,6 +1188,53 @@ function DashboardContent({ teamId }: { teamId: string }) {
                 </div>
               </section>
 
+              {!showFullAdvice && (
+                <div className="mt-6 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={handleShowAdvice}
+                    disabled={loadingAdvice}
+                    className="rounded-lg bg-accent-strong px-8 py-3 font-semibold text-[#04140b] transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {loadingAdvice ? "Thinking it through..." : "Get AI Advice"}
+                  </button>
+                </div>
+              )}
+
+              {showFullAdvice && (
+                <>
+                  {loadingAdvice && (
+                    <div className="mt-6 flex flex-col items-center gap-3 text-muted">
+                      <div className="h-8 w-8 animate-spin rounded-full border-2 border-card-border border-t-accent" />
+                      <p>Thinking it through...</p>
+                    </div>
+                  )}
+
+                  {!loadingAdvice && adviceError && (
+                    <div className="mt-6 rounded-lg border border-red-900/50 bg-red-950/30 px-5 py-4 text-center text-red-300">
+                      {adviceError}
+                    </div>
+                  )}
+
+                  {!loadingAdvice && advice && (
+                    <>
+                      <section className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+                        <AdviceCard title="Transfer" body={advice.transfer} tone="green" />
+                        <AdviceCard title="Captain" body={advice.captain} tone="red" />
+                        <AdviceCard title="Chip" body={advice.chip} tone="blue" />
+                      </section>
+                      <ActionChecklist
+                        actions={advice.actions}
+                        advice={advice}
+                        squadNames={dashboard.squad.map((player) => player.name)}
+                        checkedActions={checkedActions}
+                        onToggle={toggleAction}
+                      />
+                    </>
+                  )}
+                </>
+              )}
+
               {/* 3. Squad health grid */}
               <section className="mt-8">
                 <h2 className="text-xs font-bold uppercase tracking-widest text-muted">Squad health</h2>
@@ -1143,6 +1242,53 @@ function DashboardContent({ teamId }: { teamId: string }) {
                   {dashboard.squad.map((player) => (
                     <SquadHealthCard key={player.id} player={player} />
                   ))}
+                </div>
+              </section>
+
+              {/* 3b. Starting XI vs Bench */}
+              <section className="mt-8 rounded-xl border border-card-border bg-card p-5">
+                <h2 className="text-xs font-bold uppercase tracking-widest text-muted">Starting XI vs Bench</h2>
+                <p className="mt-3 text-sm text-muted">
+                  Only your starting XI&apos;s points count towards your total by default — a bench player only
+                  scores if a starter in the same position doesn&apos;t play, via FPL&apos;s automatic
+                  substitutions. Think of the bench as a safety net, not a source of extra points.
+                </p>
+                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <h3 className="text-[10px] font-semibold uppercase tracking-wide text-muted">
+                      Starting XI
+                    </h3>
+                    <ul className="mt-2 flex flex-col gap-1.5">
+                      {startingPlayers.map((player) => (
+                        <li key={player.id} className="flex items-center justify-between text-sm">
+                          <span className="text-foreground">
+                            {player.name} <span className="text-muted">({player.position})</span>
+                          </span>
+                          <span className="text-xs text-muted">{player.totalPoints} pts</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="text-[10px] font-semibold uppercase tracking-wide text-muted">Bench</h3>
+                    <ul className="mt-2 flex flex-col gap-1.5">
+                      {benchPlayers.map((player) => (
+                        <li key={player.id} className="flex items-center justify-between text-sm">
+                          <span className={looksLikeAStarter(player) ? "font-semibold text-amber-400" : "text-foreground"}>
+                            {player.name} <span className="text-muted">({player.position})</span>
+                          </span>
+                          <span className="text-xs text-muted">{player.totalPoints} pts</span>
+                        </li>
+                      ))}
+                    </ul>
+                    {flaggedBenchPlayers.length > 0 && (
+                      <p className="mt-2 text-xs text-amber-400">
+                        {flaggedBenchPlayers.map((player) => player.name).join(", ")}{" "}
+                        {flaggedBenchPlayers.length === 1 ? "looks" : "look"} good enough to start —
+                        worth reviewing your lineup before the deadline.
+                      </p>
+                    )}
+                  </div>
                 </div>
               </section>
 

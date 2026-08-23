@@ -6,6 +6,8 @@ import { use, useEffect, useState } from "react";
 import { flagBadgeClasses, flagLabel, type TeamData } from "@/lib/fpl";
 import { usePlayerInsight } from "@/lib/use-player-insight";
 import { PlayerModal } from "@/components/PlayerModal";
+import { AdviceCard } from "@/components/AdviceCard";
+import { ActionChecklist } from "@/components/ActionChecklist";
 import { clearSavedTeamId } from "@/lib/team-id-storage";
 
 interface TeamResponse extends TeamData {
@@ -268,37 +270,13 @@ function TeamPageContent({ id }: { id: string }) {
                     <AdviceCard title="Chip" body={advice.chip} tone="blue" />
                   </section>
 
-                  {advice.actions.length > 0 && (
-                    <section className="mt-6 rounded-xl border border-card-border bg-card p-5">
-                      <h3 className="text-xs font-bold uppercase tracking-widest text-muted">
-                        Your gameweek actions
-                      </h3>
-                      <ul className="mt-4 flex flex-col gap-2.5">
-                        {advice.actions.map((action, index) => {
-                          const checked = checkedActions.has(index);
-                          return (
-                            <li key={index}>
-                              <label className="flex cursor-pointer items-start gap-3 text-sm">
-                                <input
-                                  type="checkbox"
-                                  checked={checked}
-                                  onChange={() => toggleAction(index)}
-                                  className="mt-0.5 h-4 w-4 shrink-0 accent-accent-strong"
-                                />
-                                <span
-                                  className={
-                                    checked ? "text-muted line-through" : "text-foreground"
-                                  }
-                                >
-                                  {action}
-                                </span>
-                              </label>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </section>
-                  )}
+                  <ActionChecklist
+                    actions={advice.actions}
+                    advice={advice}
+                    squadNames={team.squad.map((player) => player.name)}
+                    checkedActions={checkedActions}
+                    onToggle={toggleAction}
+                  />
                 </>
               )}
             </>
@@ -320,33 +298,3 @@ function TeamPageContent({ id }: { id: string }) {
   );
 }
 
-function AdviceCard({
-  title,
-  body,
-  tone,
-}: {
-  title: string;
-  body: string;
-  tone: "green" | "red" | "blue";
-}) {
-  const toneClasses = {
-    green: "border-emerald-800/60 bg-emerald-950/30 text-emerald-100",
-    red: "border-rose-800/60 bg-rose-950/30 text-rose-100",
-    blue: "border-sky-800/60 bg-sky-950/30 text-sky-100",
-  }[tone];
-
-  const titleClasses = {
-    green: "text-emerald-400",
-    red: "text-rose-400",
-    blue: "text-sky-400",
-  }[tone];
-
-  return (
-    <div className={`rounded-xl border p-5 ${toneClasses}`}>
-      <h3 className={`text-xs font-bold uppercase tracking-widest ${titleClasses}`}>
-        {title}
-      </h3>
-      <p className="mt-3 text-sm leading-relaxed">{body}</p>
-    </div>
-  );
-}

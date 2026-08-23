@@ -4,6 +4,7 @@ export interface FplTeam {
   id: number;
   name: string;
   short_name: string;
+  played: number;
 }
 
 export interface FplElementType {
@@ -323,7 +324,7 @@ export function getCurrentGameweek(bootstrap: BootstrapStatic): number {
 // so a low-form sell call isn't trustworthy yet. Only a confirmed injury
 // ('i') or suspension ('s') is treated as a real signal in that window;
 // everything else (including "doubtful") gets a neutral EARLY_SEASON flag.
-const EARLY_SEASON_CUTOFF_GAMEWEEK = 4;
+export const EARLY_SEASON_CUTOFF_GAMEWEEK = 4;
 const CONFIRMED_UNAVAILABLE_STATUSES = new Set(["i", "s"]);
 
 function computeFlag(status: string, form: number, gameweek: number): SquadPlayer["flag"] {
