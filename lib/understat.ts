@@ -107,3 +107,26 @@ export async function getTopXGPlayers(position?: string, limit = 10): Promise<Un
 
   return [...filtered].sort((a, b) => b.xG - a.xG).slice(0, limit);
 }
+
+// A minimum sample so a five-minute cameo with one deflected shot doesn't
+// top a per-90 leaderboard — one full match's worth of minutes.
+const MIN_MINUTES_FOR_PER90_LEADERS = 60;
+
+// Same position filtering as getTopXGPlayers, but ranked by xG per 90
+// minutes rather than season-total xG — surfaces players whose underlying
+// chance quality is strong even if they haven't played (or scored) enough
+// yet for the raw total to stand out, which is the point of a "leaders"
+// view: spotting undervalued output before the points total catches up.
+export async function getTopXGPer90Players(position?: string, limit = 20): Promise<UnderstatPlayer[]> {
+  const players = await loadPlayers();
+  if (!players) return [];
+
+  const understatCode = position ? FPL_TO_UNDERSTAT_POSITION[position] : undefined;
+  const filtered = players.filter((player) => {
+    if (player.minutes < MIN_MINUTES_FOR_PER90_LEADERS) return false;
+    if (understatCode && !player.position.split(" ").includes(understatCode)) return false;
+    return true;
+  });
+
+  return [...filtered].sort((a, b) => b.xG90 - a.xG90).slice(0, limit);
+}

@@ -10,6 +10,22 @@ import {
   type BootstrapStatic,
 } from "@/lib/fpl";
 
+// Never statically rendered/cached by Next's build-time optimization — this
+// route's whole point is live squad data (captain, transfers, bank), so a
+// cached response is a stale one.
+export const dynamic = "force-dynamic";
+
+// NextResponse.json alone doesn't stop Vercel's edge/CDN from caching this
+// route's response — an explicit no-store header on every response path
+// (including errors) is what actually guarantees a live team's picks are
+// re-fetched on every request rather than served from cache.
+function jsonNoStore(body: unknown, init?: ResponseInit) {
+  return NextResponse.json(body, {
+    ...init,
+    headers: { "Cache-Control": "no-store, max-age=0", ...init?.headers },
+  });
+}
+
 export async function GET(request: NextRequest) {
   const teamId = request.nextUrl.searchParams.get("teamId");
 
@@ -20,11 +36,11 @@ export async function GET(request: NextRequest) {
     } catch (error) {
       console.error("Failed to load bootstrap for demo team", error);
     }
-    return NextResponse.json(getDemoTeamData(bootstrap));
+    return jsonNoStore(getDemoTeamData(bootstrap));
   }
 
   if (!teamId || !/^\d+$/.test(teamId)) {
-    return NextResponse.json(
+    return jsonNoStore(
       { error: "A valid numeric teamId is required." },
       { status: 400 },
     );
@@ -38,7 +54,7 @@ export async function GET(request: NextRequest) {
     entry = await fetchEntry(teamId);
   } catch (error) {
     console.error("Failed to load FPL entry", error);
-    return NextResponse.json(
+    return jsonNoStore(
       { error: "Could not find that FPL team. Check the team ID and try again." },
       { status: 404 },
     );
@@ -59,7 +75,7 @@ export async function GET(request: NextRequest) {
     const picksResponse = await fetchPicks(teamId, gameweek);
     const squad = buildSquad(picksResponse.picks, bootstrap);
 
-    return NextResponse.json({
+    return jsonNoStore({
       ...baseInfo,
       gameweek,
       bank: picksResponse.entry_history.bank / 10,
@@ -71,7 +87,7 @@ export async function GET(request: NextRequest) {
     // Before a season's fixtures begin, the picks endpoint 404s even for a
     // real team — fall back to the entry-only info rather than erroring.
     console.error("Gameweek picks not available yet, falling back to entry-only data", error);
-    return NextResponse.json({
+    return jsonNoStore({
       teamId,
       managerName: `${entry.player_first_name} ${entry.player_last_name}`,
       teamName: entry.name,

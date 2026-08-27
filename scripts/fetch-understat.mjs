@@ -60,14 +60,28 @@ function perNinety(total, minutes) {
   return round2(total / (minutes / 90));
 }
 
+// Understat's JSON response ships player/team names HTML-escaped (e.g.
+// "Nico O&#039;Reilly") rather than as plain text — decode the handful of
+// entities that actually show up in names (apostrophes above all).
+function decodeHtmlEntities(value) {
+  return value
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, code) => String.fromCharCode(Number.parseInt(code, 16)))
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'");
+}
+
 function mapPlayer(raw) {
   const minutes = toInt(raw.time);
   const xG = toNumber(raw.xG);
   const xA = toNumber(raw.xA);
 
   return {
-    name: raw.player_name,
-    team: raw.team_title,
+    name: decodeHtmlEntities(raw.player_name),
+    team: decodeHtmlEntities(raw.team_title),
     position: raw.position,
     games: toInt(raw.games),
     minutes,

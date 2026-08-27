@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
-import { flagBadgeClasses, flagLabel, formatRankWithTotal, rankPercentile, type TeamData } from "@/lib/fpl";
+import { flagBadgeClasses, flagLabel, formatRankWithTotal, rankPercentile, type SquadPlayer, type TeamData } from "@/lib/fpl";
 import { usePlayerInsight } from "@/lib/use-player-insight";
 import { PlayerModal } from "@/components/PlayerModal";
 import { AdviceCard } from "@/components/AdviceCard";
@@ -20,6 +20,69 @@ interface AdviceResponse {
   chip: string;
   actions: string[];
   error?: string;
+}
+
+const POSITION_FILTERS = ["All", "GKP", "DEF", "MID", "FWD"] as const;
+type PositionFilter = (typeof POSITION_FILTERS)[number];
+
+// FPL's own squad-sheet order (goalkeeper, then outfield positions front to
+// back) — the default view and the baseline every other sort still applies
+// within a position group for "By position".
+const POSITION_ORDER: Record<string, number> = { GKP: 0, DEF: 1, MID: 2, FWD: 3 };
+
+type SortOption = "position" | "points" | "form" | "price";
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: "position", label: "By position" },
+  { value: "points", label: "By points" },
+  { value: "form", label: "By form" },
+  { value: "price", label: "By price" },
+];
+
+// Bench players are filtered/sorted as their own group and rendered after a
+// divider — this only ever sorts within one group (starters or bench), so
+// it doesn't need to know about isStarting at all.
+function sortSquad(players: SquadPlayer[], sortOption: SortOption): SquadPlayer[] {
+  return [...players].sort((a, b) => {
+    if (sortOption === "position") {
+      const positionDiff = (POSITION_ORDER[a.position] ?? 99) - (POSITION_ORDER[b.position] ?? 99);
+      return positionDiff !== 0 ? positionDiff : b.totalPoints - a.totalPoints;
+    }
+    if (sortOption === "points") return b.totalPoints - a.totalPoints;
+    if (sortOption === "form") return b.form - a.form;
+    return b.price - a.price;
+  });
+}
+
+function SquadPlayerCard({ player, onOpen }: { player: SquadPlayer; onOpen: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className={`relative rounded-lg border bg-card p-4 text-left transition-colors hover:border-accent/60 ${
+        player.isStarting ? "border-card-border" : "border-card-border/50 opacity-70"
+      }`}
+    >
+      <span
+        className={`absolute right-3 top-3 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${flagBadgeClasses(player.flag)}`}
+      >
+        {flagLabel(player.flag)}
+      </span>
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+        {player.position} &middot; {player.club}
+      </p>
+      <p className="mt-1 pr-10 font-semibold text-foreground">
+        {player.name}
+        {player.isCaptain && <span className="ml-1 text-accent">(C)</span>}
+        {player.isViceCaptain && <span className="ml-1 text-muted">(V)</span>}
+      </p>
+      <div className="mt-3 flex items-center justify-between text-xs text-muted">
+        <span>£{player.price}m</span>
+        <span>Form {player.form}</span>
+        <span>{player.totalPoints} pts</span>
+      </div>
+    </button>
+  );
 }
 
 export default function TeamPage({
@@ -44,6 +107,8 @@ function TeamPageContent({ id }: { id: string }) {
   const [adviceError, setAdviceError] = useState("");
   const [loadingAdvice, setLoadingAdvice] = useState(false);
   const [checkedActions, setCheckedActions] = useState<Set<number>>(new Set());
+  const [positionFilter, setPositionFilter] = useState<PositionFilter>("All");
+  const [sortOption, setSortOption] = useState<SortOption>("position");
 
   const {
     selectedPlayer,
@@ -119,6 +184,18 @@ function TeamPageContent({ id }: { id: string }) {
   }
 
   const rankTopPercent = team ? rankPercentile(team.overallRank, team.totalPlayers) : null;
+
+  const filteredSquad = team
+    ? team.squad.filter((player) => positionFilter === "All" || player.position === positionFilter)
+    : [];
+  const startingPlayers = sortSquad(
+    filteredSquad.filter((player) => player.isStarting),
+    sortOption,
+  );
+  const benchPlayers = sortSquad(
+    filteredSquad.filter((player) => !player.isStarting),
+    sortOption,
+  );
 
   return (
     <div className="mx-auto w-full max-w-5xl px-6 py-12">
@@ -214,39 +291,62 @@ function TeamPageContent({ id }: { id: string }) {
 
           {team.seasonStarted && (
             <>
-              <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-                {team.squad.map((player) => (
-                  <button
-                    key={player.id}
-                    type="button"
-                    onClick={() => openPlayerModal(player)}
-                    className={`relative rounded-lg border bg-card p-4 text-left transition-colors hover:border-accent/60 ${
-                      player.isStarting ? "border-card-border" : "border-card-border/50 opacity-70"
-                    }`}
-                  >
-                    <span
-                      className={`absolute right-3 top-3 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${flagBadgeClasses(player.flag)}`}
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex overflow-hidden rounded-lg border border-card-border">
+                  {POSITION_FILTERS.map((pos) => (
+                    <button
+                      key={pos}
+                      type="button"
+                      onClick={() => setPositionFilter(pos)}
+                      className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors ${
+                        positionFilter === pos
+                          ? "bg-accent-strong text-[#04140b]"
+                          : "bg-card text-muted hover:text-foreground"
+                      }`}
                     >
-                      {flagLabel(player.flag)}
-                    </span>
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">
-                      {player.position} &middot; {player.club}
-                    </p>
-                    <p className="mt-1 pr-10 font-semibold text-foreground">
-                      {player.name}
-                      {player.isCaptain && <span className="ml-1 text-accent">(C)</span>}
-                      {player.isViceCaptain && <span className="ml-1 text-muted">(V)</span>}
-                    </p>
-                    <div className="mt-3 flex items-center justify-between text-xs text-muted">
-                      <span>£{player.price}m</span>
-                      <span>Form {player.form}</span>
-                      <span>{player.totalPoints} pts</span>
+                      {pos}
+                    </button>
+                  ))}
+                </div>
+
+                <select
+                  value={sortOption}
+                  onChange={(event) => setSortOption(event.target.value as SortOption)}
+                  className="rounded-lg border border-card-border bg-card px-3 py-2 text-xs font-medium text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                >
+                  {SORT_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <section className="mt-4">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                  {startingPlayers.map((player) => (
+                    <SquadPlayerCard key={player.id} player={player} onOpen={() => openPlayerModal(player)} />
+                  ))}
+                </div>
+
+                {benchPlayers.length > 0 && (
+                  <>
+                    <div className="mt-6 flex items-center gap-3">
+                      <span className="h-px flex-1 bg-card-border" />
+                      <span className="text-xs font-bold uppercase tracking-widest text-muted">Bench</span>
+                      <span className="h-px flex-1 bg-card-border" />
                     </div>
-                    {!player.isStarting && (
-                      <p className="mt-2 text-[10px] uppercase tracking-wide text-muted">Bench</p>
-                    )}
-                  </button>
-                ))}
+                    <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                      {benchPlayers.map((player) => (
+                        <SquadPlayerCard key={player.id} player={player} onOpen={() => openPlayerModal(player)} />
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {startingPlayers.length === 0 && benchPlayers.length === 0 && (
+                  <p className="mt-4 text-center text-sm text-muted">No players match this filter.</p>
+                )}
               </section>
 
               <div className="mt-10 flex justify-center">

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { buildAllPlayers, fetchBootstrapStatic } from "@/lib/fpl";
-import { getPlayerXG } from "@/lib/understat";
+import { getPlayerXG, getTopXGPer90Players } from "@/lib/understat";
+
+const LEADER_POSITIONS = ["GKP", "DEF", "MID", "FWD"] as const;
 
 export async function GET() {
   try {
@@ -15,7 +17,13 @@ export async function GET() {
         };
       }),
     );
-    return NextResponse.json({ players });
+
+    const xgLeaderEntries = await Promise.all(
+      LEADER_POSITIONS.map(async (position) => [position, await getTopXGPer90Players(position, 20)] as const),
+    );
+    const xgLeaders = Object.fromEntries(xgLeaderEntries);
+
+    return NextResponse.json({ players, xgLeaders });
   } catch (error) {
     console.error("Failed to load players", error);
     return NextResponse.json(

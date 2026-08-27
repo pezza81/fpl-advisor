@@ -219,7 +219,11 @@ export function fetchPicks(
   teamId: string | number,
   gameweek: number,
 ): Promise<PicksResponse> {
-  return fplFetch<PicksResponse>(`/entry/${teamId}/event/${gameweek}/picks/`);
+  // Cache-busting query param — FPL's own API sits behind a CDN that has
+  // been observed serving a stale picks response for the current gameweek
+  // (transfers/captain changes not reflected); a unique query string on
+  // every call forces a fresh fetch instead of a cached one.
+  return fplFetch<PicksResponse>(`/entry/${teamId}/event/${gameweek}/picks/?_=${Date.now()}`);
 }
 
 export interface GameweekHistoryRow {

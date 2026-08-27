@@ -1,9 +1,25 @@
 {
-  "generatedAt": "2026-08-23T15:16:01.972Z",
+  "generatedAt": "2026-08-26T19:24:14.619Z",
   "source": "https://understat.com",
   "league": "EPL",
   "season": "2026",
   "players": [
+    {
+      "name": "Alexander Isak",
+      "team": "Liverpool",
+      "position": "F",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 1.41,
+      "xA": 0.04,
+      "npxG": 1.41,
+      "shots": 4,
+      "keyPasses": 1,
+      "xG90": 1.41,
+      "xA90": 0.04
+    },
     {
       "name": "Jack Hinshelwood",
       "team": "Brighton",
@@ -53,6 +69,22 @@
       "xA90": 0.03
     },
     {
+      "name": "Yoane Wissa",
+      "team": "Newcastle United",
+      "position": "M",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 1,
+      "xG": 0.97,
+      "xA": 0.07,
+      "npxG": 0.97,
+      "shots": 4,
+      "keyPasses": 1,
+      "xG90": 0.97,
+      "xA90": 0.07
+    },
+    {
       "name": "Thiago",
       "team": "Brentford",
       "position": "F",
@@ -69,6 +101,22 @@
       "xA90": 0
     },
     {
+      "name": "Dominik Szoboszlai",
+      "team": "Liverpool",
+      "position": "M",
+      "games": 1,
+      "minutes": 90,
+      "goals": 1,
+      "assists": 0,
+      "xG": 0.83,
+      "xA": 0.15,
+      "npxG": 0.07,
+      "shots": 3,
+      "keyPasses": 3,
+      "xG90": 0.83,
+      "xA90": 0.15
+    },
+    {
       "name": "Michael Kayode",
       "team": "Brentford",
       "position": "D",
@@ -82,6 +130,22 @@
       "shots": 4,
       "keyPasses": 0,
       "xG90": 0.95,
+      "xA90": 0
+    },
+    {
+      "name": "Gonzalo García",
+      "team": "Fulham",
+      "position": "F",
+      "games": 1,
+      "minutes": 90,
+      "goals": 1,
+      "assists": 0,
+      "xG": 0.8,
+      "xA": 0,
+      "npxG": 0.8,
+      "shots": 3,
+      "keyPasses": 0,
+      "xG90": 0.8,
       "xA90": 0
     },
     {
@@ -131,6 +195,22 @@
       "keyPasses": 0,
       "xG90": 0.96,
       "xA90": 0
+    },
+    {
+      "name": "João Pedro",
+      "team": "Chelsea",
+      "position": "F",
+      "games": 1,
+      "minutes": 90,
+      "goals": 1,
+      "assists": 1,
+      "xG": 0.67,
+      "xA": 0.35,
+      "npxG": 0.67,
+      "shots": 4,
+      "keyPasses": 2,
+      "xG90": 0.67,
+      "xA90": 0.35
     },
     {
       "name": "Marc Guehi",
@@ -245,6 +325,22 @@
       "xA90": 0.14
     },
     {
+      "name": "Romeo Lavia",
+      "team": "Chelsea",
+      "position": "M",
+      "games": 1,
+      "minutes": 67,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.59,
+      "xA": 0.18,
+      "npxG": 0.59,
+      "shots": 1,
+      "keyPasses": 2,
+      "xG90": 0.79,
+      "xA90": 0.24
+    },
+    {
       "name": "Keane Lewis-Potter",
       "team": "Brentford",
       "position": "D",
@@ -259,6 +355,38 @@
       "keyPasses": 1,
       "xG90": 0.58,
       "xA90": 0.02
+    },
+    {
+      "name": "Cole Palmer",
+      "team": "Chelsea",
+      "position": "M",
+      "games": 1,
+      "minutes": 85,
+      "goals": 1,
+      "assists": 1,
+      "xG": 0.57,
+      "xA": 0.57,
+      "npxG": 0.57,
+      "shots": 5,
+      "keyPasses": 3,
+      "xG90": 0.61,
+      "xA90": 0.6
+    },
+    {
+      "name": "Morgan Rogers",
+      "team": "Chelsea",
+      "position": "M",
+      "games": 1,
+      "minutes": 84,
+      "goals": 1,
+      "assists": 0,
+      "xG": 0.56,
+      "xA": 0.28,
+      "npxG": 0.56,
+      "shots": 3,
+      "keyPasses": 5,
+      "xG90": 0.6,
+      "xA90": 0.3
     },
     {
       "name": "Bryan Mbeumo",
@@ -501,6 +629,22 @@
       "xA90": 0.06
     },
     {
+      "name": "Anthony Elanga",
+      "team": "Newcastle United",
+      "position": "M",
+      "games": 1,
+      "minutes": 77,
+      "goals": 1,
+      "assists": 0,
+      "xG": 0.28,
+      "xA": 0,
+      "npxG": 0.28,
+      "shots": 2,
+      "keyPasses": 0,
+      "xG90": 0.33,
+      "xA90": 0
+    },
+    {
       "name": "Igor Jesus",
       "team": "Nottingham Forest",
       "position": "F",
@@ -565,6 +709,38 @@
       "xA90": 0.33
     },
     {
+      "name": "Cody Gakpo",
+      "team": "Liverpool",
+      "position": "M",
+      "games": 1,
+      "minutes": 90,
+      "goals": 1,
+      "assists": 0,
+      "xG": 0.23,
+      "xA": 0.23,
+      "npxG": 0.23,
+      "shots": 6,
+      "keyPasses": 3,
+      "xG90": 0.23,
+      "xA90": 0.23
+    },
+    {
+      "name": "Florian Wirtz",
+      "team": "Liverpool",
+      "position": "M",
+      "games": 1,
+      "minutes": 64,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.23,
+      "xA": 0.03,
+      "npxG": 0.23,
+      "shots": 3,
+      "keyPasses": 1,
+      "xG90": 0.32,
+      "xA90": 0.04
+    },
+    {
       "name": "Diego Gómez",
       "team": "Brighton",
       "position": "M",
@@ -595,6 +771,22 @@
       "keyPasses": 3,
       "xG90": 0.22,
       "xA90": 0.61
+    },
+    {
+      "name": "Antonee Robinson",
+      "team": "Fulham",
+      "position": "D",
+      "games": 1,
+      "minutes": 84,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.2,
+      "xA": 0.05,
+      "npxG": 0.2,
+      "shots": 1,
+      "keyPasses": 1,
+      "xG90": 0.22,
+      "xA90": 0.05
     },
     {
       "name": "Julio Enciso",
@@ -661,7 +853,7 @@
       "xA90": 0
     },
     {
-      "name": "Nico O&#039;Reilly",
+      "name": "Nico O'Reilly",
       "team": "Manchester City",
       "position": "M",
       "games": 1,
@@ -675,6 +867,22 @@
       "keyPasses": 1,
       "xG90": 0.23,
       "xA90": 0.08
+    },
+    {
+      "name": "César Palacios",
+      "team": "Fulham",
+      "position": "M",
+      "games": 1,
+      "minutes": 75,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.16,
+      "xA": 0,
+      "npxG": 0.16,
+      "shots": 2,
+      "keyPasses": 0,
+      "xG90": 0.19,
+      "xA90": 0
     },
     {
       "name": "Mikel Merino",
@@ -757,6 +965,22 @@
       "xA90": 0
     },
     {
+      "name": "Joshua King",
+      "team": "Fulham",
+      "position": "M",
+      "games": 1,
+      "minutes": 90,
+      "goals": 1,
+      "assists": 0,
+      "xG": 0.12,
+      "xA": 0.04,
+      "npxG": 0.12,
+      "shots": 3,
+      "keyPasses": 1,
+      "xG90": 0.12,
+      "xA90": 0.04
+    },
+    {
       "name": "Nilson Angulo",
       "team": "Sunderland",
       "position": "M",
@@ -770,6 +994,22 @@
       "shots": 2,
       "keyPasses": 0,
       "xG90": 0.17,
+      "xA90": 0
+    },
+    {
+      "name": "Virgil van Dijk",
+      "team": "Liverpool",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.12,
+      "xA": 0,
+      "npxG": 0.12,
+      "shots": 2,
+      "keyPasses": 0,
+      "xG90": 0.12,
       "xA90": 0
     },
     {
@@ -818,6 +1058,22 @@
       "shots": 3,
       "keyPasses": 0,
       "xG90": 0.11,
+      "xA90": 0
+    },
+    {
+      "name": "Víctor Muñoz",
+      "team": "Liverpool",
+      "position": "S",
+      "games": 1,
+      "minutes": 26,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.11,
+      "xA": 0,
+      "npxG": 0.11,
+      "shots": 2,
+      "keyPasses": 0,
+      "xG90": 0.38,
       "xA90": 0
     },
     {
@@ -901,6 +1157,22 @@
       "xA90": 0.79
     },
     {
+      "name": "Jacob Ramsey",
+      "team": "Newcastle United",
+      "position": "S",
+      "games": 1,
+      "minutes": 33,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.09,
+      "xA": 0,
+      "npxG": 0.09,
+      "shots": 1,
+      "keyPasses": 0,
+      "xG90": 0.25,
+      "xA90": 0
+    },
+    {
       "name": "Noussair Mazraoui",
       "team": "Manchester United",
       "position": "D",
@@ -963,6 +1235,22 @@
       "keyPasses": 1,
       "xG90": 0.09,
       "xA90": 0.05
+    },
+    {
+      "name": "Reece James",
+      "team": "Chelsea",
+      "position": "M",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.08,
+      "xA": 0.03,
+      "npxG": 0.08,
+      "shots": 2,
+      "keyPasses": 1,
+      "xG90": 0.08,
+      "xA90": 0.03
     },
     {
       "name": "Riccardo Calafiori",
@@ -1045,6 +1333,38 @@
       "xA90": 0.08
     },
     {
+      "name": "Joe Willock",
+      "team": "Newcastle United",
+      "position": "S",
+      "games": 1,
+      "minutes": 33,
+      "goals": 1,
+      "assists": 0,
+      "xG": 0.07,
+      "xA": 0.3,
+      "npxG": 0.07,
+      "shots": 1,
+      "keyPasses": 1,
+      "xG90": 0.2,
+      "xA90": 0.82
+    },
+    {
+      "name": "Timothy Castagne",
+      "team": "Fulham",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 1,
+      "xG": 0.07,
+      "xA": 0.17,
+      "npxG": 0.07,
+      "shots": 1,
+      "keyPasses": 2,
+      "xG90": 0.07,
+      "xA90": 0.17
+    },
+    {
       "name": "Georginio Rutter",
       "team": "Brighton",
       "position": "F",
@@ -1125,6 +1445,54 @@
       "xA90": 0
     },
     {
+      "name": "Pedro Neto",
+      "team": "Chelsea",
+      "position": "S",
+      "games": 1,
+      "minutes": 12,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.06,
+      "xA": 0,
+      "npxG": 0.06,
+      "shots": 1,
+      "keyPasses": 0,
+      "xG90": 0.41,
+      "xA90": 0
+    },
+    {
+      "name": "Harvey Barnes",
+      "team": "Newcastle United",
+      "position": "M",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.06,
+      "xA": 0,
+      "npxG": 0.06,
+      "shots": 1,
+      "keyPasses": 0,
+      "xG90": 0.06,
+      "xA90": 0
+    },
+    {
+      "name": "William Osula",
+      "team": "Newcastle United",
+      "position": "F",
+      "games": 1,
+      "minutes": 57,
+      "goals": 0,
+      "assists": 1,
+      "xG": 0.06,
+      "xA": 0.26,
+      "npxG": 0.06,
+      "shots": 2,
+      "keyPasses": 1,
+      "xG90": 0.09,
+      "xA90": 0.41
+    },
+    {
       "name": "Mathys Tel",
       "team": "Tottenham",
       "position": "M",
@@ -1141,6 +1509,22 @@
       "xA90": 0.03
     },
     {
+      "name": "Ryan Gravenberch",
+      "team": "Liverpool",
+      "position": "M",
+      "games": 1,
+      "minutes": 79,
+      "goals": 0,
+      "assists": 1,
+      "xG": 0.06,
+      "xA": 0.01,
+      "npxG": 0.06,
+      "shots": 2,
+      "keyPasses": 1,
+      "xG90": 0.06,
+      "xA90": 0.02
+    },
+    {
       "name": "Carlos Alcaraz",
       "team": "Everton",
       "position": "S",
@@ -1154,6 +1538,22 @@
       "shots": 1,
       "keyPasses": 0,
       "xG90": 5.34,
+      "xA90": 0
+    },
+    {
+      "name": "Amar Dedic",
+      "team": "Newcastle United",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.06,
+      "xA": 0,
+      "npxG": 0.06,
+      "shots": 1,
+      "keyPasses": 0,
+      "xG90": 0.06,
       "xA90": 0
     },
     {
@@ -1253,6 +1653,22 @@
       "xA90": 0
     },
     {
+      "name": "Levi Colwill",
+      "team": "Chelsea",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.05,
+      "xA": 0,
+      "npxG": 0.05,
+      "shots": 1,
+      "keyPasses": 0,
+      "xG90": 0.05,
+      "xA90": 0
+    },
+    {
       "name": "Antoine Semenyo",
       "team": "Manchester City",
       "position": "M",
@@ -1269,6 +1685,22 @@
       "xA90": 0
     },
     {
+      "name": "Lewis Miley",
+      "team": "Newcastle United",
+      "position": "M",
+      "games": 1,
+      "minutes": 77,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.05,
+      "xA": 0.08,
+      "npxG": 0.05,
+      "shots": 1,
+      "keyPasses": 2,
+      "xG90": 0.06,
+      "xA90": 0.1
+    },
+    {
       "name": "Myles Lewis-Skelly",
       "team": "Arsenal",
       "position": "M",
@@ -1283,6 +1715,38 @@
       "keyPasses": 1,
       "xG90": 0.05,
       "xA90": 0.05
+    },
+    {
+      "name": "Lewis Koumas",
+      "team": "Liverpool",
+      "position": "S",
+      "games": 1,
+      "minutes": 11,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.05,
+      "xA": 0,
+      "npxG": 0.05,
+      "shots": 1,
+      "keyPasses": 0,
+      "xG90": 0.43,
+      "xA90": 0
+    },
+    {
+      "name": "Rio Ngumoha",
+      "team": "Liverpool",
+      "position": "M",
+      "games": 1,
+      "minutes": 64,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.05,
+      "xA": 0,
+      "npxG": 0.05,
+      "shots": 1,
+      "keyPasses": 0,
+      "xG90": 0.07,
+      "xA90": 0
     },
     {
       "name": "Trai Hume",
@@ -1397,6 +1861,22 @@
       "xA90": 0
     },
     {
+      "name": "Ryan Sessegnon",
+      "team": "Fulham",
+      "position": "S",
+      "games": 1,
+      "minutes": 15,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.04,
+      "xA": 0,
+      "npxG": 0.04,
+      "shots": 1,
+      "keyPasses": 0,
+      "xG90": 0.23,
+      "xA90": 0
+    },
+    {
       "name": "Evann Guessand",
       "team": "Crystal Palace",
       "position": "S",
@@ -1411,6 +1891,22 @@
       "keyPasses": 0,
       "xG90": 0.16,
       "xA90": 0
+    },
+    {
+      "name": "Sander Berge",
+      "team": "Fulham",
+      "position": "M",
+      "games": 1,
+      "minutes": 75,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.04,
+      "xA": 0.04,
+      "npxG": 0.04,
+      "shots": 1,
+      "keyPasses": 2,
+      "xG90": 0.04,
+      "xA90": 0.05
     },
     {
       "name": "Eberechi Eze",
@@ -1443,6 +1939,22 @@
       "keyPasses": 0,
       "xG90": 0.21,
       "xA90": 0
+    },
+    {
+      "name": "Milos Kerkez",
+      "team": "Liverpool",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.04,
+      "xA": 0.02,
+      "npxG": 0.04,
+      "shots": 2,
+      "keyPasses": 1,
+      "xG90": 0.04,
+      "xA90": 0.02
     },
     {
       "name": "Benjamin Sesko",
@@ -1653,6 +2165,22 @@
       "xA90": 0
     },
     {
+      "name": "Jorrel Hato",
+      "team": "Chelsea",
+      "position": "D",
+      "games": 1,
+      "minutes": 67,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.03,
+      "xA": 0.59,
+      "npxG": 0.03,
+      "shots": 1,
+      "keyPasses": 1,
+      "xG90": 0.05,
+      "xA90": 0.79
+    },
+    {
       "name": "Dwight McNeil",
       "team": "Crystal Palace",
       "position": "M",
@@ -1701,6 +2229,22 @@
       "xA90": 0
     },
     {
+      "name": "Rodrigo Muniz",
+      "team": "Fulham",
+      "position": "S",
+      "games": 1,
+      "minutes": 6,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.02,
+      "xA": 0.02,
+      "npxG": 0.02,
+      "shots": 1,
+      "keyPasses": 1,
+      "xG90": 0.23,
+      "xA90": 0.35
+    },
+    {
       "name": "Jaidon Anthony",
       "team": "Brentford",
       "position": "S",
@@ -1733,6 +2277,22 @@
       "xA90": 0
     },
     {
+      "name": "Calvin Bassey",
+      "team": "Fulham",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.02,
+      "xA": 0,
+      "npxG": 0.02,
+      "shots": 1,
+      "keyPasses": 0,
+      "xG90": 0.02,
+      "xA90": 0
+    },
+    {
       "name": "Jaydee Canvot",
       "team": "Crystal Palace",
       "position": "D",
@@ -1749,7 +2309,7 @@
       "xA90": 0
     },
     {
-      "name": "Luke O&#039;Nien",
+      "name": "Luke O'Nien",
       "team": "Sunderland",
       "position": "D",
       "games": 1,
@@ -1797,6 +2357,54 @@
       "xA90": 0.03
     },
     {
+      "name": "Jeremie Frimpong",
+      "team": "Liverpool",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0.01,
+      "xA": 0.11,
+      "npxG": 0.01,
+      "shots": 1,
+      "keyPasses": 3,
+      "xG90": 0.01,
+      "xA90": 0.11
+    },
+    {
+      "name": "Fabian Schär",
+      "team": "Newcastle United",
+      "position": "S",
+      "games": 1,
+      "minutes": 1,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
+      "name": "Bernd Leno",
+      "team": "Fulham",
+      "position": "GK",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
       "name": "Granit Xhaka",
       "team": "Sunderland",
       "position": "M",
@@ -1827,6 +2435,22 @@
       "keyPasses": 4,
       "xG90": 0,
       "xA90": 0.48
+    },
+    {
+      "name": "Alex Iwobi",
+      "team": "Fulham",
+      "position": "M",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
     },
     {
       "name": "Marcus Rashford",
@@ -1975,6 +2599,22 @@
     {
       "name": "Gianluigi Donnarumma",
       "team": "Manchester City",
+      "position": "GK",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
+      "name": "Alisson",
+      "team": "Liverpool",
       "position": "GK",
       "games": 1,
       "minutes": 90,
@@ -2154,6 +2794,22 @@
       "position": "D",
       "games": 1,
       "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
+      "name": "Jacob Murphy",
+      "team": "Newcastle United",
+      "position": "S",
+      "games": 1,
+      "minutes": 13,
       "goals": 0,
       "assists": 0,
       "xG": 0,
@@ -2517,6 +3173,22 @@
       "xA90": 0
     },
     {
+      "name": "Ronald Araújo",
+      "team": "Liverpool",
+      "position": "S",
+      "games": 1,
+      "minutes": 19,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
       "name": "Mathis Cherki",
       "team": "Manchester City",
       "position": "S",
@@ -2563,6 +3235,38 @@
       "keyPasses": 1,
       "xG90": 0,
       "xA90": 0.03
+    },
+    {
+      "name": "Malick Thiaw",
+      "team": "Newcastle United",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
+      "name": "Alexis Mac Allister",
+      "team": "Liverpool",
+      "position": "S",
+      "games": 1,
+      "minutes": 26,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
     },
     {
       "name": "Luca Netz",
@@ -2613,6 +3317,22 @@
       "xA90": 0
     },
     {
+      "name": "Jorge Cuenca",
+      "team": "Fulham",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0.24,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 2,
+      "xG90": 0,
+      "xA90": 0.24
+    },
+    {
       "name": "Ellis Simms",
       "team": "Coventry",
       "position": "F",
@@ -2627,6 +3347,22 @@
       "keyPasses": 1,
       "xG90": 0,
       "xA90": 0.02
+    },
+    {
+      "name": "Sven Botman",
+      "team": "Newcastle United",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
     },
     {
       "name": "Adrien Truffert",
@@ -2677,7 +3413,7 @@
       "xA90": 0
     },
     {
-      "name": "Dara O&#039;Shea",
+      "name": "Dara O'Shea",
       "team": "Ipswich",
       "position": "D",
       "games": 1,
@@ -2707,6 +3443,22 @@
       "keyPasses": 0,
       "xG90": 0,
       "xA90": 0
+    },
+    {
+      "name": "Maxence Lacroix",
+      "team": "Chelsea",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 1,
+      "xG": 0,
+      "xA": 0.45,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 1,
+      "xG90": 0,
+      "xA90": 0.45
     },
     {
       "name": "Mikkel Damsgaard",
@@ -2821,8 +3573,40 @@
       "xA90": 0
     },
     {
+      "name": "Malo Gusto",
+      "team": "Chelsea",
+      "position": "D",
+      "games": 1,
+      "minutes": 78,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
       "name": "James Trafford",
       "team": "Leeds",
+      "position": "GK",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
+      "name": "Robert Sánchez",
+      "team": "Chelsea",
       "position": "GK",
       "games": 1,
       "minutes": 90,
@@ -3029,6 +3813,22 @@
       "xA90": 0
     },
     {
+      "name": "Lewis Hall",
+      "team": "Newcastle United",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0.63,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 1,
+      "xG90": 0,
+      "xA90": 0.63
+    },
+    {
       "name": "Vitalii Mykolenko",
       "team": "Everton",
       "position": "D",
@@ -3157,6 +3957,22 @@
       "xA90": 0
     },
     {
+      "name": "Pep Chavarría",
+      "team": "Chelsea",
+      "position": "S",
+      "games": 1,
+      "minutes": 23,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
       "name": "Chadi Riad",
       "team": "Crystal Palace",
       "position": "D",
@@ -3205,6 +4021,22 @@
       "xA90": 0.09
     },
     {
+      "name": "Enzo Fernández",
+      "team": "Chelsea",
+      "position": "S",
+      "games": 1,
+      "minutes": 23,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0.06,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 1,
+      "xG90": 0,
+      "xA90": 0.22
+    },
+    {
       "name": "Noni Madueke",
       "team": "Arsenal",
       "position": "S",
@@ -3235,6 +4067,38 @@
       "keyPasses": 1,
       "xG90": 0,
       "xA90": 0.08
+    },
+    {
+      "name": "Jérémy Jacquet",
+      "team": "Liverpool",
+      "position": "D",
+      "games": 1,
+      "minutes": 71,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0.02,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 1,
+      "xG90": 0,
+      "xA90": 0.02
+    },
+    {
+      "name": "Shea Charles",
+      "team": "Fulham",
+      "position": "S",
+      "games": 1,
+      "minutes": 21,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
     },
     {
       "name": "Bart Verbruggen",
@@ -3299,6 +4163,22 @@
       "keyPasses": 0,
       "xG90": 0,
       "xA90": 0
+    },
+    {
+      "name": "Oscar Bobb",
+      "team": "Fulham",
+      "position": "M",
+      "games": 1,
+      "minutes": 69,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0.14,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 1,
+      "xG90": 0,
+      "xA90": 0.18
     },
     {
       "name": "Noah Okafor",
@@ -3379,6 +4259,22 @@
       "keyPasses": 2,
       "xG90": 0,
       "xA90": 0.33
+    },
+    {
+      "name": "Josh Acheampong",
+      "team": "Chelsea",
+      "position": "D",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
     },
     {
       "name": "Jacob Greaves",
@@ -3509,6 +4405,22 @@
       "xA90": 0.52
     },
     {
+      "name": "Aladji Bamba",
+      "team": "Newcastle United",
+      "position": "S",
+      "games": 1,
+      "minutes": 13,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
       "name": "Antonín Kinsky",
       "team": "Tottenham",
       "position": "GK",
@@ -3589,6 +4501,22 @@
       "xA90": 0
     },
     {
+      "name": "Estêvão",
+      "team": "Chelsea",
+      "position": "S",
+      "games": 1,
+      "minutes": 5,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
       "name": "Jair",
       "team": "Nottingham Forest",
       "position": "D",
@@ -3619,6 +4547,22 @@
       "keyPasses": 1,
       "xG90": 0,
       "xA90": 0.36
+    },
+    {
+      "name": "Kevin",
+      "team": "Fulham",
+      "position": "S",
+      "games": 1,
+      "minutes": 15,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
     },
     {
       "name": "Senne Lammens",
@@ -3962,6 +4906,54 @@
       "position": "D",
       "games": 1,
       "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
+      "name": "Lukás Hornícek",
+      "team": "Newcastle United",
+      "position": "GK",
+      "games": 1,
+      "minutes": 90,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
+      "name": "Sean Steur",
+      "team": "Newcastle United",
+      "position": "M",
+      "games": 1,
+      "minutes": 57,
+      "goals": 0,
+      "assists": 0,
+      "xG": 0,
+      "xA": 0,
+      "npxG": 0,
+      "shots": 0,
+      "keyPasses": 0,
+      "xG90": 0,
+      "xA90": 0
+    },
+    {
+      "name": "Geovany Quenda",
+      "team": "Chelsea",
+      "position": "S",
+      "games": 1,
+      "minutes": 6,
       "goals": 0,
       "assists": 0,
       "xG": 0,

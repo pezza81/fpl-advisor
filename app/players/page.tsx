@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { SquadPlayer } from "@/lib/fpl";
+import type { UnderstatPlayer } from "@/lib/understat";
 import { usePlayerInsight } from "@/lib/use-player-insight";
 import { PlayerModal } from "@/components/PlayerModal";
 import { statusBadgeClasses, statusLabel } from "@/lib/player-status";
@@ -12,8 +13,11 @@ interface PlayerWithXG extends SquadPlayer {
   xA: number | null;
 }
 
+type XGLeaderPosition = "GKP" | "DEF" | "MID" | "FWD";
+
 interface PlayersResponse {
   players: PlayerWithXG[];
+  xgLeaders?: Record<XGLeaderPosition, UnderstatPlayer[]>;
   error?: string;
 }
 
@@ -21,11 +25,20 @@ type SortKey = "name" | "club" | "position" | "price" | "form" | "totalPoints" |
 type SortDirection = "asc" | "desc";
 
 const POSITIONS = ["All", "GKP", "DEF", "MID", "FWD"] as const;
+const LEADER_POSITIONS: XGLeaderPosition[] = ["GKP", "DEF", "MID", "FWD"];
+const LEADER_POSITION_LABELS: Record<XGLeaderPosition, string> = {
+  GKP: "Goalkeepers",
+  DEF: "Defenders",
+  MID: "Midfielders",
+  FWD: "Forwards",
+};
 
 export default function PlayersPage() {
   const [players, setPlayers] = useState<PlayerWithXG[]>([]);
+  const [xgLeaders, setXgLeaders] = useState<Record<XGLeaderPosition, UnderstatPlayer[]> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [view, setView] = useState<"all" | "leaders">("all");
 
   const [search, setSearch] = useState("");
   const [position, setPosition] = useState<(typeof POSITIONS)[number]>("All");
@@ -49,7 +62,10 @@ export default function PlayersPage() {
       .then(async (res) => {
         const data = (await res.json()) as PlayersResponse;
         if (!res.ok) throw new Error(data.error ?? "Failed to load players.");
-        if (!cancelled) setPlayers(data.players);
+        if (!cancelled) {
+          setPlayers(data.players);
+          setXgLeaders(data.xgLeaders ?? null);
+        }
       })
       .catch((err: Error) => {
         if (!cancelled) setError(err.message);
@@ -151,6 +167,33 @@ export default function PlayersPage() {
         </p>
       </header>
 
+      {!loading && !error && (
+        <div className="mt-5 flex gap-1 border-b border-card-border">
+          <button
+            type="button"
+            onClick={() => setView("all")}
+            className={`border-b-2 px-3 py-2 text-sm font-semibold transition-colors ${
+              view === "all"
+                ? "border-accent text-accent"
+                : "border-transparent text-muted hover:text-foreground"
+            }`}
+          >
+            All players
+          </button>
+          <button
+            type="button"
+            onClick={() => setView("leaders")}
+            className={`border-b-2 px-3 py-2 text-sm font-semibold transition-colors ${
+              view === "leaders"
+                ? "border-accent text-accent"
+                : "border-transparent text-muted hover:text-foreground"
+            }`}
+          >
+            xG Leaders
+          </button>
+        </div>
+      )}
+
       {loading && (
         <div className="mt-16 flex flex-col items-center gap-3 text-muted">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-card-border border-t-accent" />
@@ -164,7 +207,7 @@ export default function PlayersPage() {
         </div>
       )}
 
-      {!loading && !error && (
+      {!loading && !error && view === "all" && (
         <>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <input
@@ -263,6 +306,73 @@ export default function PlayersPage() {
             </table>
           </div>
         </>
+      )}
+
+      {!loading && !error && view === "leaders" && (
+        <div className="mt-6">
+          <h2 className="text-xl font-bold text-foreground">Who&apos;s creating the most chances?</h2>
+          <p className="mt-1 text-sm text-muted">
+            Top 20 players by xG per 90 minutes in each position (Understat, players with at least
+            60 minutes played this season) — a good place to spot transfer targets whose underlying
+            numbers are ahead of what their points total suggests.
+          </p>
+
+          {!xgLeaders && (
+            <p className="mt-6 text-sm text-muted">
+              No Understat xG data available yet this season.
+            </p>
+          )}
+
+          {xgLeaders &&
+            LEADER_POSITIONS.map((pos) => (
+              <div key={pos} className="mt-8">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-muted">
+                  {LEADER_POSITION_LABELS[pos]}
+                </h3>
+                {xgLeaders[pos].length === 0 ? (
+                  <p className="mt-2 text-sm text-muted">Not enough minutes played yet this season.</p>
+                ) : (
+                  <div className="mt-2 overflow-x-auto rounded-xl border border-card-border">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-card-border bg-card text-[10px] uppercase tracking-wide text-muted">
+                          <th className="px-3 py-2 text-left font-semibold">#</th>
+                          <th className="px-3 py-2 text-left font-semibold">Name</th>
+                          <th className="px-3 py-2 text-left font-semibold">Team</th>
+                          <th className="px-3 py-2 text-right font-semibold">xG/90</th>
+                          <th className="px-3 py-2 text-right font-semibold">xA/90</th>
+                          <th className="px-3 py-2 text-right font-semibold">Goals</th>
+                          <th className="px-3 py-2 text-right font-semibold">xG</th>
+                          <th className="px-3 py-2 text-right font-semibold">Mins</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {xgLeaders[pos].map((player, index) => (
+                          <tr
+                            key={`${player.name}-${player.team}`}
+                            className="border-b border-card-border/50 last:border-b-0"
+                          >
+                            <td className="px-3 py-2 text-muted">{index + 1}</td>
+                            <td className="px-3 py-2 font-medium text-foreground">{player.name}</td>
+                            <td className="px-3 py-2 text-muted">{player.team}</td>
+                            <td className="px-3 py-2 text-right font-semibold text-foreground">
+                              {player.xG90}
+                            </td>
+                            <td className="px-3 py-2 text-right text-foreground">{player.xA90}</td>
+                            <td className="px-3 py-2 text-right text-foreground">{player.goals}</td>
+                            <td className="px-3 py-2 text-right text-foreground">{player.xG}</td>
+                            <td className="px-3 py-2 text-right text-muted">{player.minutes}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            ))}
+
+          <p className="mt-6 text-[10px] text-muted">via Understat</p>
+        </div>
       )}
 
       {selectedPlayer && (

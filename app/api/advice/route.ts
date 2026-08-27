@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { EARLY_SEASON_CUTOFF_GAMEWEEK, fetchBootstrapStatic, type SquadPlayer } from "@/lib/fpl";
+import {
+  EARLY_SEASON_CUTOFF_GAMEWEEK,
+  fetchBootstrapStatic,
+  type BootstrapStatic,
+  type SquadPlayer,
+} from "@/lib/fpl";
 import {
   buildFplNameLookup,
   classifyTrend,
@@ -26,6 +31,7 @@ import {
 } from "@/lib/api-football";
 import { chipExplanationFor } from "@/lib/chips";
 import { getPlayerXG, type UnderstatPlayer } from "@/lib/understat";
+import { validateTransferRecommendation } from "@/lib/transfer-validation";
 
 interface AdviceChip {
   name: string;
@@ -53,13 +59,29 @@ function parseActionItems(text: string): string[] {
     .slice(0, 5);
 }
 
+// web_name (lowercased) -> exact current £m, straight from the live FPL
+// bootstrap — the one source of truth for "what does this player cost right
+// now", independent of anything cached in the trend digest.
+function buildLivePriceLookup(bootstrap: BootstrapStatic | null): Map<string, number> | null {
+  if (!bootstrap) return null;
+  return new Map(bootstrap.elements.map((element) => [element.web_name.toLowerCase().trim(), element.now_cost / 10]));
+}
+
 // Cross-references the user's squad against the 3-season trend digest and
 // returns prompt-ready text: which of their own players are trending up or
 // down, plus a pool of affordable, trending-up players outside the squad
 // worth suggesting as transfer targets. Returns "" if no digest has been
 // pulled yet (npm run fetch:football) — trend-awareness degrades gracefully
 // rather than breaking advice generation.
-async function buildTrendContext(squad: SquadPlayer[]): Promise<string> {
+// livePrices (web_name -> current £m, from live FPL bootstrap) overrides the
+// digest's own currentPrice for every transfer-target candidate — that field
+// is only as fresh as the last `npm run fetch:football` run, so without this
+// override a candidate's listed price can drift from what they actually cost
+// by the time advice is generated, and Claude has no way to know that.
+async function buildTrendContext(
+  squad: SquadPlayer[],
+  livePrices: Map<string, number> | null,
+): Promise<string> {
   const digest = await loadFootballDigest();
   if (!digest) return "";
 
@@ -77,9 +99,10 @@ async function buildTrendContext(squad: SquadPlayer[]): Promise<string> {
     .filter((line): line is string => line !== null);
 
   const risingCandidates = findRisingCandidates(digest, squadWebNames, 25);
-  const risingLines = risingCandidates.map((player) =>
-    formatTrendLine(player, player.trend, player.currentPrice),
-  );
+  const risingLines = risingCandidates.map((player) => {
+    const livePrice = player.fplWebName ? livePrices?.get(player.fplWebName.toLowerCase().trim()) : undefined;
+    return formatTrendLine(player, player.trend, livePrice ?? player.currentPrice);
+  });
 
   if (squadTrendLines.length === 0 && risingLines.length === 0) return "";
 
@@ -90,7 +113,7 @@ async function buildTrendContext(squad: SquadPlayer[]): Promise<string> {
 
   const risingSection =
     risingLines.length > 0
-      ? `Players NOT in this squad whose output is trending upward league-wide (potential transfer targets, cheapest and biggest risers first is not guaranteed — check price against bank yourself):\n${risingLines.join("\n")}`
+      ? `Players NOT in this squad whose output is trending upward league-wide (potential transfer targets — cheapest and biggest risers first is not guaranteed, check price against bank yourself; the price shown for each is their exact current FPL price, live from the bootstrap API):\n${risingLines.join("\n")}`
       : "";
 
   return `\nHistorical trend data (3 real Premier League seasons via API-Football, cross-referenced against this squad):\n\n${squadSection}\n\n${risingSection}\n`;
@@ -240,30 +263,25 @@ async function buildRestDaysContext(squad: SquadPlayer[]): Promise<string> {
 // (FPL bootstrap's own `played` count per team). A club on 0-1 games hasn't
 // given a player enough of a sample to judge fairly — the instruction below
 // tells Claude not to treat that alone as a sell signal.
-async function buildEarlySeasonGamesContext(
+function buildEarlySeasonGamesContext(
   squad: SquadPlayer[],
   gameweek: number | undefined,
-): Promise<string> {
-  if (!gameweek || gameweek > EARLY_SEASON_CUTOFF_GAMEWEEK) return "";
+  bootstrap: BootstrapStatic | null,
+): string {
+  if (!gameweek || gameweek > EARLY_SEASON_CUTOFF_GAMEWEEK || !bootstrap) return "";
 
-  try {
-    const bootstrap = await fetchBootstrapStatic();
-    const playedByClub = new Map(bootstrap.teams.map((team) => [team.short_name, team.played]));
+  const playedByClub = new Map(bootstrap.teams.map((team) => [team.short_name, team.played]));
 
-    const lines = Array.from(new Set(squad.map((player) => player.club)))
-      .map((club) => {
-        const played = playedByClub.get(club);
-        return played != null ? `${club}: ${played} game${played === 1 ? "" : "s"} played this season` : null;
-      })
-      .filter((line): line is string => line !== null);
+  const lines = Array.from(new Set(squad.map((player) => player.club)))
+    .map((club) => {
+      const played = playedByClub.get(club);
+      return played != null ? `${club}: ${played} game${played === 1 ? "" : "s"} played this season` : null;
+    })
+    .filter((line): line is string => line !== null);
 
-    if (lines.length === 0) return "";
+  if (lines.length === 0) return "";
 
-    return `\nGames played so far this season, per club in this squad (FPL bootstrap, gameweek ${gameweek}):\n${lines.join("\n")}\n`;
-  } catch (error) {
-    console.error("Failed to build early-season games-played context", error);
-    return "";
-  }
+  return `\nGames played so far this season, per club in this squad (FPL bootstrap, gameweek ${gameweek}):\n${lines.join("\n")}\n`;
 }
 
 // Expected-vs-actual output (Understat) for each squad player, flagging only
@@ -363,14 +381,27 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Fetched once and reused everywhere a live price or games-played count is
+  // needed (trend context, early-season context, and the post-generation
+  // price validation below) — not per-context-builder, so this is the one
+  // place a bootstrap outage degrades gracefully rather than failing the
+  // whole request.
+  let bootstrap: BootstrapStatic | null = null;
+  try {
+    bootstrap = await fetchBootstrapStatic();
+  } catch (error) {
+    console.error("Failed to load bootstrap for advice", error);
+  }
+  const livePrices = buildLivePriceLookup(bootstrap);
+
   const client = new Anthropic({ apiKey });
-  const [trendContext, matchStatusContext, restDaysContext, earlySeasonGamesContext, xgContext] = await Promise.all([
-    buildTrendContext(squad),
+  const [trendContext, matchStatusContext, restDaysContext, xgContext] = await Promise.all([
+    buildTrendContext(squad, livePrices),
     buildMatchStatusContext(squad),
     buildRestDaysContext(squad),
-    buildEarlySeasonGamesContext(squad, gameweek),
     buildXGContext(squad),
   ]);
+  const earlySeasonGamesContext = buildEarlySeasonGamesContext(squad, gameweek, bootstrap);
   const teamStatsContext = buildTeamStatsContext(squad);
   const chipContext = buildChipContext(availableChips);
 
@@ -407,12 +438,27 @@ ACTIONS: no fewer than 3 and no more than 5 lines total — pick the most import
     const textBlock = response.content.find((block) => block.type === "text");
     const rawText = textBlock && textBlock.type === "text" ? textBlock.text : "";
     const sections = splitLabeledSections(rawText, SECTION_LABELS);
+    const actions = parseActionItems(sections.ACTIONS);
+
+    // Last line of defense: even given the exact live price above, Claude
+    // can still misstate a number in its own prose, or name a target it
+    // wasn't actually shown — this catches it before the user sees a
+    // transfer they can't actually make.
+    const { actions: validatedActions, transferText: validatedTransfer } = bootstrap
+      ? validateTransferRecommendation({
+          actions,
+          transferText: sections.TRANSFER,
+          squad,
+          bank: bank ?? 0,
+          elements: bootstrap.elements,
+        })
+      : { actions, transferText: sections.TRANSFER };
 
     return NextResponse.json({
-      transfer: sections.TRANSFER,
+      transfer: validatedTransfer,
       captain: sections.CAPTAIN,
       chip: sections.CHIP,
-      actions: parseActionItems(sections.ACTIONS),
+      actions: validatedActions,
     });
   } catch (error) {
     console.error("Failed to generate FPL advice", error);
