@@ -32,6 +32,8 @@ const LEADER_POSITION_LABELS: Record<XGLeaderPosition, string> = {
   MID: "Midfielders",
   FWD: "Forwards",
 };
+const LEADER_POSITION_FILTERS = ["All", ...LEADER_POSITIONS] as const;
+type LeaderPositionFilter = (typeof LEADER_POSITION_FILTERS)[number];
 
 export default function PlayersPage() {
   const [players, setPlayers] = useState<PlayerWithXG[]>([]);
@@ -39,6 +41,7 @@ export default function PlayersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [view, setView] = useState<"all" | "leaders">("all");
+  const [leaderPosition, setLeaderPosition] = useState<LeaderPositionFilter>("All");
 
   const [search, setSearch] = useState("");
   const [position, setPosition] = useState<(typeof POSITIONS)[number]>("All");
@@ -317,6 +320,23 @@ export default function PlayersPage() {
             numbers are ahead of what their points total suggests.
           </p>
 
+          <div className="mt-4 flex overflow-hidden rounded-lg border border-card-border w-fit">
+            {LEADER_POSITION_FILTERS.map((pos) => (
+              <button
+                key={pos}
+                type="button"
+                onClick={() => setLeaderPosition(pos)}
+                className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors ${
+                  leaderPosition === pos
+                    ? "bg-accent-strong text-[#04140b]"
+                    : "bg-card text-muted hover:text-foreground"
+                }`}
+              >
+                {pos}
+              </button>
+            ))}
+          </div>
+
           {!xgLeaders && (
             <p className="mt-6 text-sm text-muted">
               No Understat xG data available yet this season.
@@ -324,7 +344,7 @@ export default function PlayersPage() {
           )}
 
           {xgLeaders &&
-            LEADER_POSITIONS.map((pos) => (
+            (leaderPosition === "All" ? LEADER_POSITIONS : [leaderPosition]).map((pos) => (
               <div key={pos} className="mt-8">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-muted">
                   {LEADER_POSITION_LABELS[pos]}

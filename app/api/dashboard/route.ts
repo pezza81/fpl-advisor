@@ -6,15 +6,18 @@ import {
   fetchEntry,
   fetchEntryHistory,
   fetchPicks,
+  fetchTransferHistory,
   getCurrentGameweek,
   getDemoTeamData,
   getPrivateLeagues,
   type BootstrapStatic,
   type EntryHistoryChip,
   type FplChip,
+  type FplElement,
   type FplEvent,
   type GameweekHistoryRow,
   type SquadPlayer,
+  type TransferRecord,
 } from "@/lib/fpl";
 import { buildFplNameLookup, classifyTrend, loadFootballDigest } from "@/lib/football-trends";
 import {
@@ -30,6 +33,8 @@ import type {
   DashboardLeague,
   SeasonHistoryRow,
   SquadHealthPlayer,
+  TransferHistoryEntry,
+  UpcomingChanges,
   WhatsHappeningTile,
 } from "@/lib/dashboard-types";
 
@@ -139,6 +144,127 @@ function buildSeasonHistory(
     }));
 }
 
+interface GameweekTransferSummary {
+  event: number;
+  transfersMade: number;
+  freeCount: number;
+  paidCount: number;
+  costPoints: number;
+  bankAfter: number;
+}
+
+const FREE_TRANSFER_CAP = 5;
+
+// Reconstructs each gameweek's free-transfer bank using FPL's own rules
+// (2024/25+: free transfers can be banked up to a cap of 5; playing a
+// wildcard or free hit makes that gameweek's transfers unlimited and free
+// without touching the bank at all). This is a simulation, not authoritative
+// data — the public API has no endpoint exposing a manager's actual banked
+// free-transfer count (that lives behind the authenticated "my-team"
+// endpoint), so this reconstructs it from the season's own gameweek-by-
+// gameweek transfer counts and known chip history.
+function simulateFreeTransfers(
+  gameweeks: GameweekHistoryRow[],
+  chipsUsed: EntryHistoryChip[],
+): GameweekTransferSummary[] {
+  const sorted = [...gameweeks].sort((a, b) => a.event - b.event);
+  const chipEvents = new Set(
+    chipsUsed.filter((chip) => chip.name === "wildcard" || chip.name === "freehit").map((chip) => chip.event),
+  );
+
+  const summaries: GameweekTransferSummary[] = [];
+  let bank = 1; // baseline entering gameweek 2 — gameweek 1 is initial squad selection, not a transfer gameweek
+
+  for (const row of sorted) {
+    if (row.event === 1) continue;
+
+    if (chipEvents.has(row.event)) {
+      bank = Math.min(bank + 1, FREE_TRANSFER_CAP);
+      summaries.push({
+        event: row.event,
+        transfersMade: row.eventTransfers,
+        freeCount: row.eventTransfers,
+        paidCount: 0,
+        costPoints: 0,
+        bankAfter: bank,
+      });
+      continue;
+    }
+
+    const freeCount = Math.min(row.eventTransfers, bank);
+    const paidCount = row.eventTransfers - freeCount;
+    bank = Math.min(bank - freeCount + 1, FREE_TRANSFER_CAP);
+
+    summaries.push({
+      event: row.event,
+      transfersMade: row.eventTransfers,
+      freeCount,
+      paidCount,
+      costPoints: row.eventTransfersCost, // authoritative FPL total for the gameweek, not freeCount/paidCount-derived
+      bankAfter: bank,
+    });
+  }
+
+  return summaries;
+}
+
+// FPL tracks a transfer-cost total per gameweek, not per individual swap —
+// when several transfers land in the same gameweek, this splits that
+// gameweek's already-known free/paid split evenly across them in the order
+// the API returns them, the closest available approximation to "which swap
+// was free" since that distinction isn't actually tracked per-transfer.
+function buildTransferHistory(
+  transfers: TransferRecord[],
+  elementsById: Map<number, FplElement>,
+  summariesByEvent: Map<number, GameweekTransferSummary>,
+): TransferHistoryEntry[] {
+  const byEvent = new Map<number, TransferRecord[]>();
+  for (const transfer of transfers) {
+    const group = byEvent.get(transfer.event) ?? [];
+    group.push(transfer);
+    byEvent.set(transfer.event, group);
+  }
+
+  const entries: TransferHistoryEntry[] = [];
+  for (const [event, group] of byEvent) {
+    const freeCount = summariesByEvent.get(event)?.freeCount ?? group.length;
+
+    group.forEach((transfer, index) => {
+      entries.push({
+        event,
+        soldName: elementsById.get(transfer.elementOut)?.web_name ?? "Unknown player",
+        boughtName: elementsById.get(transfer.elementIn)?.web_name ?? "Unknown player",
+        costPoints: index < freeCount ? 0 : -4,
+      });
+    });
+  }
+
+  return entries.sort((a, b) => b.event - a.event);
+}
+
+// Everything the manager still needs to check or decide before the next
+// deadline — captain/vice-captain are read straight off the live squad, the
+// rest comes from the free-transfer simulation and this gameweek's chip use.
+function buildUpcomingChanges(
+  squad: SquadHealthPlayer[],
+  gameweek: number,
+  summariesByEvent: Map<number, GameweekTransferSummary>,
+  chipsUsed: EntryHistoryChip[],
+): UpcomingChanges {
+  const currentSummary = summariesByEvent.get(gameweek);
+
+  return {
+    captainName: squad.find((player) => player.isCaptain)?.name ?? null,
+    viceCaptainName: squad.find((player) => player.isViceCaptain)?.name ?? null,
+    transfersThisGameweek: currentSummary?.transfersMade ?? 0,
+    transfersCostThisGameweek: currentSummary?.costPoints ?? 0,
+    freeTransfersNextWeek: currentSummary ? currentSummary.bankAfter : gameweek <= 1 ? 1 : null,
+    chipsActivatedThisGameweek: chipsUsed
+      .filter((chip) => chip.event === gameweek)
+      .map((chip) => CHIP_LABELS[chip.name] ?? chip.name),
+  };
+}
+
 const RED_STATUSES = new Set(["i", "s", "u", "n"]);
 
 // Real-time health signal per squad player — trend from the shared 3-season
@@ -226,6 +352,12 @@ async function buildDemoDashboard(): Promise<DashboardData> {
   const leagues: DashboardLeague[] = [{ id: "demo", name: "Demo Mini-League" }];
   const whatsHappening = bootstrap ? buildWhatsHappening(bootstrap) : [];
 
+  // No real numeric FPL entry behind the demo account, so no real transfer
+  // history to fetch either — the panel still shows genuine captain/vice
+  // picks off the (real) demo squad, just with an empty transfer list and a
+  // simple baseline for the free-transfer/chip fields.
+  const upcoming = buildUpcomingChanges(squad, demo.gameweek, new Map(), chipsUsed);
+
   return {
     teamId: DEMO_TEAM_ID,
     managerName: demo.managerName,
@@ -246,6 +378,8 @@ async function buildDemoDashboard(): Promise<DashboardData> {
     seasonHistory,
     leagues,
     whatsHappening,
+    transferHistory: [],
+    upcoming,
   };
 }
 
@@ -289,6 +423,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Could not load season data right now." }, { status: 502 });
   }
 
+  // Its own fetch/catch, separate from the bootstrap+history pair above —
+  // this endpoint failing shouldn't take the whole dashboard down with it,
+  // it just means the transfer-history panel degrades to empty.
+  const transfers: TransferRecord[] = await fetchTransferHistory(teamId).catch((error) => {
+    console.error("Failed to load transfer history for dashboard", error);
+    return [];
+  });
+
   const gameweek = getCurrentGameweek(bootstrap);
   const nextEvent = bootstrap.events.find((event) => event.is_next);
   const lastPlayedRow = [...history.gameweeks].sort((a, b) => b.event - a.event)[0] ?? null;
@@ -316,6 +458,10 @@ export async function GET(request: NextRequest) {
 
   const squadHealth = seasonStarted ? await buildSquadHealth(squad) : [];
 
+  const transferSummaries = simulateFreeTransfers(history.gameweeks, history.chipsUsed);
+  const summariesByEvent = new Map(transferSummaries.map((summary) => [summary.event, summary]));
+  const elementsById = new Map(bootstrap.elements.map((element) => [element.id, element]));
+
   const data: DashboardData = {
     ...baseInfo,
     totalPlayers: bootstrap.total_players,
@@ -331,6 +477,8 @@ export async function GET(request: NextRequest) {
     seasonHistory: buildSeasonHistory(history.gameweeks, bootstrap.events),
     leagues: getPrivateLeagues(entry),
     whatsHappening: buildWhatsHappening(bootstrap),
+    transferHistory: buildTransferHistory(transfers, elementsById, summariesByEvent),
+    upcoming: buildUpcomingChanges(squadHealth, gameweek, summariesByEvent, history.chipsUsed),
   };
 
   return NextResponse.json(data);

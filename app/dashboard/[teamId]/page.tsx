@@ -1069,6 +1069,83 @@ function DashboardContent({ teamId }: { teamId: string }) {
 
           {dashboard.seasonStarted && dashboard.squad.length > 0 && (
             <section className="mt-5 rounded-xl border border-card-border bg-card p-5">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-muted">
+                Recent changes &amp; upcoming
+              </h2>
+              <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
+                  <h3 className="text-[10px] font-semibold uppercase tracking-wide text-muted">
+                    Transfer history
+                  </h3>
+                  {dashboard.transferHistory.length === 0 ? (
+                    <p className="mt-2 text-sm text-muted">No transfers made yet this season.</p>
+                  ) : (
+                    <ul className="mt-2 flex flex-col gap-2">
+                      {dashboard.transferHistory.map((transfer, index) => (
+                        <li key={index} className="text-sm">
+                          <span className="text-foreground">
+                            Sold {transfer.soldName}, Bought {transfer.boughtName}
+                          </span>
+                          <span className="text-muted"> — Gameweek {transfer.event}</span>{" "}
+                          <span className={transfer.costPoints < 0 ? "text-red-400" : "text-emerald-400"}>
+                            {transfer.costPoints < 0 ? `(${transfer.costPoints}pts)` : "(Free)"}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div>
+                  <h3 className="text-[10px] font-semibold uppercase tracking-wide text-muted">
+                    Before the next deadline
+                  </h3>
+                  <ul className="mt-2 flex flex-col gap-2 text-sm">
+                    <li>
+                      <span className="text-muted">Captain: </span>
+                      {dashboard.upcoming.captainName ? (
+                        <span className="text-foreground">{dashboard.upcoming.captainName}</span>
+                      ) : (
+                        <span className="text-red-400">Not set</span>
+                      )}
+                    </li>
+                    <li>
+                      <span className="text-muted">Vice-captain: </span>
+                      {dashboard.upcoming.viceCaptainName ? (
+                        <span className="text-foreground">{dashboard.upcoming.viceCaptainName}</span>
+                      ) : (
+                        <span className="text-red-400">Not set</span>
+                      )}
+                    </li>
+                    <li>
+                      <span className="text-muted">Transfers this gameweek: </span>
+                      <span className="text-foreground">
+                        {dashboard.upcoming.transfersThisGameweek}
+                        {dashboard.upcoming.transfersCostThisGameweek < 0
+                          ? ` (${dashboard.upcoming.transfersCostThisGameweek}pts)`
+                          : ""}
+                      </span>
+                    </li>
+                    <li>
+                      <span className="text-muted">Free transfers next week: </span>
+                      <span className="text-foreground">{dashboard.upcoming.freeTransfersNextWeek ?? "—"}</span>
+                    </li>
+                    <li>
+                      <span className="text-muted">Chips activated this gameweek: </span>
+                      <span className="text-foreground">
+                        {dashboard.upcoming.chipsActivatedThisGameweek.length > 0
+                          ? dashboard.upcoming.chipsActivatedThisGameweek.join(", ")
+                          : "None"}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {dashboard.seasonStarted && dashboard.squad.length > 0 && (
+            <section className="mt-5 rounded-xl border border-card-border bg-card p-5">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-xs font-bold uppercase tracking-widest text-muted">Today&apos;s briefing</h2>
                 {lastUpdated && (

@@ -232,6 +232,8 @@ export interface GameweekHistoryRow {
   totalPoints: number;
   overallRank: number;
   pointsOnBench: number;
+  eventTransfers: number;
+  eventTransfersCost: number;
 }
 
 export interface EntryHistoryChip {
@@ -251,6 +253,8 @@ interface RawEntryHistoryResponse {
     total_points: number;
     overall_rank: number;
     points_on_bench: number;
+    event_transfers: number;
+    event_transfers_cost: number;
   }[];
   chips: { name: string; event: number }[];
 }
@@ -268,9 +272,44 @@ export async function fetchEntryHistory(teamId: string | number): Promise<EntryH
       totalPoints: row.total_points,
       overallRank: row.overall_rank,
       pointsOnBench: row.points_on_bench,
+      eventTransfers: row.event_transfers,
+      eventTransfersCost: row.event_transfers_cost,
     })),
     chipsUsed: raw.chips.map((chip) => ({ name: chip.name, event: chip.event })),
   };
+}
+
+export interface TransferRecord {
+  event: number;
+  elementIn: number;
+  elementInCost: number;
+  elementOut: number;
+  elementOutCost: number;
+  time: string;
+}
+
+interface RawTransferRecord {
+  event: number;
+  element_in: number;
+  element_in_cost: number;
+  element_out: number;
+  element_out_cost: number;
+  time: string;
+}
+
+// Every transfer made this season, in the order FPL returns them — the raw
+// material for the dashboard's transfer-history list. An empty array is the
+// normal, expected shape for a manager who hasn't made a transfer yet.
+export async function fetchTransferHistory(teamId: string | number): Promise<TransferRecord[]> {
+  const raw = await fplFetch<RawTransferRecord[]>(`/entry/${teamId}/transfers/`);
+  return raw.map((t) => ({
+    event: t.event,
+    elementIn: t.element_in,
+    elementInCost: t.element_in_cost,
+    elementOut: t.element_out,
+    elementOutCost: t.element_out_cost,
+    time: t.time,
+  }));
 }
 
 export interface LeagueStandingRow {
