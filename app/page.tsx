@@ -63,6 +63,13 @@ export default function Home() {
           Plain English advice for your FPL team
         </p>
 
+        <Link
+          href="/guide"
+          className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-card-border bg-card px-4 py-1.5 text-xs font-medium text-muted transition-colors hover:border-accent hover:text-accent"
+        >
+          New to FPL? Read the guide &rarr;
+        </Link>
+
         <form onSubmit={handleSubmit} className="mt-10 w-full">
           <label htmlFor="teamId" className="sr-only">
             FPL Team ID

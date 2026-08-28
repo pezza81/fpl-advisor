@@ -965,6 +965,9 @@ function DashboardContent({ teamId }: { teamId: string }) {
           <Link href="/league/demo" className="text-sm text-muted transition-colors hover:text-accent">
             League
           </Link>
+          <Link href="/guide" className="text-sm text-muted transition-colors hover:text-accent">
+            Guide
+          </Link>
           <Link href="/trends" className="text-sm text-muted transition-colors hover:text-accent">
             Trends analysis &rarr;
           </Link>
