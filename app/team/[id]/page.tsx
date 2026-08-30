@@ -9,6 +9,7 @@ import { PlayerModal } from "@/components/PlayerModal";
 import { AdviceCard } from "@/components/AdviceCard";
 import { ActionChecklist } from "@/components/ActionChecklist";
 import { clearSavedTeamId } from "@/lib/team-id-storage";
+import { clearFplSession, loadFplSession, saveFplSession } from "@/lib/fpl-session-storage";
 
 interface TeamResponse extends TeamData {
   error?: string;
@@ -110,6 +111,27 @@ function TeamPageContent({ id }: { id: string }) {
   const [positionFilter, setPositionFilter] = useState<PositionFilter>("All");
   const [sortOption, setSortOption] = useState<SortOption>("position");
 
+  // Deliberately not read via a lazy useState initializer: localStorage
+  // doesn't exist during server rendering, so that would make the very
+  // first client render disagree with the server-rendered HTML. Starting at
+  // null and loading it inside an effect keeps first paint identical to SSR
+  // — the connect prompt briefly shows even for an already-connected user,
+  // then upgrades to "connected" a moment later, same tradeoff already used
+  // for the saved-team-id redirect on the homepage.
+  const [fplSession, setFplSessionState] = useState<string | null>(null);
+  const [showConnectForm, setShowConnectForm] = useState(false);
+  const [connectEmail, setConnectEmail] = useState("");
+  const [connectPassword, setConnectPassword] = useState("");
+  const [connecting, setConnecting] = useState(false);
+  const [connectError, setConnectError] = useState("");
+
+  useEffect(() => {
+    Promise.resolve().then(() => {
+      const saved = loadFplSession(id);
+      if (saved) setFplSessionState(saved);
+    });
+  }, [id]);
+
   const {
     selectedPlayer,
     insightCache,
@@ -122,7 +144,9 @@ function TeamPageContent({ id }: { id: string }) {
   useEffect(() => {
     let cancelled = false;
 
-    fetch(`/api/team?teamId=${id}`)
+    fetch(`/api/team?teamId=${id}`, {
+      headers: fplSession ? { "X-FPL-Session": fplSession } : {},
+    })
       .then(async (res) => {
         const data = (await res.json()) as TeamResponse;
         if (!res.ok) throw new Error(data.error ?? "Failed to load team.");
@@ -138,7 +162,7 @@ function TeamPageContent({ id }: { id: string }) {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, fplSession]);
 
   async function handleGetAdvice() {
     if (!team) return;
@@ -181,6 +205,36 @@ function TeamPageContent({ id }: { id: string }) {
   function handleChangeTeam() {
     clearSavedTeamId();
     router.push("/");
+  }
+
+  async function handleConnect(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setConnecting(true);
+    setConnectError("");
+
+    try {
+      const res = await fetch("/api/fpl-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: connectEmail, password: connectPassword }),
+      });
+      const data = (await res.json()) as { sessionCookie?: string; error?: string };
+      if (!res.ok || !data.sessionCookie) throw new Error(data.error ?? "Could not sign in to FPL.");
+
+      saveFplSession(id, data.sessionCookie);
+      setFplSessionState(data.sessionCookie);
+      setShowConnectForm(false);
+      setConnectPassword("");
+    } catch (err) {
+      setConnectError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setConnecting(false);
+    }
+  }
+
+  function handleDisconnect() {
+    clearFplSession(id);
+    setFplSessionState(null);
   }
 
   const rankTopPercent = team ? rankPercentile(team.overallRank, team.totalPlayers) : null;
@@ -275,6 +329,99 @@ function TeamPageContent({ id }: { id: string }) {
               </p>
             )}
           </header>
+
+          {!team.isDemo && (
+            <div className="mt-4 rounded-xl border border-card-border bg-card p-4">
+              {team.isLive && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-emerald-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    Live squad
+                  </span>
+                  <span className="text-xs text-muted">
+                    Showing your real-time picks, including changes not yet locked in.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleDisconnect}
+                    className="ml-auto shrink-0 text-xs text-muted underline decoration-muted/40 underline-offset-2 hover:text-accent"
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              )}
+
+              {!team.isLive && !showConnectForm && (
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm text-foreground">
+                      {team.sessionExpired
+                        ? "Your FPL session has expired."
+                        : "Showing your last locked-in squad."}
+                    </p>
+                    <p className="text-xs text-muted">
+                      Connect your FPL account to see live changes before the deadline — captain
+                      swaps, bench order, and lineup changes you haven&apos;t locked in yet.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowConnectForm(true)}
+                    className="shrink-0 rounded-lg border border-accent/40 bg-accent/10 px-4 py-2 text-xs font-semibold text-accent transition-colors hover:bg-accent/20"
+                  >
+                    {team.sessionExpired ? "Reconnect FPL account" : "Connect FPL account"}
+                  </button>
+                </div>
+              )}
+
+              {!team.isLive && showConnectForm && (
+                <form onSubmit={handleConnect} className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <input
+                      type="email"
+                      required
+                      placeholder="FPL email"
+                      value={connectEmail}
+                      onChange={(event) => setConnectEmail(event.target.value)}
+                      className="w-full rounded-lg border border-card-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                    />
+                    <input
+                      type="password"
+                      required
+                      placeholder="FPL password"
+                      value={connectPassword}
+                      onChange={(event) => setConnectPassword(event.target.value)}
+                      className="w-full rounded-lg border border-card-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                    />
+                    <button
+                      type="submit"
+                      disabled={connecting}
+                      className="shrink-0 rounded-lg bg-accent-strong px-4 py-2 text-sm font-semibold text-[#04140b] transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {connecting ? "Connecting..." : "Connect"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowConnectForm(false);
+                        setConnectError("");
+                      }}
+                      className="shrink-0 rounded-lg border border-card-border px-4 py-2 text-sm text-muted transition-colors hover:text-foreground"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  {connectError && <p className="text-xs text-red-400">{connectError}</p>}
+                  <p className="text-[11px] leading-relaxed text-muted">
+                    Your password is sent once to verify your login and is never stored — we keep
+                    only the resulting session token in your browser, which you can remove anytime
+                    by disconnecting. This uses FPL&apos;s own login rather than an official public
+                    API, so it can occasionally fail or stop working without notice.
+                  </p>
+                </form>
+              )}
+            </div>
+          )}
 
           {!team.seasonStarted && (
             <div className="mt-10 rounded-xl border border-card-border bg-card p-6 text-center">

@@ -194,6 +194,14 @@ export interface TeamData {
   // placeholder zero values and callers should show a "check back once the
   // season starts" state instead of the squad grid.
   seasonStarted: boolean;
+  // True when squad/bank/squadValue came from the authenticated my-team
+  // endpoint (live, pre-deadline) rather than the public picks endpoint
+  // (only ever shows the last locked-in squad).
+  isLive?: boolean;
+  // True when a session token was supplied but FPL rejected it (expired or
+  // revoked) — the response still falls back to public data, but the client
+  // should prompt the user to reconnect rather than assume they're live.
+  sessionExpired?: boolean;
 }
 
 async function fplFetch<T>(path: string): Promise<T> {
@@ -224,6 +232,87 @@ export function fetchPicks(
   // (transfers/captain changes not reflected); a unique query string on
   // every call forces a fresh fetch instead of a cached one.
   return fplFetch<PicksResponse>(`/entry/${teamId}/event/${gameweek}/picks/?_=${Date.now()}`);
+}
+
+// Signs in to FPL's own (unofficial, undocumented) login endpoint and
+// returns the resulting session cookie string. The password is used here
+// once, in memory, to make this single request — it is never logged, never
+// written to any storage, and this function never returns it. Only the
+// cookie is handed back, since that's what subsequent requests need.
+//
+// Because this isn't a public API, its exact behavior isn't guaranteed —
+// FPL can change field names, add CSRF/bot checks, or start requiring 2FA
+// at any time without notice.
+export async function authenticateWithFpl(email: string, password: string): Promise<string> {
+  const body = new URLSearchParams({
+    login: email,
+    password,
+    app: "plfpl-web",
+    redirect_uri: "https://fantasy.premierleague.com/a/login",
+  });
+
+  let res: Response;
+  try {
+    res = await fetch("https://users.premierleague.com/accounts/login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Mozilla/5.0",
+      },
+      body: body.toString(),
+      redirect: "manual",
+      cache: "no-store",
+    });
+  } catch {
+    throw new Error("Could not reach the FPL login service. Try again shortly.");
+  }
+
+  // A response can carry several Set-Cookie headers; Headers.get() only
+  // ever returns one of them, so getSetCookie() (Node/undici) is required
+  // to see them all. Only the name=value pair is kept from each — the
+  // Path/Expires/HttpOnly/etc. attributes aren't meaningful once forwarded
+  // as a request Cookie header ourselves.
+  const setCookies = typeof res.headers.getSetCookie === "function" ? res.headers.getSetCookie() : [];
+  const cookieString = setCookies.map((header) => header.split(";")[0]).join("; ");
+
+  // pl_profile is FPL's own session-identifying cookie — its presence is
+  // the actual signal a login succeeded; a wrong password redirects back to
+  // the login page with no such cookie set.
+  if (!cookieString.includes("pl_profile=")) {
+    throw new Error("Invalid FPL email or password.");
+  }
+
+  return cookieString;
+}
+
+export interface MyTeamResponse {
+  picks: FplPick[];
+  transfers: {
+    bank: number;
+    value: number;
+  };
+}
+
+// The authenticated, pre-deadline equivalent of fetchPicks — reflects
+// lineup/captain/bench changes the manager has made but not yet "locked in"
+// by the gameweek deadline, which the public picks endpoint can't show at
+// all until after that deadline passes. Requires a session cookie from
+// authenticateWithFpl; throws (falling back to fetchPicks is the caller's
+// job) if that session is missing, expired, or FPL rejects the request.
+export async function fetchMyTeam(teamId: string | number, sessionCookie: string): Promise<MyTeamResponse> {
+  const res = await fetch(`${FPL_BASE_URL}/my-team/${teamId}/?_=${Date.now()}`, {
+    headers: {
+      "User-Agent": "Mozilla/5.0",
+      Cookie: sessionCookie,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error(`FPL my-team request failed (${res.status})`);
+  }
+
+  return res.json() as Promise<MyTeamResponse>;
 }
 
 export interface GameweekHistoryRow {
