@@ -549,6 +549,9 @@ function LeagueContent({ leagueId }: { leagueId: string }) {
           <Link href="/guide" className="text-sm text-muted transition-colors hover:text-accent">
             Guide
           </Link>
+          <Link href="/strategy" className="text-sm text-muted transition-colors hover:text-accent">
+            Strategy
+          </Link>
           <Link href="/trends" className="text-sm text-muted transition-colors hover:text-accent">
             Trends analysis &rarr;
           </Link>

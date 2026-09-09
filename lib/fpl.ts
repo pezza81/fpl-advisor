@@ -52,6 +52,7 @@ export interface FplElement {
   transfers_in_event: number;
   transfers_out_event: number;
   cost_change_event: number;
+  minutes: number;
 }
 
 export interface BootstrapStatic {

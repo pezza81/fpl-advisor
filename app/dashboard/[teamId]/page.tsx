@@ -94,6 +94,72 @@ function looksLikeAStarter(player: SquadHealthPlayer): boolean {
   return player.price >= BENCH_STARTER_PRICE_THRESHOLD || player.selectedByPercent >= BENCH_STARTER_OWNERSHIP_THRESHOLD;
 }
 
+// Ownership bands used to label a squad's overall strategy lean — deliberately
+// simple thresholds (not derived from any dataset) so the label stays easy to
+// explain: "most managers own this" vs "barely anyone does".
+const TEMPLATE_OWNERSHIP_THRESHOLD = 15;
+const DIFFERENTIAL_OWNERSHIP_THRESHOLD = 5;
+
+interface StrategyProfile {
+  label: string;
+  templateCount: number;
+  differentialCount: number;
+  averageOwnership: number;
+  captain: SquadHealthPlayer | null;
+  topScorer: SquadHealthPlayer | null;
+  captainIsOptimal: boolean;
+  recommendation: string;
+}
+
+// A squad-only, this-instant snapshot — not a full season audit (that would
+// need every past gameweek's picks, which isn't fetched here). "Optimal
+// captaincy" is approximated as "is your armband on your own squad's
+// highest season scorer", not a gameweek-by-gameweek history check.
+function buildStrategyProfile(squad: SquadHealthPlayer[]): StrategyProfile | null {
+  if (squad.length === 0) return null;
+
+  const templateCount = squad.filter((p) => p.selectedByPercent >= TEMPLATE_OWNERSHIP_THRESHOLD).length;
+  const differentialCount = squad.filter((p) => p.selectedByPercent < DIFFERENTIAL_OWNERSHIP_THRESHOLD).length;
+  const averageOwnership =
+    Math.round((squad.reduce((sum, p) => sum + p.selectedByPercent, 0) / squad.length) * 10) / 10;
+
+  let label: string;
+  if (templateCount >= 10) label = "Template";
+  else if (differentialCount >= 6) label = "Differential-heavy";
+  else if (differentialCount >= 3) label = "Balanced, leaning differential";
+  else label = "Balanced";
+
+  const captain = squad.find((p) => p.isCaptain) ?? null;
+  const topScorer = [...squad].sort((a, b) => b.totalPoints - a.totalPoints)[0] ?? null;
+  const captainIsOptimal = !!captain && !!topScorer && captain.id === topScorer.id;
+
+  let recommendation: string;
+  if (!captain) {
+    recommendation = "You don't have a captain set — pick one before the deadline to avoid missing double points entirely.";
+  } else if (label === "Template" && differentialCount === 0) {
+    recommendation =
+      "Your squad is very template — consider one differential pick to separate yourself from the pack.";
+  } else if (label === "Differential-heavy") {
+    recommendation =
+      "Your squad leans heavily differential — high ceiling, but a rough week could hurt your rank badly. Consider anchoring with one or two more template picks for safety.";
+  } else if (!captainIsOptimal && topScorer) {
+    recommendation = `${topScorer.name} has more points than your captain ${captain.name} this season — worth reconsidering the armband.`;
+  } else {
+    recommendation = "Your squad has a healthy mix of template and differential picks — a balanced approach.";
+  }
+
+  return {
+    label,
+    templateCount,
+    differentialCount,
+    averageOwnership,
+    captain,
+    topScorer,
+    captainIsOptimal,
+    recommendation,
+  };
+}
+
 // Mirrors the 3 / 4-5 / 6+ day buckets used elsewhere in the app (see
 // lib/team-stats.ts's restBucketFor) — kept local since this is a client
 // component and that module touches the server-only shared SQLite DB.
@@ -939,6 +1005,7 @@ function DashboardContent({ teamId }: { teamId: string }) {
   const flaggedBenchPlayers = benchPlayers.filter(looksLikeAStarter);
 
   const rankTopPercent = dashboard ? rankPercentile(dashboard.overallRank, dashboard.totalPlayers) : null;
+  const strategyProfile = dashboard ? buildStrategyProfile(dashboard.squad) : null;
 
   const history = dashboard?.seasonHistory ?? [];
   const bestGw = history.length > 0 ? history.reduce((a, b) => (b.points > a.points ? b : a)) : null;
@@ -967,6 +1034,9 @@ function DashboardContent({ teamId }: { teamId: string }) {
           </Link>
           <Link href="/guide" className="text-sm text-muted transition-colors hover:text-accent">
             Guide
+          </Link>
+          <Link href="/strategy" className="text-sm text-muted transition-colors hover:text-accent">
+            Strategy
           </Link>
           <Link href="/trends" className="text-sm text-muted transition-colors hover:text-accent">
             Trends analysis &rarr;
@@ -1377,6 +1447,46 @@ function DashboardContent({ teamId }: { teamId: string }) {
                   </div>
                 </div>
               </section>
+
+              {/* 3c. Your strategy profile */}
+              {strategyProfile && (
+                <section className="mt-8 rounded-xl border border-card-border bg-card p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <h2 className="text-xs font-bold uppercase tracking-widest text-muted">
+                      Your strategy profile
+                    </h2>
+                    <Link href="/strategy" className="text-[10px] text-muted transition-colors hover:text-accent">
+                      Strategy guide &rarr;
+                    </Link>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <StatTile label="Playing style" value={strategyProfile.label} />
+                    <StatTile label="Avg ownership" value={`${strategyProfile.averageOwnership}%`} />
+                    <StatTile label="Template picks" value={`${strategyProfile.templateCount}/15`} />
+                    <StatTile label="Differentials" value={`${strategyProfile.differentialCount}/15`} />
+                  </div>
+
+                  <div className="mt-4 rounded-lg border border-accent/30 bg-accent/5 px-4 py-3">
+                    <p className="text-[10px] font-bold uppercase tracking-wide text-accent">Recommendation</p>
+                    <p className="mt-1 text-sm leading-relaxed text-foreground/90">
+                      {strategyProfile.recommendation}
+                    </p>
+                  </div>
+
+                  {strategyProfile.captain && (
+                    <p className="mt-3 text-xs text-muted">
+                      Captain: <span className="text-foreground">{strategyProfile.captain.name}</span>{" "}
+                      ({strategyProfile.captain.selectedByPercent}% owned)
+                      {strategyProfile.captainIsOptimal
+                        ? " — your squad's own top scorer this season."
+                        : strategyProfile.topScorer
+                          ? ` — ${strategyProfile.topScorer.name} is your squad's top scorer this season.`
+                          : ""}
+                    </p>
+                  )}
+                </section>
+              )}
 
               {/* 4. Season story */}
               <section className="mt-8 rounded-xl border border-card-border bg-card p-5">

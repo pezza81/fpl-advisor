@@ -9,6 +9,7 @@
     "lint": "eslint",
     "fetch:football": "node --env-file=.env.local scripts/fetch-football-data.mjs",
     "fetch:understat": "node scripts/fetch-understat.mjs",
+    "fetch:top-managers": "node scripts/fetch-top-managers.mjs",
     "sync:shared-db": "node scripts/sync-shared-db.mjs"
   },
   "dependencies": {

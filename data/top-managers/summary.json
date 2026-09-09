@@ -1,0 +1,139 @@
+{
+  "generatedAt": "2026-09-09T07:10:31.053Z",
+  "leagueId": 314,
+  "gameweek": 3,
+  "requestedCount": 40,
+  "sampleSize": 40,
+  "averageSquadValue": 100.5,
+  "averageBank": 0.2,
+  "mostOwned": [
+    {
+      "elementId": 411,
+      "name": "Haaland",
+      "club": "MCI",
+      "count": 38,
+      "percent": 95
+    },
+    {
+      "elementId": 379,
+      "name": "Isak",
+      "club": "LIV",
+      "count": 36,
+      "percent": 90
+    },
+    {
+      "elementId": 115,
+      "name": "De Cuyper",
+      "club": "BHA",
+      "count": 29,
+      "percent": 72.5
+    },
+    {
+      "elementId": 277,
+      "name": "Egan",
+      "club": "HUL",
+      "count": 20,
+      "percent": 50
+    },
+    {
+      "elementId": 399,
+      "name": "Cherki",
+      "club": "MCI",
+      "count": 19,
+      "percent": 47.5
+    },
+    {
+      "elementId": 367,
+      "name": "Gakpo",
+      "club": "LIV",
+      "count": 17,
+      "percent": 42.5
+    },
+    {
+      "elementId": 82,
+      "name": "Kelleher",
+      "club": "BRE",
+      "count": 17,
+      "percent": 42.5
+    },
+    {
+      "elementId": 106,
+      "name": "Thiago",
+      "club": "BRE",
+      "count": 17,
+      "percent": 42.5
+    },
+    {
+      "elementId": 397,
+      "name": "Semenyo",
+      "club": "MCI",
+      "count": 16,
+      "percent": 40
+    },
+    {
+      "elementId": 368,
+      "name": "Szoboszlai",
+      "club": "LIV",
+      "count": 15,
+      "percent": 37.5
+    },
+    {
+      "elementId": 391,
+      "name": "Gvardiol",
+      "club": "MCI",
+      "count": 14,
+      "percent": 35
+    },
+    {
+      "elementId": 426,
+      "name": "B.Fernandes",
+      "club": "MUN",
+      "count": 14,
+      "percent": 35
+    },
+    {
+      "elementId": 398,
+      "name": "Foden",
+      "club": "MCI",
+      "count": 12,
+      "percent": 30
+    },
+    {
+      "elementId": 356,
+      "name": "Virgil",
+      "club": "LIV",
+      "count": 12,
+      "percent": 30
+    },
+    {
+      "elementId": 279,
+      "name": "Ajayi",
+      "club": "HUL",
+      "count": 12,
+      "percent": 30
+    }
+  ],
+  "mostCaptained": [
+    {
+      "elementId": 411,
+      "name": "Haaland",
+      "club": "MCI",
+      "count": 37,
+      "percent": 92.5
+    },
+    {
+      "elementId": 379,
+      "name": "Isak",
+      "club": "LIV",
+      "count": 2,
+      "percent": 5
+    },
+    {
+      "elementId": 391,
+      "name": "Gvardiol",
+      "club": "MCI",
+      "count": 1,
+      "percent": 2.5
+    }
+  ]
+}
