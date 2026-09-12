@@ -7,6 +7,12 @@ const HAS_PRICE_CLAUSE = /\s+for\s+£\s?\d+(?:\.\d+)?m\b/i;
 const CLAIMED_PRICE = /for\s+£\s?(\d+(?:\.\d+)?)m/i;
 const PRICE_TOLERANCE = 0.05; // guards against float rounding, not a real mismatch
 
+// 'u' (unavailable) and 'n' (not registered) mark players bootstrap keeps
+// around for history but who are no longer part of the game — left the
+// Premier League, retired, etc. 'a'/'d'/'i'/'s' are all still real, ownable
+// FPL assets (doubtful/injured/suspended is a risk signal, not an exit).
+const NOT_IN_FPL_STATUSES = new Set(["u", "n"]);
+
 function normalizeName(name: string): string {
   return name
     .toLowerCase()
@@ -146,6 +152,7 @@ export function validateTransferRecommendation({
   const claimedPrice = claimedPriceMatch ? Number.parseFloat(claimedPriceMatch[1]) : null;
   const actionNeedsPriceFix = claimedPrice == null || Math.abs(claimedPrice - realPrice) >= PRICE_TOLERANCE;
   const budget = bank + findSaleProceeds(actions, squad);
+  const playerHasLeftFpl = NOT_IN_FPL_STATUSES.has(element.status);
 
   let finalName = rawName;
   let finalPrice = realPrice;
@@ -153,12 +160,14 @@ export function validateTransferRecommendation({
   let correctedTransferText = transferText;
   let corrected = false;
 
-  if (realPrice > budget + PRICE_TOLERANCE) {
-    // Real price busts the budget regardless of what Claude claimed — find
-    // the closest affordable alternative in the same position (same
-    // element_type), preferring the highest price that still fits so the
-    // swap stays as close to the original pick's quality tier as the
-    // budget allows.
+  if (playerHasLeftFpl || realPrice > budget + PRICE_TOLERANCE) {
+    // Either the name resolved to a player bootstrap keeps only for history
+    // (left the league, no longer registered — can't actually be bought), or
+    // the real price busts the budget regardless of what Claude claimed.
+    // Either way: find the closest affordable alternative in the same
+    // position (same element_type), preferring the highest price that still
+    // fits so the swap stays as close to the original pick's quality tier as
+    // the budget allows.
     const squadIds = new Set(squad.map((player) => player.id));
     const alternative = elements
       .filter(
